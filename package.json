@@ -1,0 +1,26 @@
+{
+  "name": "techery-proxy-service",
+  "version": "0.1.0",
+  "description": "Internal Techery service",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/techery/techery-proxy-service.git"
+  },
+  "author": "Techery",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node ./dist/bin/server.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.2",
+    "debug": "~2.2.0",
+    "express": "~4.14.0",
+    "morgan": "~1.7.0"
+  },
+  "devDependencies": {
+    "babel-preset-latest": "^6.16.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  }
+}
