@@ -12,7 +12,7 @@ Techery internal service for proxying third party services and stub them if need
 #### Use npm and install all local dependencies
 
 ```
-npm install
+npm install && gulp
 ```
 
 This command will install all the needed npm dependencies.
