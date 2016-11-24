@@ -1,4 +1,5 @@
-# techery-proxy-service
+# Hermet
+Make your server hermetic.
 Techery internal service for proxying third party services and stub them if needed.
  
 ### System requirements
