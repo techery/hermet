@@ -1,15 +1,12 @@
 let express = require('express');
 let router = express.Router({mergeParams: true});
-
 let stubs = require('./stubs');
+let servicesController = require('../controllers/ServicesController');
+
 
 router.route('/')
-  .get((req, res, next) => {
-    res.send("Proxy rule list");
-  })
-  .post((req, res, next) => {
-    res.send("Create new rule");
-  });
+  .get((req, res, next) => servicesController.list(req, res))
+  .post((req, res, next) => servicesController.create(req, res));
 
 router.route('/:serviceId')
   .get((req, res, next) => {

@@ -1,6 +1,6 @@
 let httpProxy = require('http-proxy'),
+  serviceRepository = require("./repositories/ServiceRepository"),
   serviceMapping = require("./resources/serviceMapping");
-
 //
 // Create a proxy server with custom application logic
 //
