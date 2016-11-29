@@ -19,6 +19,6 @@ router.route('/:serviceId')
     res.send("Delete rule");
   });
 
-router.use('/:serviceId/stubs', stubs);
+router.use('/', stubs);
 
 module.exports = router;

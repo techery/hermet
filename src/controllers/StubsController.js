@@ -7,18 +7,17 @@ class StubsController {
   }
 
   list(req, res, next) {
-    this.stubsRepository.find().then((items) => {
+    this.stubsRepository.getByServiceId(req.params.serviceId).then((items) => {
       res.status(200).json(items);
     }).catch(next);
   }
 
   create(req, res, next) {
-    let stub = this.stubsRepository.create({
+    this.stubsRepository.save({
       response: "Ok",
-      predicates:  "{equals: { field: 'value' }}"
-    });
-
-    this.stubsRepository.save(stub).then(() => {
+      predicates:  {equals: { field: 'value' }},
+      serviceId: req.params.serviceId
+    }).then(() => {
       res.status(204).send("");
     }).catch(next);
   }

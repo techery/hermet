@@ -19,11 +19,12 @@ proxy.on('error', function (err, req, res) {
 });
 
 module.exports = (req, res) => {
-  serviceRepository.find({proxyHost: req.headers.host}).then(services => {
+  serviceRepository.getByProxyHost(req.headers.host).then(services => {
     if (services.length == 0) {
       showError(res, 400, 'Proxy service mapping error');
       return;
     }
+
     proxy.web(req, res, {
       target: services[0].targetUrl
     });

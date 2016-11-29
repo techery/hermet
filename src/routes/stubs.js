@@ -2,14 +2,14 @@ let express = require('express');
 let router = express.Router();
 let stubController = require('../controllers/StubsController');
 
-router.route('/')
+router.route('/:serviceId/stubs')
   .get((req, res, next) => stubController.list(req, res, next))
   .post((req, res, next) => stubController.create(req, res, next))
   .delete((req, res, next) => {
     res.send("Delete rule");
   });
 
-router.route('/:stubId')
+router.route('/:serviceId/stubs/:stubId')
   .get((req, res, next) => {
     res.send("Get stub details");
   })
