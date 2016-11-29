@@ -5,15 +5,14 @@ class ServicesController {
   constructor(serviceRepository) {
     this.serviceRepository = serviceRepository;
   }
-  list(req, res) {
+
+  list(req, res, next) {
     this.serviceRepository.find().then((items) => {
       res.status(200).json(items);
-    }).catch(err =>
-      res.status(400).json({errors: {base: err.message}})
-    );
+    }).catch(next);
   }
 
-  create(req, res) {
+  create(req, res, next) {
     let rule = this.serviceRepository.create({
       name: "merchant-service-preprod",
       proxyHost:  "merchant-service-preprod.proxy.io:5050",
@@ -22,9 +21,7 @@ class ServicesController {
 
     this.serviceRepository.save(rule).then(() => {
       res.status(204).send("");
-    }).catch(err =>
-      res.status(400).json({errors: {base: err.message}})
-    );
+    }).catch(next);
   }
 }
 

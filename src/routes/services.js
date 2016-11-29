@@ -5,8 +5,8 @@ let servicesController = require('../controllers/ServicesController');
 
 
 router.route('/')
-  .get((req, res, next) => servicesController.list(req, res))
-  .post((req, res, next) => servicesController.create(req, res));
+  .get((req, res, next) => servicesController.list(req, res, next))
+  .post((req, res, next) => servicesController.create(req, res, next));
 
 router.route('/:serviceId')
   .get((req, res, next) => {
