@@ -5,6 +5,7 @@ var ottoman = require('ottoman');
 class CouchbaseWrapper {
 
   constructor(host, bucketName, timeout) {
+    this.bucketName = bucketName;
     this.cluster = new couchbase.Cluster('couchbase://' + host);
     let bucket = this.cluster.openBucket(bucketName);
     bucket.operationTimeout = timeout;
@@ -29,12 +30,38 @@ class CouchbaseWrapper {
 
     return this.promisify((callback) => {
       this.bucket.query(N1qlQuery.fromString(query), params || {}, callback);
+    }).then((items) => {
+      let result = [];
+      items.map((item) => {
+        result.push(item[this.bucketName]);
+      });
+
+      return result;
+    });
+  }
+
+  get(id) {
+    return this.promisify((callback) => {
+      this.bucket.get(id, callback);
+    }).then(item => {
+      return item.value;
     });
   }
 
   upsert(id, data) {
+    return new Promise((resolve, reject) => {
+      this.bucket.upsert(id, data, (error, result) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(id, result);
+      });
+    });
+  }
+
+  remove(id) {
     return this.promisify((callback) => {
-      this.bucket.upsert(id, data, callback);
+      this.bucket.remove(id, callback);
     });
   }
 }

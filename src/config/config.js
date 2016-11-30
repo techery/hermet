@@ -7,7 +7,7 @@ function _getEnv(key, defaultValue) {
 const config = {
   couchbase: {
     host: _getEnv("COUCHBASE_HOST", "localhost"),
-    bucket: _getEnv("COUCHBASE_BUCKET", "hermet"),
+    bucket: _getEnv("COUCHBASE_BUCKET", "hernet"),
     operationTimeout: _getEnv("COUCHBASE_OPERATION_TIMEOUT", 10000)
   }
 };

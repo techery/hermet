@@ -9,15 +9,9 @@ router.route('/')
   .post((req, res, next) => servicesController.create(req, res, next));
 
 router.route('/:serviceId')
-  .get((req, res, next) => {
-    res.send("Get rule details");
-  })
-  .put((req, res, next) => {
-    res.send("Update rule");
-  })
-  .delete((req, res, next) => {
-    res.send("Delete rule");
-  });
+  .get((req, res, next) => servicesController.get(req, res, next))
+  .put((req, res, next) => servicesController.update(req, res, next))
+  .delete((req, res, next) => servicesController.remove(req, res, next));
 
 router.use('/', stubs);
 

@@ -23,11 +23,13 @@
     "jsonpath-plus": "^0.15.0",
     "morgan": "~1.7.0",
     "ottoman": "^1.0.4",
+    "uuid": "^3.0.1",
     "xmldom": "^0.1.27",
     "xpath": "0.0.23"
   },
   "devDependencies": {
     "babel-preset-latest": "^6.16.0",
+    "chakram": "^1.5.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2"
   }
