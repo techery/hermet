@@ -9,10 +9,10 @@ describe("Proxy rules api", function () {
   context("should perform CRUD operations", function () {
 
     it("should create new proxy rules", function () {
-      var response = httpClient.post("/services", serviceData).then(function (result) {
+      var response = hermetApiClient.post("/services", serviceData).then(function (result) {
         expect(result).to.have.status(201);
 
-        return httpClient.get("/services/" + utils.getItemIdFromLocation(result.response.headers.location))
+        return hermetApiClient.get("/services/" + utils.getItemIdFromLocation(result.response.headers.location))
       });
 
       expect(response).to.have.status(200);
@@ -29,10 +29,10 @@ describe("Proxy rules api", function () {
         targetUrl: "http://techery-dt-preprod.techery.io:3020"
       };
 
-      var response = httpClient.put("/services/" + updatedItemId, updatedServiceData).then(function (response) {
+      var response = hermetApiClient.put("/services/" + updatedItemId, updatedServiceData).then(function (response) {
         expect(response).to.have.status(204);
 
-        return httpClient.get("/services/" + updatedItemId);
+        return hermetApiClient.get("/services/" + updatedItemId);
       });
 
       expect(response).to.have.status(200);
@@ -43,16 +43,16 @@ describe("Proxy rules api", function () {
 
     it("should remove created proxy rules", function () {
       var deletedItemId;
-      var response = httpClient.post("/services", serviceData).then(function (result) {
+      var response = hermetApiClient.post("/services", serviceData).then(function (result) {
         expect(result).to.have.status(201);
 
         deletedItemId = utils.getItemIdFromLocation(result.response.headers.location);
 
-        return httpClient.delete("/services/" + deletedItemId)
+        return hermetApiClient.delete("/services/" + deletedItemId)
       }).then(function (response) {
         expect(response).to.have.status(204);
 
-        return httpClient.get("/services/" + deletedItemId)
+        return hermetApiClient.get("/services/" + deletedItemId)
       });
 
       expect(response).to.have.status(404);
@@ -62,7 +62,7 @@ describe("Proxy rules api", function () {
   });
 
   it("should can retrieve all proxy rule", function () {
-    var response = httpClient.get("/services");
+    var response = hermetApiClient.get("/services");
     expect(response).to.have.status(200);
 
     return chakram.wait();

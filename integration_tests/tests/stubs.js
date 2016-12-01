@@ -11,7 +11,7 @@ describe("Stubs api", function () {
     };
 
     before(function() {
-      return httpClient.post("/services", serviceData).then(function (result) {
+      return hermetApiClient.post("/services", serviceData).then(function (result) {
         expect(result).to.have.status(201);
 
         serviceId = utils.getItemIdFromLocation(result.response.headers.location);
@@ -28,12 +28,12 @@ describe("Stubs api", function () {
 
       var stubId;
 
-      var response = httpClient.post("/services/" + serviceId + "/stubs", stubData).then(function(result) {
+      var response = hermetApiClient.post("/services/" + serviceId + "/stubs", stubData).then(function(result) {
         expect(result).to.have.status(201);
 
         stubId = utils.getItemIdFromLocation(result.response.headers.location);
 
-        return httpClient.get("/services/" + serviceId + "/stubs/" + stubId);
+        return hermetApiClient.get("/services/" + serviceId + "/stubs/" + stubId);
       });
 
       expect(response).to.have.status(200);
@@ -49,10 +49,10 @@ describe("Stubs api", function () {
       };
       var stubId = uuid();
 
-      var response = httpClient.put("/services/" + serviceId + "/stubs/" + stubId, stubData).then(function(result) {
+      var response = hermetApiClient.put("/services/" + serviceId + "/stubs/" + stubId, stubData).then(function(result) {
         expect(result).to.have.status(204);
 
-        return httpClient.get("/services/" + serviceId + "/stubs/" + stubId);
+        return hermetApiClient.get("/services/" + serviceId + "/stubs/" + stubId);
       });
 
       expect(response).to.have.status(200);
@@ -69,16 +69,16 @@ describe("Stubs api", function () {
 
       var stubId;
 
-      var response = httpClient.post("/services/" + serviceId + "/stubs", stubData).then(function(result) {
+      var response = hermetApiClient.post("/services/" + serviceId + "/stubs", stubData).then(function(result) {
         expect(result).to.have.status(201);
 
         stubId = utils.getItemIdFromLocation(result.response.headers.location);
 
-        return httpClient.delete("/services/" + serviceId + "/stubs/" + stubId);
+        return hermetApiClient.delete("/services/" + serviceId + "/stubs/" + stubId);
       }).then(function(response) {
         expect(response).to.have.status(204);
 
-        return httpClient.get("/services/" + serviceId + "/stubs/" + stubId);
+        return hermetApiClient.get("/services/" + serviceId + "/stubs/" + stubId);
       });
 
       expect(response).to.have.status(404);
@@ -87,7 +87,7 @@ describe("Stubs api", function () {
     });
 
     it("should can retrieve all stubs", function () {
-      var response = httpClient.get("/services/" + serviceId + "/stubs");
+      var response = hermetApiClient.get("/services/" + serviceId + "/stubs");
       expect(response).to.have.status(200);
 
       return chakram.wait();
