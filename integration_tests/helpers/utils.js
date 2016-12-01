@@ -1,7 +1,7 @@
 'use strict';
 
-const BASE_HOST = config.baseUrl;
-
 module.exports = {
-
+  getItemIdFromLocation: function(location) {
+    return location.split("/").slice(-1)[0];
+  }
 };

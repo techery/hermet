@@ -4,14 +4,67 @@ const uuid = require('uuid');
 
 class StubsRepository extends BaseRepository {
 
-  save(instance) {
-    instance._type = this.modelType;
-    return couchbaseWrapper.upsert(uuid(), instance);
+  setServiceId(serviceId) {
+    this.serviceId = serviceId;
+
+    return this;
   }
 
+  promisify(body) {
+    return new Promise((resolve, reject) => {
+      body((error, result) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(result);
+      });
+    });
+  }
 
-  getByServiceId(serviceId) {
-    return couchbaseWrapper.query("SELECT * FROM hermet WHERE _type=$1 AND serviceId=$2", [this.modelType, serviceId]);
+  all() {
+    return this.promisify((callback) => {
+      couchbaseWrapper.bucket.lookupIn(this.serviceId).get('stubs').execute(callback);
+    }).then(function(item) {
+      return item.contents[0].value;
+    });
+  }
+
+  save(data) {
+    var id = uuid();
+    return new Promise((resolve, reject) => {
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).upsert('stubs.' + id, data, true).execute((error, result) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(id, result);
+      });
+    });
+  }
+
+  getById(id) {
+    return this.promisify((callback) => {
+      couchbaseWrapper.bucket.lookupIn(this.serviceId).get('stubs.' + id).execute(callback);
+    }).then(function(item) {
+      return item.contents[0].value;
+    });
+  }
+
+  remove(id) {
+    return this.promisify((callback) => {
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove('stubs.' + id).execute(callback);
+    });
+  }
+
+  update(id, data) {
+    return this.promisify((callback) => {
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).upsert('stubs.' + id, data, false).execute(callback);
+    });
+  }
+
+  removeAll() {
+    return this.promisify((callback) => {
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove('stubs').execute(callback);
+    });
   }
 }
 
