@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-
+let config = require('../config');
 let app = require('../app');
 let proxy = require('../proxy');
 let debug = require('debug')('proxy:server');
@@ -13,7 +13,7 @@ let http = require('http');
  * Get port from environment and store in Express.
  */
 
-let apiPort = normalizePort(process.env.API_PORT || '5000');
+let apiPort = normalizePort(config.app.hermet_api_port);
 app.set('port', apiPort);
 
 /**
@@ -36,7 +36,7 @@ server.on('listening', () => {
  * Create Proxy service
  */
 
-let proxyPort = normalizePort(process.env.PROXY_PORT || '5050');
+let proxyPort = normalizePort(config.app.hermet_proxy_port);
 
 let proxySever = http.createServer(proxy);
 

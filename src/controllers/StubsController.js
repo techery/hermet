@@ -1,6 +1,5 @@
 let stubsRepository = require('../repositories/StubsRepository');
-
-const BASE_URL = "http://localhost:5000/api";
+let config = require('../config');
 
 class StubsController {
 
@@ -12,7 +11,7 @@ class StubsController {
     this.stubsRepository.setServiceId(req.params.serviceId)
       .save(req.body)
       .then((id) => {
-        res.set('Location', BASE_URL + "/services/" + req.params.serviceId + "/stubs/" + id);
+        res.set('Location', config.app.hermet_api_base_url + "/services/" + req.params.serviceId + "/stubs/" + id);
         res.status(201).end();
       }).catch(next);
   }

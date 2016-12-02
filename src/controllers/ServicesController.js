@@ -1,6 +1,5 @@
 let serviceRepository = require('../repositories/ServiceRepository');
-
-const BASE_URL = "http://localhost:5000/api";
+let config = require('../config');
 
 class ServicesController {
 
@@ -11,7 +10,7 @@ class ServicesController {
   create(req, res, next) {
     this.serviceRepository.save(req.body)
     .then((id) => {
-      res.set('Location', BASE_URL + "/services/" + id);
+      res.set('Location', config.app.hermet_api_base_url + "/services/" + id);
       res.status(201).end();
     })
     .catch(next);

@@ -1,5 +1,6 @@
 'use strict';
 
+let config = require("../config");
 let httpCLient = require("./http_client").create();
 
 module.exports = {
@@ -7,11 +8,10 @@ module.exports = {
     return location.split("/").slice(-1)[0];
   },
   flushDB: function() {
-      var username = "root",
-      password = "techery",
-      auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
+    var auth = "Basic " + new Buffer(config.couchbase.user + ":" + config.couchbase.password).toString("base64");
 
-    return httpCLient.post("http://localhost:8091/pools/default/buckets/hernet/controller/doFlush", {}, {},
+    return httpCLient.post("http://" + config.couchbase.host + ":8091/pools/default/buckets/" + config.couchbase.bucket + "/controller/doFlush",
+      {}, {},
       {
         Authorization: auth
       }

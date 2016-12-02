@@ -1,6 +1,6 @@
 'use strict';
 
-const SERVICE_HOST_ALIAS = "hermet.proxy.io:5050";
+const SERVICE_HOST_ALIAS = config.env.localhost_alias + ":" + config.app.hermet_proxy_port;
 
 describe("Proxy", function () {
 
@@ -14,7 +14,7 @@ describe("Proxy", function () {
     var serviceData = {
       name: "Hermet proxy rule",
       proxyHost: SERVICE_HOST_ALIAS,
-      targetUrl: config.hermetBaseUrl
+      targetUrl: config.app.hermet_api_base_url
     };
 
     before(function() {

@@ -3,7 +3,6 @@ let router = express.Router({mergeParams: true});
 let stubs = require('./stubs');
 let servicesController = require('../controllers/ServicesController');
 
-
 router.route('/')
   .get((req, res, next) => servicesController.list(req, res, next))
   .post((req, res, next) => servicesController.create(req, res, next));
