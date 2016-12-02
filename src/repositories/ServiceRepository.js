@@ -1,14 +1,15 @@
 let couchbaseWrapper = require('../services/CouchbaseWrapper');
-const uuid = require('uuid');
+const uuid = require('uuid'),
+      md5 = require('md5');
 
 let BaseRepository = require('./BaseRepository');
 
 class ServiceRepository extends BaseRepository {
 
   save(instance) {
-    instance._id = uuid();
+    instance._id = md5(instance.proxyHost);
     instance._type = this.modelType;
-    return couchbaseWrapper.upsert(instance._id, instance);
+    return couchbaseWrapper.insert(instance._id, instance);
   }
 
   all() {
@@ -17,11 +18,9 @@ class ServiceRepository extends BaseRepository {
   }
 
   getByProxyHost(proxyHost) {
-    return couchbaseWrapper.query(
-      "SELECT * FROM " + couchbaseWrapper.bucketName + " WHERE _type=$1 AND proxyHost=$2",
-      [this.modelType, proxyHost]
-    );
+    return couchbaseWrapper.get(md5(proxyHost));
   }
+
   get(id) {
     return couchbaseWrapper.get(id);
   }

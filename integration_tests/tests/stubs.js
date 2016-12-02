@@ -6,7 +6,7 @@ describe("Stubs api", function () {
     var serviceId;
     var serviceData = {
       name: "merchant-service-preprod",
-      proxyHost:  "merchant-service-preprod.proxy.io:5050",
+      proxyHost:  "stubs-crud.proxy.io:5050",
       targetUrl: "http://techery-dt-preprod.techery.io:3020"
     };
 
@@ -23,7 +23,7 @@ describe("Stubs api", function () {
     it("should create new stub for proxy rule", function () {
       var stubData = {
         response: "Ok",
-        predicates: {equals: {field: 'value'}}
+        predicate: {equals: {field: 'value'}}
       };
 
       var stubId;

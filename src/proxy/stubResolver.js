@@ -1,5 +1,8 @@
 'use strict';
 
+let predicates = require("./predicates"),
+    url = require("url");
+
 class StubResolver {
 
   /**
@@ -24,15 +27,16 @@ class StubResolver {
    * @param req     Protocol request
    * @returns Object
    */
-  static resolveStubByRequest(stubMap, req) {
-    var stubs = Object.values(stubMap);
+  resolveStubByRequest(stubMap, req) {
+    return Object.keys(stubMap).map(function(stubId) {
+        return stubMap[stubId];
+      }).find(function(stub) {
 
-    return stubs.find(function (stub) {
       if (!stub.predicate) {
         return false;
       }
 
-      return predicateResolver.resolve(stub.predicate, this.makeRequestForCompare(req), "utf8");
+      return predicates.resolve(stub.predicate, StubResolver.makeRequestForCompare(req), "utf8");
     });
   }
 }

@@ -1,14 +1,16 @@
 
 describe("Proxy rules api", function () {
-  var serviceData = {
-    name: "merchant-service-preprod",
-    proxyHost:  "merchant-service-preprod.proxy.io:5050",
-    targetUrl: "http://techery-dt-preprod.techery.io:3020"
-  };
 
   context("should perform CRUD operations", function () {
 
+    var serviceData = {
+      name: "merchant-service-preprod",
+      proxyHost:  "create-service.proxy.io:5050",
+      targetUrl: "http://techery-dt-preprod.techery.io:3020"
+    };
+
     it("should create new proxy rules", function () {
+
       var response = hermetApiClient.post("/services", serviceData).then(function (result) {
         expect(result).to.have.status(201);
 
@@ -22,10 +24,11 @@ describe("Proxy rules api", function () {
     });
 
     it("should update proxy rules", function () {
+
       var updatedItemId = "updated_id";
       var updatedServiceData = {
         name: "merchant-service-preprod",
-        proxyHost:  "merchant-service-preprod.proxy.io:5050",
+        proxyHost:  "upate-service.proxy.io:5050",
         targetUrl: "http://techery-dt-preprod.techery.io:3020"
       };
 
@@ -42,6 +45,13 @@ describe("Proxy rules api", function () {
     });
 
     it("should remove created proxy rules", function () {
+
+      var serviceData = {
+        name: "merchant-service-preprod",
+        proxyHost:  "delete-service.proxy.io:5050",
+        targetUrl: "http://techery-dt-preprod.techery.io:3020"
+      };
+
       var deletedItemId;
       var response = hermetApiClient.post("/services", serviceData).then(function (result) {
         expect(result).to.have.status(201);

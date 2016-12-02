@@ -1,7 +1,7 @@
 let httpProxy = require('http-proxy'),
   serviceRepository = require("./repositories/ServiceRepository"),
-  stubResolver = require("./proxy/stubResolver"),
-  url = require("url");
+  stubResolver = require("./proxy/stubResolver");
+
 //
 // Create a proxy server with custom application logic
 //
@@ -14,7 +14,6 @@ function showError(res, status, message) {
   res.end(message);
 }
 
-
 function isStubsApplied(service, req, res) {
   if (!service.stubs) {
     return false;
@@ -22,8 +21,8 @@ function isStubsApplied(service, req, res) {
 
   let stub = stubResolver.resolveStubByRequest(service.stubs, req);
   if (stub) {
-    res.writeHead(stub.response.statusCode, stub.response.headers);
-    res.end(stub.response.body);
+    res.writeHead(stub.response.statusCode || 200, stub.response.headers || {});
+    res.end(JSON.stringify(stub.response.body));
 
     return true;
   }
@@ -36,13 +35,8 @@ proxy.on('error', function (err, req, res) {
 });
 
 module.exports = (req, res) => {
-  serviceRepository.getByProxyHost(req.headers.host).then(services => {
-    if (services.length == 0) {
-      showError(res, 400, 'Proxy service mapping error');
-      return;
-    }
+  serviceRepository.getByProxyHost(req.headers.host).then(service => {
 
-    let service = services[0];
     if (isStubsApplied(service, req, res)) {
       return;
     }
@@ -52,6 +46,6 @@ module.exports = (req, res) => {
     });
 
   }).catch(err => {
-    showError(res, 500, 'Can not get proxy rules. Error:' + err.message);
+    showError(res, 400, 'Can not get proxy rules. Error:' + err.message);
   });
 };

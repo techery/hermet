@@ -29,7 +29,9 @@ class CouchbaseWrapper {
     var N1qlQuery = couchbase.N1qlQuery;
 
     return this.promisify((callback) => {
-      this.bucket.query(N1qlQuery.fromString(query), params || {}, callback);
+      let n1qlQuery = N1qlQuery.fromString(query);
+      n1qlQuery.consistency(N1qlQuery.Consistency.NOT_BOUNDED);
+      this.bucket.query(n1qlQuery, params || {}, callback);
     }).then((items) => {
       let result = [];
       items.map((item) => {
@@ -51,6 +53,17 @@ class CouchbaseWrapper {
   upsert(id, data) {
     return new Promise((resolve, reject) => {
       this.bucket.upsert(id, data, (error, result) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(id, result);
+      });
+    });
+  }
+
+  insert(id, data) {
+    return new Promise((resolve, reject) => {
+      this.bucket.insert(id, data, (error, result) => {
         if (error) {
           reject(error);
         }
