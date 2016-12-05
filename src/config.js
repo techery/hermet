@@ -12,7 +12,7 @@ const config = {
     hermet_proxy_port: _getEnv("HERMET_PROXY_PORT", 5050)
   },
   log: {
-    fileName: _getEnv("LOG_FILE_NAME", "app.log"),
+    fileName: _getEnv("LOG_FILE", "app.log"),
     logLevel: _getEnv("LOG_LEVEL", "debug"),
   },
   couchbase: {

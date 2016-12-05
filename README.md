@@ -6,6 +6,7 @@ Techery internal service for proxying third party services and stub them if need
  
  * Nodejs ~4.1
  * npm    ~3.8.6
+ * couchbase ~4.5
  
 
 ### Installation.
@@ -25,10 +26,23 @@ cp .env.sample .env
 ```
 Then set custom variables as needed
 
+Also create "log" directory for log files into the root of project.
+
 ### Running service
 
 ```
 npm start
 ```
 
-This command invokes `node bin/server.js` command which is responsible for starting the service.
+This command invokes `node dist/bin/server.js` command which is responsible for starting the service.
+
+
+### Integration tests
+
+Need to add localhost alias "hermet.proxy.io" in /etc/hosts.
+
+For run tests use command:
+
+```
+mocha --timeout 10000 ./integration_tests/bootstrap.js ./integration_tests/tests/**/*.js 
+```
