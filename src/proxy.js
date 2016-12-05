@@ -1,3 +1,5 @@
+'use strict';
+
 let httpProxy = require('http-proxy'),
   logger = require('./components/logger'),
   serviceRepository = require("./repositories/ServiceRepository"),
@@ -22,8 +24,12 @@ function isStubsApplied(service, req, res) {
 
   let stub = stubResolver.resolveStubByRequest(service.stubs, req);
   if (stub) {
-    res.writeHead(stub.response.statusCode || 200, stub.response.headers || {});
-    res.end(JSON.stringify(stub.response.body));
+    let statusCode = stub.response.statusCode || 200,
+       headers = stub.response.headers || {},
+       body = stub.response.body || "";
+
+    res.writeHead(statusCode, headers);
+    res.end(body ? JSON.stringify(body) : body);
 
     return true;
   }

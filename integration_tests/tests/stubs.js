@@ -45,7 +45,9 @@ describe("Stubs api", function () {
     it("should update stub for proxy rule", function () {
       var stubData = {
         response: "Success",
-        predicates: {equals: {field: 'value'}}
+        predicates: [
+          {equals: {field: 'value'}}
+        ]
       };
       var stubId = uuid();
 
@@ -64,7 +66,9 @@ describe("Stubs api", function () {
     it("should remove stub from proxy rule", function () {
       var stubData = {
         response: "Ok",
-        predicates: {equals: {field: 'value'}}
+        predicates: [
+          {equals: {field: 'value'}}
+        ]
       };
 
       var stubId;

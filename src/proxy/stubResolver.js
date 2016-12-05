@@ -1,7 +1,8 @@
 'use strict';
 
-let predicates = require("./predicates"),
-    url = require("url");
+let predicateResolver = require("./predicates"),
+    url = require("url"),
+    logger = require("../components/logger");
 
 class StubResolver {
 
@@ -11,13 +12,26 @@ class StubResolver {
    * @param req Protocol request
    * @returns Object
    */
-  static makeRequestForCompare(req) {
+  static prepareRequest(req) {
     let urlParts = url.parse(req.url);
 
     return {
       method: req.method,
-      path: urlParts.pathname
+      path: urlParts.pathname,
+      headers: req.headers
     }
+  }
+
+  /**
+   * Convert map or object into the value list
+   *
+   * @param mapItem Object
+   * @returns Array
+   */
+  static convertMapToList(mapItem) {
+    return Object.keys(mapItem).map(function(itemId) {
+      return mapItem[itemId];
+    });
   }
 
   /**
@@ -28,15 +42,13 @@ class StubResolver {
    * @returns Object
    */
   resolveStubByRequest(stubMap, req) {
-    return Object.keys(stubMap).map(function(stubId) {
-        return stubMap[stubId];
-      }).find(function(stub) {
+    let stubs = StubResolver.convertMapToList(stubMap);
 
-      if (!stub.predicate) {
-        return false;
-      }
-
-      return predicates.resolve(stub.predicate, StubResolver.makeRequestForCompare(req), "utf8");
+    return stubs.find(function (stub) {
+      let predicates = stub.predicates || [];
+      return predicates.every(function (predicate) {
+        return predicateResolver.resolve(predicate, StubResolver.prepareRequest(req), "utf8", logger);
+      });
     });
   }
 }

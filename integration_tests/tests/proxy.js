@@ -39,7 +39,9 @@ describe("Proxy", function () {
           body: {status: "Ok"},
           headers: {"Content-Type": "application/json"}
         },
-        predicate: {equals: {method: 'POST', path: '/path'}}
+        predicate: [
+          {equals: {method: 'POST', path: '/path'}}
+        ]
       };
 
       return hermetApiClient.post("/services/" + serviceId + "/stubs", stubData).then(function(result) {
