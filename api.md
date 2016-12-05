@@ -18,8 +18,10 @@
         + Attributes (list item)
             + id (string, required)
             + name (string, required)
+            + description (string, optional)
             + proxyHost (string, required)
             + targetUrl (string, required)
+            + proxyTimeout (number, optional)
             
         + Body 
         
@@ -27,8 +29,10 @@
                     {
                         "id": "ce29ff01f8bc8b3219cf2a7cab6a3fbd",
                         "name": "merchant-service-preprod",
+                        "description": "Description and comments of proxy rules",
                         "proxyHost":  "merchant-service-preprod.proxy.io:5050",
                         "targetUrl": "http://techery-dt-preprod.techery.io:3020"
+                        "proxyTimeout": 10000
                     }
                 ]
 

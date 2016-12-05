@@ -2,7 +2,7 @@
 
 let predicateResolver = require("./predicates"),
     url = require("url"),
-    logger = require("../components/logger");
+    logger = require("../components/logger").proxyLogger;
 
 class StubResolver {
 
