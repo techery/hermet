@@ -25,7 +25,6 @@ module.exports = {
           json: body ? body : true
         };
 
-
         if (queryParams) {
           options.qs = queryParams;
         }
@@ -39,7 +38,6 @@ module.exports = {
           headers: headers,
           json: body ? body : true
         };
-
 
         if (queryParams) {
           options.qs = queryParams;
