@@ -11,6 +11,10 @@ const config = {
     hermet_api_port: _getEnv("HERMET_API_PORT", 5000),
     hermet_proxy_port: _getEnv("HERMET_PROXY_PORT", 5050)
   },
+  log: {
+    fileName: _getEnv("LOG_FILE_NAME", "app.log"),
+    logLevel: _getEnv("LOG_LEVEL", "debug"),
+  },
   couchbase: {
     host: _getEnv("COUCHBASE_HOST", "localhost"),
     bucket: _getEnv("COUCHBASE_BUCKET", "hermet"),

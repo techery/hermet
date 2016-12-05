@@ -1,4 +1,5 @@
 let httpProxy = require('http-proxy'),
+  logger = require('./components/logger'),
   serviceRepository = require("./repositories/ServiceRepository"),
   stubResolver = require("./proxy/stubResolver");
 
@@ -31,12 +32,13 @@ function isStubsApplied(service, req, res) {
 }
 
 proxy.on('error', function (err, req, res) {
+  let message = 'Proxy error: ' + err.message;
+  logger.error(message);
   showError(res, 500, 'Error: ' + err.message)
 });
 
 module.exports = (req, res) => {
   serviceRepository.getByProxyHost(req.headers.host).then(service => {
-
     if (isStubsApplied(service, req, res)) {
       return;
     }
@@ -46,6 +48,8 @@ module.exports = (req, res) => {
     });
 
   }).catch(err => {
-    showError(res, 400, 'Can not get proxy rules. Error:' + err.message);
+    let message = 'Can not get proxy rules. Error: ' + err.message;
+    logger.error(message);
+    showError(res, 400, message);
   });
 };
