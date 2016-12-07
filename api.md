@@ -1,4 +1,4 @@
-#Hernet api documentation
+#Hermet api documentation
 
 * [Errors](#errors)
 * [Services](#services)
