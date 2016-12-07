@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-const config = require("../config");
-let curlify = require("request-as-curl"),
+const config = require('../config');
+let curlify = require('request-as-curl'),
     winston = require('winston'),
     path = require('path');
 require('winston-daily-rotate-file');
 
 function initLogger(logFileName) {
   let transport = new winston.transports.DailyRotateFile({
-    filename: path.join("log/", logFileName),
+    filename: path.join('log/', logFileName),
     datePattern: 'yyyy-MM-dd.',
     prepend: true,
     json: false,
@@ -29,15 +29,15 @@ class Logger {
   }
 
   info(message, data) {
-    this.loggerInstance.log("info", message, data);
+    this.loggerInstance.log('info', message, data);
   }
 
   debug(message, data) {
-    this.loggerInstance.log("debug", message, data);
+    this.loggerInstance.log('debug', message, data);
   }
 
   error(message, data) {
-    this.loggerInstance.log("error", message, data);
+    this.loggerInstance.log('error', message, data);
   }
 
   curlify(req, data) {

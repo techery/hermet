@@ -1,8 +1,8 @@
 'use strict';
 
-let predicateResolver = require("./predicates"),
-    url = require("url"),
-    logger = require("../components/logger").proxyLogger;
+let predicateResolver = require('./predicates'),
+    url = require('url'),
+    logger = require('../components/logger').proxyLogger;
 
 class StubResolver {
 
@@ -47,7 +47,7 @@ class StubResolver {
     return stubs.find(function (stub) {
       let predicates = stub.predicates || [];
       return predicates.every(function (predicate) {
-        return predicateResolver.resolve(predicate, StubResolver.prepareRequest(req), "utf8", logger);
+        return predicateResolver.resolve(predicate, StubResolver.prepareRequest(req), 'utf8', logger);
       });
     });
   }

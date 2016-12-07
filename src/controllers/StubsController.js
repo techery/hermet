@@ -1,3 +1,5 @@
+'use strict';
+
 let stubsRepository = require('../repositories/StubsRepository');
 let config = require('../config');
 
@@ -11,7 +13,7 @@ class StubsController {
     this.stubsRepository.setServiceId(req.params.serviceId)
       .save(req.body)
       .then((id) => {
-        res.set('Location', config.app.hermet_api_base_url + "/services/" + req.params.serviceId + "/stubs/" + id);
+        res.set('Location', config.app.hermet_api_base_url + '/services/' + req.params.serviceId + '/stubs/' + id);
         res.status(201).end();
       }).catch(next);
   }
@@ -22,7 +24,7 @@ class StubsController {
       .then((stub) => {
         res.status(200).json(stub);
       }).catch(function (error) {
-        res.status(404).json({"error": error.message});
+        res.status(404).json({'error': error.message});
     });
   }
 

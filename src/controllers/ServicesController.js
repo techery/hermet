@@ -1,3 +1,5 @@
+'use strict';
+
 let serviceRepository = require('../repositories/ServiceRepository');
 let config = require('../config');
 
@@ -10,7 +12,7 @@ class ServicesController {
   create(req, res, next) {
     this.serviceRepository.save(req.body)
     .then((id) => {
-      res.set('Location', config.app.hermet_api_base_url + "/services/" + id);
+      res.set('Location', config.app.hermet_api_base_url + '/services/' + id);
       res.status(201).end();
     })
     .catch(next);
@@ -21,7 +23,7 @@ class ServicesController {
     .then((item) => {
       res.status(200).send(item);
     }).catch(function (error) {
-      res.status(404).json({"error": error.message});
+      res.status(404).json({'error': error.message});
     });
   }
 

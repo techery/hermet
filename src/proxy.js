@@ -3,8 +3,8 @@
 let httpProxy = require('http-proxy'),
   config = require('./config'),
   logger = require('./components/logger').proxyLogger,
-  serviceRepository = require("./repositories/ServiceRepository"),
-  stubResolver = require("./proxy/stubResolver");
+  serviceRepository = require('./repositories/ServiceRepository'),
+  stubResolver = require('./proxy/stubResolver');
 
 //
 // Create a proxy server with custom application logic
@@ -20,8 +20,8 @@ function showError(res, status, message) {
 
 function showInternalError(err, req) {
   logger.error(err.message +
-    "\r\nRequest: " + logger.curlify(req, req.body || null) +
-    "\r\n" +  err.stack
+    '\r\nRequest: ' + logger.curlify(req, req.body || null) +
+    '\r\n' +  err.stack
   );
   showError(res, 500, 'Proxy error');
 }

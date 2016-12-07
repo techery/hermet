@@ -1,3 +1,5 @@
+'use strict';
+
 let express = require('express');
 let router = express.Router({mergeParams: true});
 let stubs = require('./stubs');

@@ -1,3 +1,5 @@
+'use strict';
+
 let express = require('express');
 let router = express.Router();
 let stubController = require('../controllers/StubsController');

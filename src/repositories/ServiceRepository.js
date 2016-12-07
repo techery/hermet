@@ -1,6 +1,7 @@
+'use strict';
+
 let couchbaseWrapper = require('../services/CouchbaseWrapper');
-const uuid = require('uuid'),
-      md5 = require('md5');
+const md5 = require('md5');
 
 let BaseRepository = require('./BaseRepository');
 
@@ -13,8 +14,8 @@ class ServiceRepository extends BaseRepository {
   }
 
   all() {
-    return couchbaseWrapper.query("SELECT * FROM " + couchbaseWrapper.bucketName + " WHERE _type=$1", [this.modelType]);
-  //  return couchbaseWrapper.query("CREATE PRIMARY INDEX ON `hernet` USING GSI");
+    return couchbaseWrapper.query('SELECT * FROM ' + couchbaseWrapper.bucketName + ' WHERE _type=$1', [this.modelType]);
+  //  return couchbaseWrapper.query('CREATE PRIMARY INDEX ON `hernet` USING GSI');
   }
 
   getByProxyHost(proxyHost) {
@@ -34,4 +35,4 @@ class ServiceRepository extends BaseRepository {
   }
 }
 
-module.exports = new ServiceRepository("service");
+module.exports = new ServiceRepository('service');

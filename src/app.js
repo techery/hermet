@@ -1,3 +1,5 @@
+'use strict';
+
 let express = require('express');
 let logger = require('./components/logger').apiLogger;
 let bodyParser = require('body-parser');
@@ -23,11 +25,11 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   logger.error(err.message +
-    "\r\nRequest: " + logger.curlify(req, req.body || null) +
-    "\r\n" +  err.stack
+    '\r\nRequest: ' + logger.curlify(req, req.body || null) +
+    '\r\n' +  err.stack
   );
 
-  res.status(500).json({error: "Hermet API error."});
+  res.status(500).json({error: 'Hermet API error.'});
 });
 
 module.exports = app;

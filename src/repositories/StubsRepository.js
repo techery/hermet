@@ -1,3 +1,5 @@
+'use strict';
+
 let BaseRepository = require('./BaseRepository');
 let couchbaseWrapper = require('../services/CouchbaseWrapper');
 const uuid = require('uuid');
@@ -68,4 +70,4 @@ class StubsRepository extends BaseRepository {
   }
 }
 
-module.exports = new StubsRepository("stub");
+module.exports = new StubsRepository('stub');
