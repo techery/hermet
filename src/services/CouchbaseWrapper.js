@@ -76,6 +76,14 @@ class CouchbaseWrapper {
       this.bucket.remove(id, callback);
     });
   }
+
+  createPrimaryIndex() {
+    let N1qlQuery = couchbase.N1qlQuery;
+    return this.promisify((callback) => {
+      let n1qlQuery = N1qlQuery.fromString('CREATE PRIMARY INDEX ON `' + this.bucketName + '` USING GSI');
+      this.bucket.query(n1qlQuery, {}, callback);
+    });
+  }
 }
 
 module.exports = new CouchbaseWrapper(config.couchbase.host, config.couchbase.bucket, config.couchbase.operationTimeout);

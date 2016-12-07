@@ -15,7 +15,6 @@ class ServiceRepository extends BaseRepository {
 
   all() {
     return couchbaseWrapper.query('SELECT * FROM ' + couchbaseWrapper.bucketName + ' WHERE _type=$1', [this.modelType]);
-  //  return couchbaseWrapper.query('CREATE PRIMARY INDEX ON `hernet` USING GSI');
   }
 
   getByProxyHost(proxyHost) {
