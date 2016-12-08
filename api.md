@@ -1,4 +1,4 @@
-#Hernet api documentation
+#Hermet api documentation
 
 * [Errors](#errors)
 * [Services](#services)
@@ -18,17 +18,21 @@
         + Attributes (list item)
             + id (string, required)
             + name (string, required)
+            + description (string, optional)
             + proxyHost (string, required)
             + targetUrl (string, required)
+            + proxyTimeout (number, optional)
             
         + Body 
         
                 [
                     {
-                        "id": "1",
+                        "id": "ce29ff01f8bc8b3219cf2a7cab6a3fbd",
                         "name": "merchant-service-preprod",
+                        "description": "Description and comments of proxy rules",
                         "proxyHost":  "merchant-service-preprod.proxy.io:5050",
                         "targetUrl": "http://techery-dt-preprod.techery.io:3020"
+                        "proxyTimeout": 10000
                     }
                 ]
 
@@ -43,6 +47,7 @@
             + name (string, required)
             + proxyHost (string, required)
             + targetUrl (string, required)
+            + description (string, optional)
                       
         + Body
     
@@ -52,16 +57,11 @@
                     "targetUrl": "http://techery-dt-preprod.techery.io:3020"
                 }
 
-    + Response 200 (application/json)
-        + Attributes
-            + id (string, required)
+    + Response 201 (application/json)
+        + Headers
+    
+                Location: "/services/{serviceId}"
                 
-        + Body 
-        
-                {
-                  "id": "1"
-                }
-
 + DELETE
     + Request (application/json)
         + Headers
@@ -87,7 +87,7 @@
         
                 [
                     {
-                        "id": 56,
+                        "id": "ce29ff01f8bc8b3219cf2a7cab6a3fbd",
                         "response" {
                             "statusCode": 200,
                             "headers": {
@@ -103,11 +103,13 @@
                                 }
                             ]
                         },
-                        "predicates": {
-                            "path": "/test",
-                            "method": "POST",
-                            "headers": {
-                              "Content-Type": "application/json"
+                        "predicate": { 
+                            "equals": {
+                                "path": "/test",
+                                "method": "POST",
+                                "headers": {
+                                  "Content-Type": "application/json"
+                                }
                             }
                         }
                     }
@@ -140,24 +142,21 @@
                             }
                         ]
                     },
-                    "predicates": {
-                        "path": "/test",
-                        "method": "POST",
-                        "headers": {
-                          "Content-Type": "application/json"
+                    "predicate": { 
+                        "equals": {
+                            "path": "/test",
+                            "method": "POST",
+                            "headers": {
+                              "Content-Type": "application/json"
+                            }
                         }
                     }
                 }
 
-    + Response 200 (application/json)
-        + Attributes
-            + id (string, required)
-                
-        + Body 
-        
-                {
-                  "id": "1"
-                }
+    + Response 201 (application/json)
+        + Headers
+    
+                Location: "/services/{serviceId}/stubs/{stubId}"
 
 + DELETE
     + Request (application/json)
