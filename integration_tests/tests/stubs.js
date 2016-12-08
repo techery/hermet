@@ -4,14 +4,9 @@ describe('Stubs api', function () {
 
   context('should perform CRUD operations', function () {
     var serviceId;
-    var serviceData = {
-      name: 'merchant-service-preprod',
-      proxyHost:  'stubs-crud.proxy.io:5050',
-      targetUrl: 'http://techery-dt-preprod.techery.io:3020'
-    };
 
     before(function() {
-      return hermetApiClient.post('/services', serviceData).then(function (result) {
+      return hermetApiClient.post('/services', fixtures.services.stubCrud).then(function (result) {
         expect(result).to.have.status(201);
 
         serviceId = utils.getItemIdFromLocation(result.response.headers.location);

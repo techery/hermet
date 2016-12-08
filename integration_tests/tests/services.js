@@ -4,22 +4,16 @@ describe('Proxy rules api', function () {
 
   context('should perform CRUD operations', function () {
 
-    var serviceData = {
-      name: 'merchant-service-preprod',
-      proxyHost:  'create-service.proxy.io:5050',
-      targetUrl: 'http://techery-dt-preprod.techery.io:3020'
-    };
-
     it('should create new proxy rules', function () {
 
-      var response = hermetApiClient.post('/services', serviceData).then(function (result) {
+      var response = hermetApiClient.post('/services', fixtures.services.create).then(function (result) {
         expect(result).to.have.status(201);
 
         return hermetApiClient.get('/services/' + utils.getItemIdFromLocation(result.response.headers.location))
       });
 
       expect(response).to.have.status(200);
-      expect(response).to.comprise.of.json(serviceData);
+      expect(response).to.comprise.of.json(fixtures.services.create);
 
       return chakram.wait();
     });
@@ -27,34 +21,23 @@ describe('Proxy rules api', function () {
     it('should update proxy rules', function () {
 
       var updatedItemId = 'updated_id';
-      var updatedServiceData = {
-        name: 'merchant-service-preprod',
-        proxyHost:  'upate-service.proxy.io:5050',
-        targetUrl: 'http://techery-dt-preprod.techery.io:3020'
-      };
 
-      var response = hermetApiClient.put('/services/' + updatedItemId, updatedServiceData).then(function (response) {
+      var response = hermetApiClient.put('/services/' + updatedItemId, fixtures.services.update).then(function (response) {
         expect(response).to.have.status(204);
 
         return hermetApiClient.get('/services/' + updatedItemId);
       });
 
       expect(response).to.have.status(200);
-      expect(response).to.comprise.of.json(updatedServiceData);
+      expect(response).to.comprise.of.json(fixtures.services.update);
 
       return chakram.wait();
     });
 
     it('should remove created proxy rules', function () {
 
-      var serviceData = {
-        name: 'merchant-service-preprod',
-        proxyHost:  'delete-service.proxy.io:5050',
-        targetUrl: 'http://techery-dt-preprod.techery.io:3020'
-      };
-
       var deletedItemId;
-      var response = hermetApiClient.post('/services', serviceData).then(function (result) {
+      var response = hermetApiClient.post('/services', fixtures.services.delete).then(function (result) {
         expect(result).to.have.status(201);
 
         deletedItemId = utils.getItemIdFromLocation(result.response.headers.location);
