@@ -4,16 +4,18 @@ let express = require('express');
 let logger = require('./components/logger').apiLogger;
 let bodyParser = require('body-parser');
 
+let sessions = require('./middleware/sessions');
 let index = require('./routes/index');
-let all = require('./routes/all');
+let routes = require('./routes/all');
 
 let app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(sessions);
 
 app.use(index);
-app.use('/api', all);
+app.use('/api', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

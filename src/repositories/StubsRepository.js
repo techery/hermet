@@ -6,8 +6,20 @@ const uuid = require('uuid');
 
 class StubsRepository extends BaseRepository {
 
+  constructor(modelType) {
+    super(modelType);
+
+    this.sessionId = 'default';
+  }
+
   setServiceId(serviceId) {
     this.serviceId = serviceId;
+
+    return this;
+  }
+
+  setSessionId(sessionId) {
+    this.sessionId = sessionId;
 
     return this;
   }
@@ -25,7 +37,7 @@ class StubsRepository extends BaseRepository {
 
   all() {
     return this.promisify((callback) => {
-      couchbaseWrapper.bucket.lookupIn(this.serviceId).get('stubs').execute(callback);
+      couchbaseWrapper.bucket.lookupIn(this.serviceId).get(this.getStubPath()).execute(callback);
     }).then(function(item) {
       return item.contents[0].value;
     });
@@ -34,7 +46,7 @@ class StubsRepository extends BaseRepository {
   save(data) {
     var id = uuid();
     return new Promise((resolve, reject) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).upsert('stubs.' + id, data, true).execute((error, result) => {
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).insert(this.getStubPath(id), data, true).execute((error, result) => {
         if (error) {
           reject(error);
         }
@@ -45,7 +57,7 @@ class StubsRepository extends BaseRepository {
 
   getById(id) {
     return this.promisify((callback) => {
-      couchbaseWrapper.bucket.lookupIn(this.serviceId).get('stubs.' + id).execute(callback);
+      couchbaseWrapper.bucket.lookupIn(this.serviceId).get(this.getStubPath(id)).execute(callback);
     }).then(function(item) {
       return item.contents[0].value;
     });
@@ -53,20 +65,26 @@ class StubsRepository extends BaseRepository {
 
   remove(id) {
     return this.promisify((callback) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove('stubs.' + id).execute(callback);
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove(this.getStubPath(id)).execute(callback);
     });
   }
 
   update(id, data) {
     return this.promisify((callback) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).upsert('stubs.' + id, data, false).execute(callback);
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).upsert(this.getStubPath(id), data, true).execute(callback);
     });
   }
 
   removeAll() {
     return this.promisify((callback) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove('stubs').execute(callback);
+      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove(this.getStubPath()).execute(callback);
     });
+  }
+
+  getStubPath(stubId) {
+    let stubIdPath = stubId ? '.' + stubId : '';
+
+    return 'sessions.' + this.sessionId + '.stubs' + stubIdPath
   }
 }
 

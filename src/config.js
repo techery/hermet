@@ -9,7 +9,8 @@ function _getEnv(key, defaultValue) {
 const config = {
   app: {
     hermet_api_port: _getEnv('HERMET_API_PORT', 5000),
-    hermet_proxy_port: _getEnv('HERMET_PROXY_PORT', 5050)
+    hermet_proxy_port: _getEnv('HERMET_PROXY_PORT', 5050),
+    hermet_session_header: _getEnv('HERMET_SESSION_HEADER', 'x-session-id')
   },
   log: {
     apiFileName: _getEnv('LOG_API_FILE_NAME', 'api.log'),

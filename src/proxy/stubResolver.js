@@ -46,6 +46,9 @@ class StubResolver {
 
     return stubs.find(function (stub) {
       let predicates = stub.predicates || [];
+      if (!predicates.length) {
+        return true;
+      }
       return predicates.every(function (predicate) {
         return predicateResolver.resolve(predicate, StubResolver.prepareRequest(req), 'utf8', logger);
       });

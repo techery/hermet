@@ -1,6 +1,7 @@
 'use strict';
 
 let httpProxy = require('http-proxy'),
+  _ = require('lodash'),
   config = require('./config'),
   logger = require('./components/logger').proxyLogger,
   serviceRepository = require('./repositories/ServiceRepository'),
@@ -27,11 +28,9 @@ function showInternalError(err, req) {
 }
 
 function isStubsApplied(service, req, res) {
-  if (!service.stubs) {
-    return false;
-  }
-
-  let stub = stubResolver.resolveStubByRequest(service.stubs, req);
+  let sessionId = req.headers[config.app.hermet_session_header] || 'default';
+  let stubMap =_.get(service, 'sessions.' + sessionId + '.stubs', {});
+  let stub = stubResolver.resolveStubByRequest(stubMap, req);
   if (stub) {
     let statusCode = stub.response.statusCode || 200,
        headers = stub.response.headers || {},

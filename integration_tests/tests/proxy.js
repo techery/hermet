@@ -32,25 +32,39 @@ describe('Proxy', function () {
       });
     });
 
-    it('should respond with stubs', function() {
+    context('should use stubs by predicates', function() {
       var stubPath = '/path';
       var stubData = {
         response: {
           body: {status: 'Ok'},
           headers: {'Content-Type': 'application/json'}
         },
-        predicate: [
+        predicates: [
           {equals: {method: 'POST', path: '/path'}}
         ]
       };
 
-      return hermetApiClient.post('/services/' + serviceId + '/stubs', stubData).then(function(result) {
-        expect(result).to.have.status(201);
+      before(function() {
+        var response = hermetApiClient.post('/services/' + serviceId + '/stubs', stubData);
+        expect(response).to.have.status(201);
 
-        return httpClient.post('http://' + SERVICE_HOST_ALIAS +  stubPath);
-      }).then(function(result) {
-        expect(result).to.have.status(200);
-        expect(result).to.comprise.of.json(stubData.response.body);
+        return chakram.wait();
+      });
+
+      it('should return stubbed response', function() {
+        var response = httpClient.post('http://' + SERVICE_HOST_ALIAS +  stubPath);
+
+        expect(response).to.have.status(200);
+        expect(response).to.comprise.of.json(stubData.response.body);
+
+        return chakram.wait();
+      });
+
+      it('should proxy response from real service', function() {
+        var response = httpClient.post('http://' + SERVICE_HOST_ALIAS +  '/tests_path');
+
+        expect(response).to.have.status(500);
+        expect(response).to.comprise.of.json({"error":"Hermet API error."});
 
         return chakram.wait();
       });
