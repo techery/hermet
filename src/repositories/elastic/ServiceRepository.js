@@ -37,7 +37,28 @@ class ServiceRepository extends BaseRepository {
   }
 
   getByProxyHost(proxyHost) {
-   // ToDo define
+    let options = {
+      type: this.modelType,
+      body: {
+        'query' : {
+          'match': {'proxyHost': proxyHost}
+        }
+      }
+    };
+
+    return this.client.searchByOptions(options)
+      .then(response => {
+
+        if (response.hits.total === 0) {
+          return null;
+        }
+
+        let item = response.hits.hits[0];
+        let result = item._source;
+        result.id = item._id;
+
+        return result;
+      });
   }
 }
 

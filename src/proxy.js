@@ -4,7 +4,8 @@ let httpProxy = require('http-proxy'),
   _ = require('lodash'),
   config = require('./config'),
   logger = require('./components/logger').proxyLogger,
-  serviceRepository = require('./repositories/ServiceRepository'),
+  serviceRepository = require('./repositories/elastic/ServiceRepository'),
+  stubRepository = require('./repositories/elastic/StubsRepository'),
   stubResolver = require('./proxy/stubResolver');
 
 //
@@ -50,18 +51,29 @@ proxy.on('error', function (err, req, res) {
 });
 
 module.exports = (req, res) => {
-  serviceRepository.getByProxyHost(req.headers.host).catch(err => {
+
+   serviceRepository.getByProxyHost(req.headers.host).catch(err => {
     let message = 'Can not get proxy rules for host: ' + req.headers.host;
     logger.error(message +  ' Error: ' + err.message);
     showError(res, 400, message);
   }).then(service => {
-    if (!service || isStubsApplied(service, req, res)) {
+
+    if (!service) {
       return;
     }
-    proxy.web(req, res, {
-      target: service.targetUrl,
-      proxyTimeout: service.proxyTimeout || config.proxy.defaultTimeout
+
+    stubRepository.setServiceId(service.id).all().then(stubs => {
+
+      if (isStubsApplied(stubs, req, res)) {
+        return;
+      }
+
+      proxy.web(req, res, {
+        target: service.targetUrl,
+        proxyTimeout: service.proxyTimeout || config.proxy.defaultTimeout
+      });
     });
+
   }).catch(err => {
     showInternalError(err, req);
   });

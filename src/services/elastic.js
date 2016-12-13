@@ -90,6 +90,14 @@ class ElasticWrapper {
       this.client.search(options, callback);
     });
   }
+
+  searchByOptions(options) {
+    options.index = this.index;
+
+    return this.promisify((callback) => {
+      this.client.search(options, callback);
+    });
+  }
 }
 
 module.exports = new ElasticWrapper(_initClient(), "hermet");
