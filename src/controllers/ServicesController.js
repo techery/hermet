@@ -1,6 +1,6 @@
 'use strict';
 
-let serviceRepository = require('../repositories/ServiceRepository');
+let serviceRepository = require('../repositories/elastic/ServiceRepository');
 let config = require('../config');
 
 class ServicesController {
@@ -10,9 +10,9 @@ class ServicesController {
   }
 
   create(req, res, next) {
-    this.serviceRepository.save(req.body)
-    .then((id) => {
-      res.set('Location', config.app.hermet_api_base_url + '/services/' + id);
+    this.serviceRepository.create(req.body)
+    .then((response) => {
+      res.set('Location', config.app.hermet_api_base_url + '/services/' + response._id);
       res.status(201).end();
     })
     .catch(next);

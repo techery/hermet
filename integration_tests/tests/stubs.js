@@ -4,32 +4,32 @@ describe('Stubs api', function () {
 
   context('should perform CRUD operations', function () {
     var serviceId;
+    var stubId;
+
+    var stubData = {
+      response: 'Ok',
+      predicate: {equals: {field: 'value'}}
+    };
 
     before(function() {
       return hermetApiClient.post('/services', fixtures.services.stubCrud).then(function (result) {
-        expect(result).to.have.status(201);
+          expect(result).to.have.status(201);
 
-        serviceId = utils.getItemIdFromLocation(result.response.headers.location);
+          serviceId = utils.getItemIdFromLocation(result.response.headers.location);
 
-        return chakram.wait();
-      });
+          return hermetApiClient.post('/services/' + serviceId + '/stubs', stubData);
+        }).then(function(result) {
+          expect(result).to.have.status(201);
+
+          stubId = utils.getItemIdFromLocation(result.response.headers.location);
+
+          return chakram.wait();
+        });
     });
 
     it('should create new stub for proxy rule', function () {
-      var stubData = {
-        response: 'Ok',
-        predicate: {equals: {field: 'value'}}
-      };
 
-      var stubId;
-
-      var response = hermetApiClient.post('/services/' + serviceId + '/stubs', stubData).then(function(result) {
-        expect(result).to.have.status(201);
-
-        stubId = utils.getItemIdFromLocation(result.response.headers.location);
-
-        return hermetApiClient.get('/services/' + serviceId + '/stubs/' + stubId);
-      });
+      var response = hermetApiClient.get('/services/' + serviceId + '/stubs/' + stubId);
 
       expect(response).to.have.status(200);
       expect(response).to.comprise.of.json(stubData);
@@ -44,7 +44,6 @@ describe('Stubs api', function () {
           {equals: {field: 'value'}}
         ]
       };
-      var stubId = uuid();
 
       var response = hermetApiClient.put('/services/' + serviceId + '/stubs/' + stubId, stubData).then(function(result) {
         expect(result).to.have.status(204);

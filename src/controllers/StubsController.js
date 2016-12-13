@@ -1,6 +1,6 @@
 'use strict';
 
-let stubsRepository = require('../repositories/StubsRepository');
+let stubsRepository = require('../repositories/elastic/StubsRepository');
 let config = require('../config');
 
 class StubsController {
@@ -11,9 +11,9 @@ class StubsController {
 
   create(req, res, next) {
     this.prepareStubRepositiory(req)
-      .save(req.body)
-      .then((id) => {
-        res.set('Location', config.app.hermet_api_base_url + '/services/' + req.params.serviceId + '/stubs/' + id);
+      .create(req.body)
+      .then((result) => {
+        res.set('Location', config.app.hermet_api_base_url + '/services/' + req.params.serviceId + '/stubs/' + result._id);
         res.status(201).end();
       })
       .catch(next);
@@ -21,7 +21,7 @@ class StubsController {
 
   get(req, res, next) {
     this.prepareStubRepositiory(req)
-      .getById(req.params.stubId)
+      .get(req.params.stubId)
       .then((stub) => {
         res.status(200).json(stub);
       })

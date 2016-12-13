@@ -2,7 +2,8 @@
 
 class BaseRepository {
 
-  constructor(modelType) {
+  constructor(client, modelType) {
+    this.client = client;
     this.modelType = modelType;
   }
 }
