@@ -25,6 +25,9 @@ const config = {
   },
   proxy: {
     defaultTimeout: _getEnv('PROXY_DEFAULT_TIMEOUT', 10000)
+  },
+  elasticsearch: {
+    index: _getEnv('ELASTIC_INDEX', 'hermet'),
   }
 };
 

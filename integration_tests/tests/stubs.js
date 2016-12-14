@@ -90,5 +90,12 @@ describe('Stubs api', function () {
 
       return chakram.wait();
     });
+
+    it('should can remove all stubs', function () {
+      var response = hermetApiClient.delete('/services/' + serviceId + '/stubs');
+      expect(response).to.have.status(204);
+
+      return chakram.wait();
+    });
   });
 });

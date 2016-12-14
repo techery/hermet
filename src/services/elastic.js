@@ -1,5 +1,5 @@
 'use strict';
-
+const config = require('../config');
 let elasticsearch = require('elasticsearch');
 
 function _initClient() {
@@ -39,7 +39,6 @@ class ElasticWrapper {
   }
 
   get(type, id, parentId) {
-
     let options = {index: this.index, type: type, id: id};
     if (parentId) {
       options.parent = parentId;
@@ -99,6 +98,22 @@ class ElasticWrapper {
       this.client.search(options, callback);
     });
   }
+
+  removeByQuery(type, queryBody) {
+    let options = {
+      index: this.index,
+      type: type,
+      conflicts: "proceed"
+    };
+
+    if (queryBody) {
+      options.body = queryBody;
+    }
+
+    return this.promisify((callback) => {
+      this.client.deleteByQuery(options, callback);
+    });
+  }
 }
 
-module.exports = new ElasticWrapper(_initClient(), "hermet");
+module.exports = new ElasticWrapper(_initClient(), config.elasticsearch.index);

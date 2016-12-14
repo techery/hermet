@@ -47,7 +47,24 @@ class StubsRepository extends BaseRepository {
   }
 
   all() {
-    let body = {
+    return this.client.search(this.modelType, this.prepareSearchParams())
+      .then(response => {
+        let result = [];
+        response.hits.hits.map((item) => {
+          item._source.id =item._id;
+          result.push(item._source);
+        });
+
+        return result;
+      });
+  }
+
+  removeAll() {
+    return this.client.removeByQuery(this.modelType, this.prepareSearchParams());
+  }
+
+  prepareSearchParams() {
+    return {
       "query": {
         "bool": {
           "filter": [
@@ -65,22 +82,7 @@ class StubsRepository extends BaseRepository {
           ]
         }
       }
-    };
-
-    return this.client.search(this.modelType, body)
-      .then(response => {
-        let result = [];
-        response.hits.hits.map((item) => {
-          item._source.id =item._id;
-          result.push(item._source);
-        });
-
-        return result;
-      });
-  }
-
-  removeAll() {
-    // ToDo define
+    }
   }
 }
 
