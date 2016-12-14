@@ -64,13 +64,19 @@ module.exports = async (req, res) => {
   }
 
   try {
-    let stubs = await stubRepository.setServiceId(service.id).all();
-    if (!isStubsApplied(stubs, req, res)) {
-      proxy.web(req, res, {
-        target: service.targetUrl,
-        proxyTimeout: service.proxyTimeout || config.proxy.defaultTimeout
-      });
+    let sessionId = req.headers[config.app.hermet_session_header] || 'default';
+    let stubs = await stubRepository
+      .setServiceId(service.id)
+      .setSessionId(sessionId)
+      .all();
+    if (isStubsApplied(stubs, req, res)) {
+      return;
     }
+
+    proxy.web(req, res, {
+      target: service.targetUrl,
+      proxyTimeout: service.proxyTimeout || config.proxy.defaultTimeout
+    });
   } catch (error) {
     return showInternalError(error, req, res);
   }
