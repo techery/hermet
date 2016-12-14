@@ -23,27 +23,13 @@ class StubResolver {
   }
 
   /**
-   * Convert map or object into the value list
-   *
-   * @param mapItem Object
-   * @returns Array
-   */
-  static convertMapToList(mapItem) {
-    return Object.keys(mapItem).map(function(itemId) {
-      return mapItem[itemId];
-    });
-  }
-
-  /**
    * Try to get stub for request param satisfying for the stub predicates
    *
-   * @param stubMap Map(id, stub)
+   * @param stubs Map(id, stub)
    * @param req     Protocol request
    * @returns Object
    */
-  resolveStubByRequest(stubMap, req) {
-    let stubs = StubResolver.convertMapToList(stubMap);
-
+  resolveStubByRequest(stubs, req) {
     return stubs.find(function (stub) {
       let predicates = stub.predicates || [];
       if (!predicates.length) {

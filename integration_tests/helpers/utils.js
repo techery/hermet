@@ -4,17 +4,29 @@ let config = require("../config");
 let httpCLient = require("./http_client").create();
 
 module.exports = {
-  getItemIdFromLocation: function(location) {
+  getItemIdFromLocation: function (location) {
     return location.split("/").slice(-1)[0];
   },
-  flushDB: function() {
-    var auth = "Basic " + new Buffer(config.couchbase.user + ":" + config.couchbase.password).toString("base64");
-
-    return httpCLient.post("http://" + config.couchbase.host + ":8091/pools/default/buckets/" + config.couchbase.bucket + "/controller/doFlush",
-      {}, {},
-      {
-        Authorization: auth
-      }
-    );
+  flushDB: function () {
+    return httpCLient.delete('http://localhost:9200/hermet').then(function (response) {
+    //  console.log(response);
+      return httpCLient.put('http://localhost:9200/hermet', {
+        "mappings": {
+          "service": {}, "stub": {
+            "_parent": {"type": "service"}, "properties": {
+              "response": {
+                "enabled": false
+              },
+              "predicates": {
+                "enabled": false
+              }
+            }
+          }
+        }
+      }).then(function (response) {
+       // console.log(response);
+        return response;
+      });
+    })
   }
 };

@@ -46,6 +46,7 @@ describe('Proxy', function () {
 
       before(function() {
         var response = hermetApiClient.post('/services/' + serviceId + '/stubs', stubData);
+
         expect(response).to.have.status(201);
 
         return chakram.wait();

@@ -47,8 +47,9 @@ class StubsRepository extends BaseRepository {
   all() {
     let body = {
       "query": {
-        "term": {
-          "_parent": this.serviceId
+        "parent_id": {
+          "type": this.modelType,
+          "id": this.serviceId
         }
       }
     };

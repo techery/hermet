@@ -32,6 +32,7 @@ class ElasticWrapper {
       if (parentId) {
         options.parent = parentId;
       }
+      options.refresh = true;
 
       this.client.index(options, callback);
     });

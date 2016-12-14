@@ -20,7 +20,7 @@ function showError(res, status, message) {
   res.end(message);
 }
 
-function showInternalError(err, req) {
+function showInternalError(err, req, res) {
   logger.error(err.message +
     '\r\nRequest: ' + logger.curlify(req, req.body || null) +
     '\r\n' +  err.stack
@@ -28,10 +28,9 @@ function showInternalError(err, req) {
   showError(res, 500, 'Proxy error');
 }
 
-function isStubsApplied(service, req, res) {
-  let sessionId = req.headers[config.app.hermet_session_header] || 'default';
-  let stubMap =_.get(service, 'sessions.' + sessionId + '.stubs', {});
-  let stub = stubResolver.resolveStubByRequest(stubMap, req);
+function isStubsApplied(stubs, req, res) {
+
+  let stub = stubResolver.resolveStubByRequest(stubs, req);
   if (stub) {
     let statusCode = stub.response.statusCode || 200,
        headers = stub.response.headers || {},
@@ -47,34 +46,32 @@ function isStubsApplied(service, req, res) {
 }
 
 proxy.on('error', function (err, req, res) {
-  showInternalError(err, req);
+  showInternalError(err, req, res);
 });
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
+  let service;
 
-   serviceRepository.getByProxyHost(req.headers.host).catch(err => {
+  try {
+    service = await serviceRepository.getByProxyHost(req.headers.host);
+    if (!service) {
+      throw new Error('There is no proxy rules for this host:' + req.headers.host);
+    }
+  } catch (error) {
     let message = 'Can not get proxy rules for host: ' + req.headers.host;
     logger.error(message +  ' Error: ' + err.message);
-    showError(res, 400, message);
-  }).then(service => {
+    return showError(res, 400, message);
+  }
 
-    if (!service) {
-      return;
-    }
-
-    stubRepository.setServiceId(service.id).all().then(stubs => {
-
-      if (isStubsApplied(stubs, req, res)) {
-        return;
-      }
-
+  try {
+    let stubs = await stubRepository.setServiceId(service.id).all();
+    if (!isStubsApplied(stubs, req, res)) {
       proxy.web(req, res, {
         target: service.targetUrl,
         proxyTimeout: service.proxyTimeout || config.proxy.defaultTimeout
       });
-    });
-
-  }).catch(err => {
-    showInternalError(err, req);
-  });
+    }
+  } catch (error) {
+    return showInternalError(error, req, res);
+  }
 };
