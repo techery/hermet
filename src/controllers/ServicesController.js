@@ -1,6 +1,6 @@
 'use strict';
 
-let serviceRepository = require('../repositories/elastic/ServiceRepository');
+let serviceRepository = require('../repositories/ServiceRepository');
 let config = require('../config');
 
 class ServicesController {

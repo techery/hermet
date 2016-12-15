@@ -1,37 +1,65 @@
-'use strict';
-
-let couchbaseWrapper = require('../services/CouchbaseWrapper');
-const md5 = require('md5');
-
 let BaseRepository = require('./BaseRepository');
+let elastic = require('../services/elastic');
 
 class ServiceRepository extends BaseRepository {
 
-  save(instance) {
-    instance._id = md5(instance.proxyHost);
-    instance._type = this.modelType;
-    return couchbaseWrapper.insert(instance._id, instance);
-  }
-
-  all() {
-    return couchbaseWrapper.query('SELECT * FROM ' + couchbaseWrapper.bucketName + ' WHERE _type=$1', [this.modelType]);
-  }
-
-  getByProxyHost(proxyHost) {
-    return couchbaseWrapper.get(md5(proxyHost));
+  create(data) {
+    return this.client.create(this.modelType, data);
   }
 
   get(id) {
-    return couchbaseWrapper.get(id);
+    return this.client.get(this.modelType, id).then(response => {
+      let result = response._source;
+      result.id = response._id;
+
+      return result;
+    });
   }
 
   update(id, data) {
-    return couchbaseWrapper.upsert(id, data);
+    return this.client.update(this.modelType, id, data);
   }
 
   remove(id) {
-    return couchbaseWrapper.remove(id);
+    return this.client.remove(this.modelType, id);
+  }
+
+  all() {
+    return this.client.search(this.modelType)
+      .then(response => {
+        let result = [];
+        response.hits.hits.map((item) => {
+          result.push(item._source);
+        });
+
+        return result;
+      });
+  }
+
+  getByProxyHost(proxyHost) {
+    let options = {
+      type: this.modelType,
+      body: {
+        'query' : {
+          'match': {'proxyHost': proxyHost}
+        }
+      }
+    };
+
+    return this.client.searchByOptions(options)
+      .then(response => {
+
+        if (response.hits.total === 0) {
+          return null;
+        }
+
+        let item = response.hits.hits[0];
+        let result = item._source;
+        result.id = item._id;
+
+        return result;
+      });
   }
 }
 
-module.exports = new ServiceRepository('service');
+module.exports = new ServiceRepository(elastic, 'service');

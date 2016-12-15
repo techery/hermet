@@ -4,8 +4,8 @@ let httpProxy = require('http-proxy'),
   _ = require('lodash'),
   config = require('./config'),
   logger = require('./components/logger').proxyLogger,
-  serviceRepository = require('./repositories/elastic/ServiceRepository'),
-  stubRepository = require('./repositories/elastic/StubsRepository'),
+  serviceRepository = require('./repositories/ServiceRepository'),
+  stubRepository = require('./repositories/StubsRepository'),
   stubResolver = require('./proxy/stubResolver');
 
 //

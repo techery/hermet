@@ -1,6 +1,6 @@
 'use strict';
 
-let stubsRepository = require('../repositories/elastic/StubsRepository');
+let stubsRepository = require('../repositories/StubsRepository');
 let config = require('../config');
 
 class StubsController {

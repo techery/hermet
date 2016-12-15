@@ -18,11 +18,6 @@ const config = {
     proxyFileName: _getEnv('LOG_PROXY_FILE_NAME', 'proxy.log'),
     logLevel: _getEnv('LOG_LEVEL', 'debug'),
   },
-  couchbase: {
-    host: _getEnv('COUCHBASE_HOST', 'localhost'),
-    bucket: _getEnv('COUCHBASE_BUCKET', 'hermet'),
-    operationTimeout: _getEnv('COUCHBASE_OPERATION_TIMEOUT', 10000)
-  },
   proxy: {
     defaultTimeout: _getEnv('PROXY_DEFAULT_TIMEOUT', 10000)
   },

@@ -9,7 +9,6 @@ module.exports = {
   },
   flushDB: function () {
     return httpCLient.delete('http://localhost:9200/hermet').then(function (response) {
-    //  console.log(response);
       return httpCLient.put('http://localhost:9200/hermet', {
         "mappings": {
           "service": {}, "stub": {
@@ -24,7 +23,6 @@ module.exports = {
           }
         }
       }).then(function (response) {
-       // console.log(response);
         return response;
       });
     })

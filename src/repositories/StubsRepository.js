@@ -1,13 +1,12 @@
 'use strict';
 
 let BaseRepository = require('./BaseRepository');
-let couchbaseWrapper = require('../services/CouchbaseWrapper');
-const uuid = require('uuid');
+let elastic = require('../services/elastic');
 
 class StubsRepository extends BaseRepository {
 
-  constructor(modelType) {
-    super(modelType);
+  constructor(client, modelType) {
+    super(client, modelType);
 
     this.sessionId = 'default';
   }
@@ -24,68 +23,67 @@ class StubsRepository extends BaseRepository {
     return this;
   }
 
-  promisify(body) {
-    return new Promise((resolve, reject) => {
-      body((error, result) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(result);
-      });
-    });
+  create(data) {
+    data.sessionId = this.sessionId;
+    return this.client.create(this.modelType, data, this.serviceId);
   }
 
-  all() {
-    return this.promisify((callback) => {
-      couchbaseWrapper.bucket.lookupIn(this.serviceId).get(this.getStubPath()).execute(callback);
-    }).then(function(item) {
-      return item.contents[0].value;
-    });
-  }
+  get(id) {
+    return this.client.get(this.modelType, id, this.serviceId).then(response => {
+      let result = response._source;
+      result.id = response._id;
 
-  save(data) {
-    var id = uuid();
-    return new Promise((resolve, reject) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).insert(this.getStubPath(id), data, true).execute((error, result) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(id, result);
-      });
-    });
-  }
-
-  getById(id) {
-    return this.promisify((callback) => {
-      couchbaseWrapper.bucket.lookupIn(this.serviceId).get(this.getStubPath(id)).execute(callback);
-    }).then(function(item) {
-      return item.contents[0].value;
-    });
-  }
-
-  remove(id) {
-    return this.promisify((callback) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove(this.getStubPath(id)).execute(callback);
+      return result;
     });
   }
 
   update(id, data) {
-    return this.promisify((callback) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).upsert(this.getStubPath(id), data, true).execute(callback);
-    });
+    data.sessionId = this.sessionId;
+    return this.client.update(this.modelType, id, data, this.serviceId);
+  }
+
+  remove(id) {
+    return this.client.remove(this.modelType, id, this.serviceId);
+  }
+
+  all() {
+    return this.client.search(this.modelType, this.prepareSearchParams())
+      .then(response => {
+        let result = [];
+        response.hits.hits.map((item) => {
+          item._source.id =item._id;
+          result.push(item._source);
+        });
+
+        return result;
+      });
   }
 
   removeAll() {
-    return this.promisify((callback) => {
-      couchbaseWrapper.bucket.mutateIn(this.serviceId).remove(this.getStubPath()).execute(callback);
-    });
+    return this.client.removeByQuery(this.modelType, this.prepareSearchParams());
   }
 
-  getStubPath(stubId) {
-    let stubIdPath = stubId ? '.' + stubId : '';
-
-    return 'sessions.' + this.sessionId + '.stubs' + stubIdPath
+  prepareSearchParams() {
+    return {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "match": {
+                "sessionId": this.sessionId
+              }
+            },
+            {
+              "parent_id": {
+                "type": this.modelType,
+                "id": this.serviceId
+              }
+            }
+          ]
+        }
+      }
+    }
   }
 }
 
-module.exports = new StubsRepository('stub');
+module.exports = new StubsRepository(elastic, 'stub');
