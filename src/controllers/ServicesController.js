@@ -1,52 +1,46 @@
 'use strict';
 
 let serviceRepository = require('../repositories/ServiceRepository');
-let config = require('../config');
+let BaseController = require('./BaseController');
 
-class ServicesController {
+class ServicesController extends BaseController {
 
   constructor(serviceRepository) {
+    super();
     this.serviceRepository = serviceRepository;
   }
 
-  create(req, res, next) {
-    this.serviceRepository.create(req.body)
-    .then((response) => {
-      res.set('Location', config.app.hermet_api_base_url + '/services/' + response._id);
-      res.status(201).end();
-    })
-    .catch(next);
+  async create(req, res) {
+    let result = await this.serviceRepository.create(req.body);
+    this.respondWithCreated(res,'/services/' + result._id);
   }
 
-  get(req, res, next) {
-    this.serviceRepository.get(req.params.serviceId)
-    .then((item) => {
-      res.status(200).send(item);
-    }).catch(function (error) {
-      res.status(404).json({'error': error.message});
-    });
+  async get(req, res) {
+    try {
+      let item = await this.serviceRepository.get(req.params.serviceId);
+      this.respondJson(res, item);
+    } catch (err) {
+      this.respondWithNotFound();
+    }
   }
 
-  update(req, res, next) {
-    this.serviceRepository.update(req.params.serviceId, req.body)
-      .then(() => {
-        res.status(204).end();
-      })
-      .catch(next);
+  async update(req, res) {
+    await this.serviceRepository.update(req.params.serviceId, req.body);
+    this.respondWithNoContent(res);
   }
 
-  remove(req, res, next) {
-    this.serviceRepository.remove(req.params.serviceId)
-      .then((item) => {
-        res.status(204).end();
-      })
-      .catch(next);
+  async remove(req, res) {
+    try {
+      await this.serviceRepository.remove(req.params.serviceId);
+      this.respondWithNoContent(res);
+    } catch (err) {
+      this.respondWithNotFound();
+    }
   }
 
-  list(req, res, next) {
-    this.serviceRepository.all().then((items) => {
-      res.status(200).json(items);
-    }).catch(next);
+  async list(req, res) {
+    let items = await this.serviceRepository.all();
+    this.respondJson(res, items);
   }
 }
 

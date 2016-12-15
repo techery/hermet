@@ -19,17 +19,16 @@ app.use('/api', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  let err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  res.status(404).json({error: 'Not Found'});
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  logger.error(err.message +
-    '\r\nRequest: ' + logger.curlify(req, req.body || null) +
-    '\r\n' +  err.stack
-  );
+  logger.error('Request: ' + logger.curlify(req, req.body || null) + '\r\n' +  err.stack);
+
+  if (err.errorCode) {
+    return res.status(err.statusCode || 500).json({error: err.errorCode + ' ' + err.name + ': ' + err.message});
+  }
 
   res.status(500).json({error: 'Hermet API error.'});
 });
