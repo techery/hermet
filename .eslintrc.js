@@ -38,7 +38,7 @@ module.exports = {
     "keyword-spacing": ["error", {"before": true, "after": true}],
     "space-unary-ops": "error",
 
-    "indent": ["error", 2],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
     "linebreak-style": ["error", "unix"],
     "strict": ["error", "global"],
     "valid-typeof": "error",

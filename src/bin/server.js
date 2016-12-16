@@ -6,7 +6,6 @@
 let config = require('../config');
 let app = require('../app');
 let proxy = require('../proxy');
-let debug = require('debug')('proxy:server');
 let http = require('http');
 
 /**
@@ -14,6 +13,7 @@ let http = require('http');
  */
 
 let apiPort = normalizePort(config.app.hermet_api_port);
+
 app.set('port', apiPort);
 
 /**
@@ -29,6 +29,7 @@ let server = http.createServer(app);
 server.listen(apiPort);
 server.on('error', onError);
 server.on('listening', () => {
+  // TODO: Replace console.log with logger.info
   console.log('API server listening on ' + apiPort);
 });
 
@@ -42,13 +43,17 @@ let proxySever = http.createServer(proxy);
 
 proxySever.listen(proxyPort);
 proxySever.on('listening', () => {
+  // TODO: Replace console.log with logger.info
   console.log('Proxy server listening on ' + proxyPort);
 });
 
 /**
  * Normalize a port into a number, string, or false.
+ *
+ * @param {*} val
+ *
+ * @returns {number | string | boolean}
  */
-
 function normalizePort(val) {
   let port = parseInt(val, 10);
 
@@ -67,8 +72,11 @@ function normalizePort(val) {
 
 /**
  * Event listener for HTTP server "error" event.
+ *
+ * @param {*} error
+ *
+ * @throws {*}
  */
-
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
@@ -81,10 +89,12 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
+      // TODO: Replace console.log with logger.info
       console.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
+      // TODO: Replace console.log with logger.info
       console.error(bind + ' is already in use');
       process.exit(1);
       break;
