@@ -1,70 +1,51 @@
 'use strict';
 
 let stubsRepository = require('../repositories/StubsRepository');
-let config = require('../config');
+let BaseController = require('./BaseController');
 
-class StubsController {
+class StubsController extends  BaseController {
 
   constructor(stubsRepository) {
+    super();
     this.stubsRepository = stubsRepository;
   }
 
-  create(req, res, next) {
-    this.prepareStubRepositiory(req)
-      .create(req.body)
-      .then((result) => {
-        res.set('Location', config.app.hermet_api_base_url + '/services/' + req.params.serviceId + '/stubs/' + result._id);
-        res.status(201).end();
-      })
-      .catch(next);
+  async create(req, res) {
+    let result = await this.prepareStubRepositiory(req).create(req.body);
+    this.respondWithCreated(res, '/services/' + req.params.serviceId + '/stubs/' + result._id)
   }
 
-  get(req, res, next) {
-    this.prepareStubRepositiory(req)
-      .get(req.params.stubId)
-      .then((stub) => {
-        res.status(200).json(stub);
-      })
-      .catch(function (error) {
-        res.status(404).json({'error': error.message});
-    });
+  async get(req, res) {
+    try {
+      let stub = await this.prepareStubRepositiory(req).get(req.params.stubId);
+      this.respondJson(res, stub);
+    } catch (err) {
+      this.respondWithNotFound();
+    }
   }
 
-  update(req, res, next) {
-    this.prepareStubRepositiory(req)
-      .update(req.params.stubId, req.body)
-      .then(() => {
-        res.status(204).end();
-      }).catch(next);
+  async update(req, res) {
+    await this.prepareStubRepositiory(req).update(req.params.stubId, req.body);
+    this.respondWithNoContent(res)
   }
 
-  remove(req, res, next) {
-    this.prepareStubRepositiory(req)
-      .remove(req.params.stubId)
-      .then(() => {
-        res.status(204).end();
-      })
-      .catch((error) => {
-        res.status(404).json({'error': error.message});
-      });
+  async remove(req, res) {
+    try {
+      await this.prepareStubRepositiory(req).remove(req.params.stubId);
+      this.respondWithNoContent(res);
+    } catch (err) {
+        this.respondWithNotFound();
+    }
   }
 
-  list(req, res, next) {
-    this.prepareStubRepositiory(req)
-      .all()
-      .then((items) => {
-        res.status(200).json(items);
-      })
-      .catch(next);
+  async list(req, res) {
+    let items = await this.prepareStubRepositiory(req).all();
+    this.respondJson(res, items);
   }
 
-  removeAll(req, res, next) {
-    this.prepareStubRepositiory(req)
-      .removeAll()
-      .then(() => {
-        res.status(204).end();
-      })
-      .catch(next);
+  async removeAll(req, res) {
+    await this.prepareStubRepositiory(req).removeAll();
+    this.respondWithNoContent(res)
   }
 
   prepareStubRepositiory(req) {

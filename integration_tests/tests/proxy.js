@@ -64,8 +64,8 @@ describe('Proxy', function () {
       it('should proxy response from real service', function() {
         var response = httpClient.post('http://' + SERVICE_HOST_ALIAS +  '/tests_path');
 
-        expect(response).to.have.status(500);
-        expect(response).to.comprise.of.json({"error":"Hermet API error."});
+        expect(response).to.have.status(404);
+        expect(response).to.comprise.of.json({"error":"Not Found"});
 
         return chakram.wait();
       });
