@@ -29,7 +29,7 @@ After that we can to create proxy rule for the main php application using Hermet
 It should return an empty response with status code 201 and location header:    
 
     HTTP/1.1 201 Created
-    Location: http://techery-dt-staging-hermet-api.techery.io:5000/services/26d4cc043e6bfa2a1558c7ce9808f088
+    Location: http://techery-dt-staging-hermet-api.techery.io:5000/api/services/AVkHMmQUWaE8mLHnVBgu
 
 Proxy rule item was created and now http://techery-dt-staging.techery.io:5050 is equal to http://techery-dt-staging.techery.io according to the proxy rule.
 
@@ -101,15 +101,14 @@ Formatted body
 
 Request:
 
-    curl -i -XPOST 'http://techery-dt-staging-hermet-api.techery.io:5000/api/services/3e43e8561b6f937a3ef20317cf560fa0/stubs' \
+    curl -i -XPOST 'http://techery-dt-staging-hermet-api.techery.io:5000/api/services/AVkHMmQUWaE8mLHnVBgu/stubs' \
         -H 'Content-Type: application/json' \
-        -d '{"response": {"body": {"token":"test-token","sso_token":"test-sso-token"}}, "predicates": [{"equals": {"path": "/api/sessions", "metohod": "POST", "body": {"username": "68010864"}}, "caseSensitive": true}]}'
+        -d '{"response": {"body": {"token":"test-token","sso_token":"test-sso-token"}}, "predicates": [{"equals": {"path": "/api/sessions", "method": "POST"}}]}'
         
 Response: 
     
         HTTP/1.1 201 Created
-        Location: http://techery-dt-staging-hermet-api.techery.io:5000/services/26d4cc043e6bfa2a1558c7ce9808f088
-    
+        Location: http://techery-dt-staging-hermet-api.techery.io:5000/api/services/AVkHMmQUWaE8mLHnVBgu/stubs/AVkHVJaNWaE8mLHnVBgz
         
 Let`s check authorization:
 
@@ -138,7 +137,7 @@ to the CRUD requests for stubs and pass this header to proxy. If we repeat the p
     curl -i -XPOST 'http://techery-dt-staging-hermet-api.techery.io:5000/api/services/3e43e8561b6f937a3ef20317cf560fa0/stubs' \
         -H 'Content-Type: application/json' \
         -H 'X-Session-id: session-id' \
-        -d '{"response": {"body": {"token":"test-token","sso_token":"test-sso-token"}}, "predicates": [{"equals": {"path": "/api/sessions", "metohod": "POST", "body": {"username": "68010864"}}, "caseSensitive": true}]}'
+        -d '{"response": {"body": {"token":"test-token","sso_token":"test-sso-token"}}, "predicates": [{"equals": {"path": "/api/sessions", "method": "POST"}}]}'
         
 This request creates specific stub for session with "session-id". And now 
 
