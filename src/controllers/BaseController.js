@@ -14,6 +14,7 @@ class BaseController {
 
   /**
    * Return 201 Created response
+   *
    * @param {Object} res
    * @param {string} uri
    */
