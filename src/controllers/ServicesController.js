@@ -12,7 +12,7 @@ class ServicesController extends BaseController {
 
   async create(req, res) {
     let result = await this.serviceRepository.create(req.body);
-    this.respondWithCreated(res,'/services/' + result._id);
+    this.respondWithCreated(res, '/services/' + result._id);
   }
 
   async get(req, res) {

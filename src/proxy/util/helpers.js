@@ -7,12 +7,12 @@
  * @param {Object} socket - the socket
  * @returns {string}
  */
-function socketName (socket) {
-    var result = socket.remoteAddress;
-    if (socket.remotePort) {
-        result += ':' + socket.remotePort;
-    }
-    return result;
+function socketName(socket) {
+  var result = socket.remoteAddress;
+  if (socket.remotePort) {
+    result += ':' + socket.remotePort;
+  }
+  return result;
 }
 
 /**
@@ -20,8 +20,8 @@ function socketName (socket) {
  * @param {Object} obj - the object to clone
  * @returns {Object}
  */
-function clone (obj) {
-    return JSON.parse(JSON.stringify(obj));
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
 }
 
 /**
@@ -31,21 +31,21 @@ function clone (obj) {
  * and overrides, the values for overrides will be used
  * @returns {Object}
  */
-function merge (defaults, overrides) {
-    var result = clone(defaults);
-    Object.keys(overrides).forEach(function (key) {
-        if (typeof overrides[key] === 'object') {
-            result[key] = merge(result[key] || {}, overrides[key]);
-        }
-        else {
-            result[key] = overrides[key];
-        }
-    });
-    return result;
+function merge(defaults, overrides) {
+  var result = clone(defaults);
+  Object.keys(overrides).forEach(function (key) {
+    if (typeof overrides[key] === 'object') {
+      result[key] = merge(result[key] || {}, overrides[key]);
+    }
+    else {
+      result[key] = overrides[key];
+    }
+  });
+  return result;
 }
 
 module.exports = {
-    socketName: socketName,
-    clone: clone,
-    merge: merge
+  socketName: socketName,
+  clone: clone,
+  merge: merge
 };

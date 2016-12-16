@@ -51,7 +51,7 @@ class StubsRepository extends BaseRepository {
       .then(response => {
         let result = [];
         response.hits.hits.map((item) => {
-          item._source.id =item._id;
+          item._source.id = item._id;
           result.push(item._source);
         });
 

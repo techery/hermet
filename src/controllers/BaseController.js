@@ -6,7 +6,8 @@ let logger = require('../components/logger').apiLogger;
 
 class BaseController {
 
-  constructor() {}
+  constructor() {
+  }
 
   respondJson(res, json) {
     res.status(200).json(json);

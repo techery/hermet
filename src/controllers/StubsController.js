@@ -3,7 +3,7 @@
 let stubsRepository = require('../repositories/StubsRepository');
 let BaseController = require('./BaseController');
 
-class StubsController extends  BaseController {
+class StubsController extends BaseController {
 
   constructor(stubsRepository) {
     super();
@@ -34,7 +34,7 @@ class StubsController extends  BaseController {
       await this.prepareStubRepositiory(req).remove(req.params.stubId);
       this.respondWithNoContent(res);
     } catch (err) {
-        this.respondWithNotFound();
+      this.respondWithNotFound();
     }
   }
 
