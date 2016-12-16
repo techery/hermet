@@ -6,7 +6,7 @@ module.exports = {
   },
   "extends": "eslint:recommended",
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 8,
     "sourceType": "module",
     "ecmaFeatures": {
       "impliedStrict": true
@@ -99,7 +99,6 @@ module.exports = {
         "ClassDeclaration": false,
         "ArrowFunctionExpression": false
       }
-    }],
-    "valid-jsdoc": "error"
+    }]
   }
 };

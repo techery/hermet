@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function NotFound(message, errorCode) {
 
   Error.captureStackTrace(this, this.constructor);
