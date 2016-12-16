@@ -1,8 +1,8 @@
 'use strict';
 
 let predicateResolver = require('./predicates'),
-    url = require('url'),
-    logger = require('../components/logger').proxyLogger;
+  url = require('url'),
+  logger = require('../components/logger').proxyLogger;
 
 class StubResolver {
 

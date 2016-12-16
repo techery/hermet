@@ -40,7 +40,7 @@ class ServiceRepository extends BaseRepository {
     let options = {
       type: this.modelType,
       body: {
-        'query' : {
+        'query': {
           'match': {'proxyHost': proxyHost}
         }
       }

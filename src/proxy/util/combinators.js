@@ -20,14 +20,14 @@
  * @param {...*} args - The arguments to curry
  * @returns {Function}
  */
-function curry (fn) {
-    var args = Array.prototype.slice.call(arguments, 1);
-    return function () {
-        var nextArgs = Array.prototype.slice.call(arguments),
-            allArgs = args.concat(nextArgs);
+function curry(fn) {
+  var args = Array.prototype.slice.call(arguments, 1);
+  return function () {
+    var nextArgs = Array.prototype.slice.call(arguments),
+      allArgs = args.concat(nextArgs);
 
-        return fn.apply(this, allArgs);
-    };
+    return fn.apply(this, allArgs);
+  };
 }
 
 /**
@@ -40,29 +40,40 @@ function curry (fn) {
  * @param {...Function} args - The functions to compose
  * @returns {Function} A single function that represents the composition of the functions provided
  */
-function compose () {
-    var args = Array.prototype.slice.call(arguments).reverse();
-    return function (obj) { return args.reduce(function (result, F) { return F(result); }, obj); };
+function compose() {
+  var args = Array.prototype.slice.call(arguments).reverse();
+  return function (obj) {
+    return args.reduce(function (result, F) {
+      return F(result);
+    }, obj);
+  };
 }
 
 module.exports = {
-    /**
-     * Returns what was passed in unchanged, occasionally useful as the default transformation function
-     * to avoid special case logic
-     * @param {Object} i - The input
-     * @returns {Object} Exactly what was passed in
-     */
-    identity: function (i) { return i; },
-    /**
-     * Ignores its parameters, and instead always returns a constant value
-     * @param {Object} k - The constant to return
-     * @returns {Function} - A function that will always return the constant
-     */
-    constant: function (k) { return function () { return k; }; },
-    /**
-     * A function that does nothing, occasionally useful to avoid special case logic
-     */
-    noop: function () {},
-    compose: compose,
-    curry: curry
+  /**
+   * Returns what was passed in unchanged, occasionally useful as the default transformation function
+   * to avoid special case logic
+   * @param {Object} i - The input
+   * @returns {Object} Exactly what was passed in
+   */
+  identity: function (i) {
+    return i;
+  },
+  /**
+   * Ignores its parameters, and instead always returns a constant value
+   * @param {Object} k - The constant to return
+   * @returns {Function} - A function that will always return the constant
+   */
+  constant: function (k) {
+    return function () {
+      return k;
+    };
+  },
+  /**
+   * A function that does nothing, occasionally useful to avoid special case logic
+   */
+  noop: function () {
+  },
+  compose: compose,
+  curry: curry
 };

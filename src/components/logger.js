@@ -2,8 +2,8 @@
 
 const config = require('../config');
 let curlify = require('request-as-curl'),
-    winston = require('winston'),
-    path = require('path');
+  winston = require('winston'),
+  path = require('path');
 require('winston-daily-rotate-file');
 
 function initLogger(logFileName) {
