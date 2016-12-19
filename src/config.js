@@ -1,7 +1,15 @@
-'use strict';
+/* eslint-disable no-magic-numbers */
 
 require('dotenv').load();
 
+/**
+ * Get env variable
+ *
+ * @param {string} key
+ * @param {*} defaultValue
+ * @returns {*}
+ * @private
+ */
 function _getEnv(key, defaultValue) {
   return process.env[key] || defaultValue;
 }
