@@ -30,6 +30,7 @@ server.listen(apiPort);
 server.on('error', onError);
 server.on('listening', () => {
   // TODO: Replace console.log with logger.info
+  // eslint-disable-next-line no-console
   console.log('API server listening on ' + apiPort);
 });
 
@@ -44,6 +45,7 @@ let proxySever = http.createServer(proxy);
 proxySever.listen(proxyPort);
 proxySever.on('listening', () => {
   // TODO: Replace console.log with logger.info
+  // eslint-disable-next-line no-console
   console.log('Proxy server listening on ' + proxyPort);
 });
 
@@ -90,11 +92,13 @@ function onError(error) {
   switch (error.code) {
     case 'EACCES':
       // TODO: Replace console.log with logger.info
+      // eslint-disable-next-line no-console
       console.error(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
       // TODO: Replace console.log with logger.info
+      // eslint-disable-next-line no-console
       console.error(bind + ' is already in use');
       process.exit(1);
       break;

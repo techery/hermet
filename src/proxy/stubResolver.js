@@ -1,8 +1,6 @@
-'use strict';
-
-let predicateResolver = require('./predicates'),
-  url = require('url'),
-  logger = require('../components/logger').proxyLogger;
+let predicateResolver = require('./predicates');
+let url = require('url');
+let logger = require('../components/logger').proxyLogger;
 
 class StubResolver {
 
@@ -19,7 +17,7 @@ class StubResolver {
       method: req.method,
       path: urlParts.pathname,
       headers: req.headers
-    }
+    };
   }
 
   /**
@@ -32,9 +30,11 @@ class StubResolver {
   resolveStubByRequest(stubs, req) {
     return stubs.find(function (stub) {
       let predicates = stub.predicates || [];
+
       if (!predicates.length) {
         return true;
       }
+
       return predicates.every(function (predicate) {
         return predicateResolver.resolve(predicate, StubResolver.prepareRequest(req), 'utf8', logger);
       });
