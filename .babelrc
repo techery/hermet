@@ -1,9 +1,4 @@
 {
-    "presets": ["latest"],
-    "plugins": [
-        ["transform-runtime", {
-            "polyfill": false,
-            "regenerator": true
-        }]
-    ]
+  "presets": ["es2016-node4"],
+  "plugins": ["transform-es2015-classes"]
 }
