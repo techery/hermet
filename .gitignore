@@ -38,5 +38,11 @@ jspm_packages
 
 dist
 
+# DotEnv
+.env
+
 # IDE
 .idea
+
+# TypeScript
+typings

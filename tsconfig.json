@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "module": "commonjs",
+    "newLine": "lf",
+    "target": "es6",
+    "lib": ["es6", "dom"],
+    "types": ["reflect-metadata"],
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "preserveConstEnums": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "sourceMap": false
+  },
+  "filesGlob": [
+    "typings/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

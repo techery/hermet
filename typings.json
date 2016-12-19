@@ -1,0 +1,15 @@
+{
+  "globalDependencies": {
+    "chai": "registry:dt/chai#3.4.0+20160926213833",
+    "elasticsearch": "registry:dt/elasticsearch#5.0.0+20161116052743",
+    "mocha": "registry:dt/mocha#2.2.5+20161119044246",
+    "node-4": "registry:dt/node-4#4.0.0+20161121110008"
+  },
+  "dependencies": {
+    "dotenv": "registry:dt/dotenv#2.0.0+20161103000434",
+    "express": "registry:dt/express#4.0.0+20161115070701",
+    "http-proxy": "registry:npm/http-proxy#1.12.0+20161206164214",
+    "winston": "registry:dt/winston#0.0.0+20161122193333",
+    "xmldom": "registry:dt/xmldom#0.1.22+20160428043022"
+  }
+}
