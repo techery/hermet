@@ -1,4 +1,4 @@
-# Hermet
+# Hermet [![Build Status](https://travis-ci.org/techery/hermet.svg?branch=develop)](https://travis-ci.org/techery/hermet)
 Make your server hermetic.
 Techery internal service for proxying third party services and stub them if needed.
  
