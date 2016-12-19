@@ -1,7 +1,5 @@
-'use strict';
-
 let express = require('express');
-let router = express.Router();
+let router = new express.Router();
 let stubController = require('../controllers/StubsController');
 let wrap = require('./wrapper');
 
