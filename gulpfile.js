@@ -12,7 +12,7 @@ const config = {
   }
 };
 
-gulp.task('build', () => {
+gulp.task('build', ['lint'], () => {
   return gulp.src(config.dirs.src)
     .pipe(babel())
     .pipe(gulp.dest(config.dirs.build));
@@ -25,4 +25,4 @@ gulp.task('lint', () => {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('default', ['lint', 'build']);
+gulp.task('default', ['build']);
