@@ -1,5 +1,3 @@
-'use strict';
-
 let express = require('express');
 let logger = require('./components/logger').apiLogger;
 let bodyParser = require('body-parser');
@@ -18,12 +16,12 @@ app.use(index);
 app.use('/api', routes);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req, res) {
   res.status(404).json({error: 'Not Found'});
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
   logger.error('Request: ' + logger.curlify(req, req.body || null) + '\r\n' + err.stack);
 
   if (err.errorCode) {
