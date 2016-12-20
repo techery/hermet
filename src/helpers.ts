@@ -9,10 +9,10 @@ export function env<T>(key: string, def?: T): T {
     let value: any = process.env[key];
 
     switch (value) {
-        case "true":
+        case 'true':
             value = true;
             break;
-        case "false":
+        case 'false':
             value = false;
             break;
         default:

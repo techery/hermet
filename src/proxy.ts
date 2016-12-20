@@ -1,4 +1,4 @@
-import config from "./config";
+import config from './config';
 
 let httpProxy = require('http-proxy');
 let logger = require('./components/logger').proxyLogger;

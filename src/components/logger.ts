@@ -1,4 +1,4 @@
-import config from "../config";
+import config from '../config';
 
 let curlify = require('request-as-curl');
 let path = require('path');

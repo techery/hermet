@@ -10,6 +10,7 @@
     "dotenv": "registry:dt/dotenv#2.0.0+20161103000434",
     "express": "registry:dt/express#4.0.0+20161115070701",
     "http-proxy": "registry:npm/http-proxy#1.12.0+20161206164214",
+    "mime": "registry:dt/mime#0.0.0+20160428043022",
     "serve-static": "registry:dt/serve-static#1.7.1+20161128184045",
     "winston": "registry:dt/winston#0.0.0+20161122193333",
     "xmldom": "registry:dt/xmldom#0.1.22+20160428043022"
