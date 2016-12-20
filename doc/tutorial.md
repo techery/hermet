@@ -57,7 +57,7 @@ It is time to try authorization:
     curl -i -X POST 'http://techery-dt-staging.techery.io:5050/api/sessions' \
         -H 'Content-Type: application/json' \
         -H 'Accept: application/json;version=2' \
-        -d '{"username": "68010864", "password": "Test1231!"}'
+        -d '{"username": "test", "password": "Test1231!"}'
     
 Response
     
@@ -115,7 +115,7 @@ Let`s check authorization:
     curl -i -X POST 'http://techery-dt-staging.techery.io:5050/api/sessions' \
         -H 'Content-Type: application/json' \
         -H 'Accept: application/json;version=2' \
-        -d '{"username": "68010864", "password": "Test1231!"}'
+        -d '{"username": "test", "password": "Test1231!"}'
         
 Will be respond with stub:
 
@@ -144,7 +144,7 @@ This request creates specific stub for session with "session-id". And now
     curl -i -X POST 'http://techery-dt-staging.techery.io:5050/api/sessions' \
         -H 'Content-Type: application/json' \
         -H 'Accept: application/json;version=2' \
-        -d '{"username": "68010864", "password": "Test1231!"}'
+        -d '{"username": "test", "password": "Test1231!"}'
         
 It will be proxied to staging, but then next one will be respond with stub:
 
@@ -152,5 +152,5 @@ It will be proxied to staging, but then next one will be respond with stub:
         -H 'Content-Type: application/json' \
         -H 'X-Session-id: session-id' \
         -H 'Accept: application/json;version=2' \
-        -d '{"username": "68010864", "password": "Test1231!"}'
+        -d '{"username": "test", "password": "Test1231!"}'
         
