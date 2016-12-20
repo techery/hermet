@@ -1,5 +1,6 @@
+import config from './config';
+
 let httpProxy = require('http-proxy');
-let config = require('./config');
 let logger = require('./components/logger').proxyLogger;
 let serviceRepository = require('./repositories/ServiceRepository');
 let stubRepository = require('./repositories/StubsRepository');

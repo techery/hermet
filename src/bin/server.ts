@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /// <reference path="../../typings/index.d.ts" />
 
+import config from '../config';
 /**
  * Module dependencies.
  */
-let config = require('../config');
 let app = require('../app');
 let proxy = require('../proxy');
 let http = require('http');

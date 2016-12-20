@@ -1,4 +1,5 @@
-let config = require('../config');
+import config from '../config';
+
 let NotFound = require('./errors/NotFound');
 
 class BaseController {
