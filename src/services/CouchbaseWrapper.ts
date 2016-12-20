@@ -1,4 +1,5 @@
-var config = require('../config');
+import config from "../config";
+
 var couchbase = require('couchbase');
 
 class CouchbaseWrapper {

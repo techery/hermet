@@ -1,4 +1,5 @@
-const config = require('../config');
+import config from "../config";
+
 let curlify = require('request-as-curl');
 let path = require('path');
 let winston = require('winston');
