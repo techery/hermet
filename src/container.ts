@@ -9,8 +9,8 @@ import config from './config';
 import {Client} from 'elasticsearch';
 import ServicesController from './controllers/ServicesController';
 import StubsController from './controllers/StubsController';
-import SessionsController from "./controllers/SessionsController";
-import SessionsRepository from "./repositories/SessionsRepository";
+import SessionsController from './controllers/SessionsController';
+import SessionsRepository from './repositories/SessionsRepository';
 
 let elasticsearch = new Client({
     host: 'localhost:9200',

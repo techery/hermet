@@ -1,6 +1,6 @@
 import {Response, Request} from 'express';
-import BaseController from "./BaseController";
-import SessionsRepository from "../repositories/SessionsRepository";
+import BaseController from './BaseController';
+import SessionsRepository from '../repositories/SessionsRepository';
 
 export default class SessionsController extends BaseController {
 
