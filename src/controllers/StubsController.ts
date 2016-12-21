@@ -1,14 +1,15 @@
 import {Request, Response} from 'express';
 import config from '../config';
 import BaseController from './BaseController';
+import StubsRepository from '../repositories/StubsRepository';
 
 export default class StubsController extends BaseController {
-    protected stubsRepository: any;
+    protected stubsRepository: StubsRepository;
 
     /**
      * @param {Object} stubsRepository
      */
-    constructor(stubsRepository: any) {
+    constructor(stubsRepository: StubsRepository) {
         super();
         this.stubsRepository = stubsRepository;
     }
@@ -94,7 +95,7 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @returns {Object}
      */
-    protected prepareStubRepositiory(request: Request): any {
+    protected prepareStubRepositiory(request: Request): StubsRepository {
         const sessionId = request.get(config.app.hermet_session_header) || 'default';
 
         return this.stubsRepository

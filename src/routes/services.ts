@@ -1,11 +1,9 @@
-import ServicesController from '../controllers/ServicesController';
 import wrap from './wrapper';
+import {servicesController} from '../container';
 
 let express = require('express');
 let router = new express.Router({mergeParams: true});
 let stubs = require('./stubs');
-let serviceRepository = require('../repositories/ServiceRepository');
-let servicesController = new ServicesController(serviceRepository);
 
 router.route('/')
   .get(wrap(async (req, res, next) => servicesController.list(req, res)))

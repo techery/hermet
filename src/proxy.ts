@@ -1,9 +1,8 @@
 import config from './config';
+import {serviceRepository, stubsRepository} from './container';
 
 let httpProxy = require('http-proxy');
 let logger = require('./components/logger').proxyLogger;
-let serviceRepository = require('./repositories/ServiceRepository');
-let stubRepository = require('./repositories/StubsRepository');
 let stubResolver = require('./proxy/stubResolver');
 
 //
@@ -82,7 +81,7 @@ module.exports = async (req, res) => {
 
   try {
     let sessionId = req.headers[config.app.hermet_session_header] || 'default';
-    let stubs = await stubRepository
+    let stubs = await stubsRepository
       .setServiceId(service.id)
       .setSessionId(sessionId)
       .all();

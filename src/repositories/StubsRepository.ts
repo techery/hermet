@@ -1,130 +1,121 @@
-let BaseRepository = require('./BaseRepository');
-let elastic = require('../services/elastic');
+import ElasticRepository from './ElasticRepository';
 
-class StubsRepository extends BaseRepository {
-  /**
-   * @param {Object} client
-   * @param {string} modelType
-   */
-  constructor(client, modelType) {
-    super(client, modelType);
+export default class StubsRepository extends ElasticRepository {
+    protected sessionId: string = 'default';
+    protected serviceId: string;
+    protected type: string = 'stub';
 
-    this.sessionId = 'default';
-  }
+    /**
+     * @param {string} serviceId
+     * @returns {StubsRepository}
+     */
+    public setServiceId(serviceId: string): StubsRepository {
+        this.serviceId = serviceId;
 
-  /**
-   * @param {integer} serviceId
-   * @returns {StubsRepository}
-   */
-  setServiceId(serviceId) {
-    this.serviceId = serviceId;
+        return this;
+    }
 
-    return this;
-  }
+    /**
+     * @param {string} sessionId
+     * @returns {StubsRepository}
+     */
+    public setSessionId(sessionId: string): StubsRepository {
+        this.sessionId = sessionId;
 
-  /**
-   * @param {integer} sessionId
-   * @returns {StubsRepository}
-   */
-  setSessionId(sessionId) {
-    this.sessionId = sessionId;
+        return this;
+    }
 
-    return this;
-  }
+    /**
+     * @param {Object} data
+     * @returns {Promise}
+     */
+    public create(data: any): Promise<any> {
+        data.sessionId = this.sessionId;
 
-  /**
-   * @param {Object} data
-   * @returns {Promise}
-   */
-  create(data) {
-    data.sessionId = this.sessionId;
+        return this.client.create(this.type, data, this.serviceId);
+    }
 
-    return this.client.create(this.modelType, data, this.serviceId);
-  }
+    /**
+     * @param {string} id
+     * @returns {Promise}
+     */
+    public get(id: string): Promise<any> {
+        return this.client.get(this.type, id, this.serviceId).then((response: any) => {
+            let result: any = response._source;
 
-  /**
-   * @param {integer} id
-   * @returns {Promise}
-   */
-  get(id) {
-    return this.client.get(this.modelType, id, this.serviceId).then(response => {
-      let result = response._source;
+            result.id = response._id;
 
-      result.id = response._id;
-
-      return result;
-    });
-  }
-
-  /**
-   * @param {integer} id
-   * @param {Object} data
-   * @returns {Promise}
-   */
-  update(id, data) {
-    data.sessionId = this.sessionId;
-
-    return this.client.update(this.modelType, id, data, this.serviceId);
-  }
-
-  /**
-   * @param {integer} id
-   * @returns {Promise}
-   */
-  remove(id) {
-    return this.client.remove(this.modelType, id, this.serviceId);
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  all() {
-    return this.client.search(this.modelType, this.prepareSearchParams())
-      .then(response => {
-        let result = [];
-
-        response.hits.hits.map((item) => {
-          item._source.id = item._id;
-          result.push(item._source);
-
-          return item;
+            return result;
         });
+    }
 
-        return result;
-      });
-  }
+    /**
+     * @param {string} id
+     * @param {Object} data
+     * @returns {Promise}
+     */
+    public update(id: string, data: any): Promise<any> {
+        data.sessionId = this.sessionId;
 
-  /**
-   * @returns {Promise}
-   */
-  removeAll() {
-    return this.client.removeByQuery(this.modelType, this.prepareSearchParams());
-  }
+        return this.client.update(this.type, id, data, this.serviceId);
+    }
 
-  /**
-   * @returns {Object}
-   */
-  prepareSearchParams() {
-    return {
-      query: {
-        bool: {
-          filter: [
-            {
-              match: {
-                sessionId: this.sessionId
-              }
-            },
-            {
-              parent_id: {
-                type: this.modelType,
-                id: this.serviceId
-              }
+    /**
+     * @param {string} id
+     * @returns {Promise}
+     */
+    public remove(id: string): Promise<any> {
+        return this.client.remove(this.type, id, this.serviceId);
+    }
+
+    /**
+     * @returns {Promise}
+     */
+    public all(): Promise<any> {
+        return this.client.search(this.type, this.prepareSearchParams())
+            .then((response: any) => {
+                let result: any[] = [];
+
+                response.hits.hits.map((item: any) => {
+                    item._source.id = item._id;
+                    result.push(item._source);
+
+                    return item;
+                });
+
+                return result;
+            });
+    }
+
+    /**
+     * @returns {Promise}
+     */
+    public removeAll(): Promise<any> {
+        return this.client.removeByQuery(this.type, this.prepareSearchParams());
+    }
+
+    /**
+     * @returns {Object}
+     */
+    protected prepareSearchParams(): Object {
+        return {
+            query: {
+                bool: {
+                    filter: [
+                        {
+                            match: {
+                                sessionId: this.sessionId
+                            }
+                        },
+                        {
+                            parent_id: {
+                                type: this.type,
+                                id: this.serviceId
+                            }
+                        }
+                    ]
+                }
             }
-          ]
-        }
-      }
-    };
-  }
+        };
+    }
 }
-
-module.exports = new StubsRepository(elastic, 'stub');

@@ -10,7 +10,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node ./dist/bin/server.js",
+    "start": "node --harmony ./dist/bin/server.js",
     "test": "mocha dist/tests/ --recursive"
   },
   "dependencies": {

@@ -1,93 +1,91 @@
-let BaseRepository = require('./BaseRepository');
-let elastic = require('../services/elastic');
+import ElasticRepository from './ElasticRepository';
 
-class ServiceRepository extends BaseRepository {
-  /**
-   * @param {Object} data
-   * @returns {Promise}
-   */
-  create(data) {
-    return this.client.create(this.modelType, data);
-  }
+export default class ServiceRepository extends ElasticRepository {
+    protected type: string = 'service';
+    /**
+     * @param {Object} data
+     * @returns {Promise}
+     */
+    public create(data: any): Promise<any> {
+        return this.client.create(this.type, data);
+    }
 
-  /**
-   * @param {integer} id
-   * @returns {Promise}
-   */
-  get(id) {
-    return this.client.get(this.modelType, id).then(response => {
-      let result = response._source;
+    /**
+     * @param {string} id
+     * @returns {Promise}
+     */
+    public get(id: string): Promise<any> {
+        return this.client.get(this.type, id).then((response: any) => {
+            let result = response._source;
 
-      result.id = response._id;
+            result.id = response._id;
 
-      return result;
-    });
-  }
-
-  /**
-   * @param {integer} id
-   * @param {Object} data
-   * @returns {Promise}
-   */
-  update(id, data) {
-    return this.client.update(this.modelType, id, data);
-  }
-
-  /**
-   * @param {integer} id
-   * @returns {Promise}
-   */
-  remove(id) {
-    return this.client.remove(this.modelType, id);
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  all() {
-    return this.client.search(this.modelType)
-      .then(response => {
-        let result = [];
-
-        response.hits.hits.map((item) => {
-          result.push(item._source);
-
-          return item;
+            return result;
         });
+    }
 
-        return result;
-      });
-  }
+    /**
+     * @param {string} id
+     * @param {Object} data
+     * @returns {Promise}
+     */
+    public update(id: string, data: any): Promise<any> {
+        return this.client.update(this.type, id, data);
+    }
 
-  /**
-   * @param {string} proxyHost
-   * @returns {Promise}
-   */
-  getByProxyHost(proxyHost) {
-    let options = {
-      type: this.modelType,
-      body: {
-        'query': {
-          'match': {'proxyHost': proxyHost}
-        }
-      }
-    };
+    /**
+     * @param {string} id
+     * @returns {Promise}
+     */
+    public remove(id: string): Promise<any> {
+        return this.client.remove(this.type, id);
+    }
 
-    return this.client.searchByOptions(options)
-      .then(response => {
+    /**
+     * @returns {Promise}
+     */
+    public all(): Promise<any> {
+        return this.client.search(this.type)
+            .then((response: any) => {
+                let result: any[] = [];
 
-        if (response.hits.total === 0) {
-          return null;
-        }
+                response.hits.hits.map((item: any) => {
+                    result.push(item._source);
 
-        let item = response.hits.hits[0];
-        let result = item._source;
+                    return item;
+                });
 
-        result.id = item._id;
+                return result;
+            });
+    }
 
-        return result;
-      });
-  }
+    /**
+     * @param {string} proxyHost
+     * @returns {Promise}
+     */
+    public getByProxyHost(proxyHost: string): Promise<any> {
+        let options = {
+            type: this.type,
+            body: {
+                'query': {
+                    'match': {'proxyHost': proxyHost}
+                }
+            }
+        };
+
+        return this.client.searchByOptions(options)
+            .then(response => {
+
+                if (response.hits.total === 0) {
+                    return null;
+                }
+
+                let item = response.hits.hits[0];
+                let result = item._source;
+
+                result.id = item._id;
+
+                return result;
+            });
+    }
 }
-
-module.exports = new ServiceRepository(elastic, 'service');

@@ -1,13 +1,14 @@
 import {Response, Request} from 'express';
 import BaseController from './BaseController';
+import ServiceRepository from '../repositories/ServiceRepository';
 
 export default class ServicesController extends BaseController {
-    protected serviceRepository: any;
+    protected serviceRepository: ServiceRepository;
 
     /**
      * @param {serviceRepository} serviceRepository
      */
-    constructor(serviceRepository: any) {
+    constructor(serviceRepository: ServiceRepository) {
         super();
         this.serviceRepository = serviceRepository;
     }
