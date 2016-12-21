@@ -1,81 +1,80 @@
-let serviceRepository = require('../repositories/ServiceRepository');
-let BaseController = require('./BaseController');
+import {Response, Request} from 'express';
+import BaseController from './BaseController';
 
-class ServicesController extends BaseController {
+export default class ServicesController extends BaseController {
+    protected serviceRepository: any;
 
-  /**
-   * @param {serviceRepository} serviceRepository
-   */
-  constructor(serviceRepository) {
-    super();
-    this.serviceRepository = serviceRepository;
-  }
-
-  /**
-   * Create new service
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async create(req, res) {
-    let result = await this.serviceRepository.create(req.body);
-
-    this.respondWithCreated(res, '/services/' + result._id);
-  }
-
-  /**
-   * Get service
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async get(req, res) {
-    try {
-      let item = await this.serviceRepository.get(req.params.serviceId);
-
-      this.respondJson(res, item);
-    } catch (err) {
-      this.respondWithNotFound();
+    /**
+     * @param {serviceRepository} serviceRepository
+     */
+    constructor(serviceRepository: any) {
+        super();
+        this.serviceRepository = serviceRepository;
     }
-  }
 
-  /**
-   * Update service parameters
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async update(req, res) {
-    await this.serviceRepository.update(req.params.serviceId, req.body);
-    this.respondWithNoContent(res);
-  }
+    /**
+     * Create new service
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async create(request: Request, response: Response): Promise<void> {
+        let result = await this.serviceRepository.create(request.body);
 
-  /**
-   * Delete the service
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async remove(req, res) {
-    try {
-      await this.serviceRepository.remove(req.params.serviceId);
-      this.respondWithNoContent(res);
-    } catch (err) {
-      this.respondWithNotFound();
+        this.respondWithCreated(response, '/services/' + result._id);
     }
-  }
 
-  /**
-   * Get services list
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async list(req, res) {
-    let items = await this.serviceRepository.all();
+    /**
+     * Get service
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async get(request: Request, response: Response): Promise<void> {
+        try {
+            let item = await this.serviceRepository.get(request.params.serviceId);
 
-    this.respondJson(res, items);
-  }
+            this.respondJson(response, item);
+        } catch (err) {
+            this.respondWithNotFound();
+        }
+    }
+
+    /**
+     * Update service parameters
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async update(request: Request, response: Response): Promise<void> {
+        await this.serviceRepository.update(request.params.serviceId, request.body);
+        this.respondWithNoContent(response);
+    }
+
+    /**
+     * Delete the service
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async remove(request: Request, response: Response): Promise<void> {
+        try {
+            await this.serviceRepository.remove(request.params.serviceId);
+            this.respondWithNoContent(response);
+        } catch (err) {
+            this.respondWithNotFound();
+        }
+    }
+
+    /**
+     * Get services list
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async list(request: Request, response: Response): Promise<void> {
+        let items = await this.serviceRepository.all();
+
+        this.respondJson(response, items);
+    }
 }
-
-module.exports = new ServicesController(serviceRepository);

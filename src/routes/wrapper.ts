@@ -1,1 +1,15 @@
-module.exports = fn => (...args) => fn(...args).catch(args[2]);
+import {Request, Response, NextFunction, RequestHandler} from 'express';
+
+export default function wrap(callable: RequestHandler): RequestHandler {
+    return function (request: Request, response: Response, next: NextFunction): void {
+        let value = callable(request, response, next);
+
+        if (value instanceof Promise) {
+            value.catch(next);
+        }
+
+        if (value instanceof Error) {
+            next(value);
+        }
+    };
+}

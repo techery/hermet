@@ -1,9 +1,7 @@
-module.exports = function NotFound(message, errorCode) {
+export default class NotFound extends Error {
+    constructor(message: string) {
+        super(message);
 
-  Error.captureStackTrace(this, this.constructor);
-
-  this.name = this.constructor.name;
-  this.message = message || 'The requested resource couldn\'t be found';
-  this.statusCode = 404;
-  this.errorCode = errorCode || 404;
-};
+        this.name = 'NotFound';
+    }
+}

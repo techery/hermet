@@ -1,4 +1,3 @@
 {
-  "presets": ["es2016-node4"],
-  "plugins": ["transform-es2015-classes"]
+  "presets": ["es2016-node4"]
 }
