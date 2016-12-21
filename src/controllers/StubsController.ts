@@ -1,102 +1,104 @@
-let stubsRepository = require('../repositories/StubsRepository');
-let BaseController = require('./BaseController');
+import {Request, Response} from 'express';
+import config from '../config';
+import BaseController from './BaseController';
 
-class StubsController extends BaseController {
+export default class StubsController extends BaseController {
+    protected stubsRepository: any;
 
-  /**
-   * @param {Object} stubsRepository
-   */
-  constructor(stubsRepository) {
-    super();
-    this.stubsRepository = stubsRepository;
-  }
-
-  /**
-   * Create new stub
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async create(req, res) {
-    let result = await this.prepareStubRepositiory(req).create(req.body);
-
-    this.respondWithCreated(res, '/services/' + req.params.serviceId + '/stubs/' + result._id);
-  }
-
-  /**
-   * Get stub
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async get(req, res) {
-    try {
-      let stub = await this.prepareStubRepositiory(req).get(req.params.stubId);
-
-      this.respondJson(res, stub);
-    } catch (err) {
-      this.respondWithNotFound();
+    /**
+     * @param {Object} stubsRepository
+     */
+    constructor(stubsRepository: any) {
+        super();
+        this.stubsRepository = stubsRepository;
     }
-  }
 
-  /**
-   * Update stub details
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async update(req, res) {
-    await this.prepareStubRepositiory(req).update(req.params.stubId, req.body);
-    this.respondWithNoContent(res);
-  }
+    /**
+     * Create new stub
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async create(request: Request, response: Response): Promise<void> {
+        let result = await this.prepareStubRepositiory(request).create(request.body);
 
-  /**
-   * Remove stub
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async remove(req, res) {
-    try {
-      await this.prepareStubRepositiory(req).remove(req.params.stubId);
-      this.respondWithNoContent(res);
-    } catch (err) {
-      this.respondWithNotFound();
+        this.respondWithCreated(response, '/services/' + request.params.serviceId + '/stubs/' + result._id);
     }
-  }
 
-  /**
-   * Get all stubs
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async list(req, res) {
-    let items = await this.prepareStubRepositiory(req).all();
+    /**
+     * Get stub
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async get(request: Request, response: Response): Promise<void> {
+        try {
+            let stub = await this.prepareStubRepositiory(request).get(request.params.stubId);
 
-    this.respondJson(res, items);
-  }
+            this.respondJson(response, stub);
+        } catch (err) {
+            this.respondWithNotFound();
+        }
+    }
 
-  /**
-   * Remove all stubs
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  async removeAll(req, res) {
-    await this.prepareStubRepositiory(req).removeAll();
-    this.respondWithNoContent(res);
-  }
+    /**
+     * Update stub details
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async update(request: Request, response: Response): Promise<void> {
+        await this.prepareStubRepositiory(request).update(request.params.stubId, request.body);
+        this.respondWithNoContent(response);
+    }
 
-  /**
-   * @param {Object} req
-   * @returns {Object}
-   */
-  prepareStubRepositiory(req) {
-    return this.stubsRepository
-      .setServiceId(req.params.serviceId)
-      .setSessionId(req.sessionId);
-  }
+    /**
+     * Remove stub
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async remove(request: Request, response: Response): Promise<void> {
+        try {
+            await this.prepareStubRepositiory(request).remove(request.params.stubId);
+            this.respondWithNoContent(response);
+        } catch (err) {
+            this.respondWithNotFound();
+        }
+    }
+
+    /**
+     * Get all stubs
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async list(request: Request, response: Response): Promise<void> {
+        let items = await this.prepareStubRepositiory(request).all();
+
+        this.respondJson(response, items);
+    }
+
+    /**
+     * Remove all stubs
+     *
+     * @param {Request} request
+     * @param {Response} response
+     */
+    public async removeAll(request: Request, response: Response): Promise<void> {
+        await this.prepareStubRepositiory(request).removeAll();
+        this.respondWithNoContent(response);
+    }
+
+    /**
+     * @param {Request} request
+     * @returns {Object}
+     */
+    protected prepareStubRepositiory(request: Request): any {
+        const sessionId = request.get(config.app.hermet_session_header) || 'default';
+
+        return this.stubsRepository
+            .setServiceId(request.params.serviceId)
+            .setSessionId(sessionId);
+    }
 }
-
-module.exports = new StubsController(stubsRepository);

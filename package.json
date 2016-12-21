@@ -31,7 +31,6 @@
     "reflect-metadata": "0.1.8"
   },
   "devDependencies": {
-    "babel-plugin-transform-es2015-classes": "6.14.0",
     "babel-preset-es2016-node4": "6.0.1",
     "chai": "^3.5.0",
     "gulp": "3.9.1",
