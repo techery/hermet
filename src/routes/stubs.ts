@@ -1,8 +1,8 @@
+import {Router} from 'express';
 import wrap from './wrapper';
 import {stubsController} from '../container';
 
-let express = require('express');
-let router = new express.Router();
+let router = Router();
 
 router.route('/:serviceId/stubs')
   .get(wrap(async (req, res, next) => stubsController.list(req, res)))
@@ -14,4 +14,4 @@ router.route('/:serviceId/stubs/:stubId')
   .put(wrap(async (req, res, next) => stubsController.update(req, res)))
   .delete(wrap(async (req, res, next) => stubsController.remove(req, res)));
 
-module.exports = router;
+export default router;

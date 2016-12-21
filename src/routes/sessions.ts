@@ -1,8 +1,8 @@
+import {Router} from 'express';
 import wrap from './wrapper';
 import {sessionController} from '../container';
 
-let express = require('express');
-let router = new express.Router();
+let router = Router({mergeParams: true});
 
 router.route('/')
   .get(wrap(async (req, res, next) => sessionController.list(req, res)))
@@ -13,4 +13,4 @@ router.route('/:sessionId')
   .put(wrap(async (req, res, next) => sessionController.update(req, res)))
   .delete(wrap(async (req, res, next) => sessionController.remove(req, res)));
 
-module.exports = router;
+export default router;

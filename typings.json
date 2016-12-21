@@ -7,6 +7,7 @@
     "node-4": "registry:dt/node-4#4.0.0+20161121110008"
   },
   "dependencies": {
+    "body-parser": "registry:npm/body-parser#1.15.2+20161116154925",
     "dotenv": "registry:dt/dotenv#2.0.0+20161103000434",
     "express": "registry:dt/express#4.0.0+20161115070701",
     "http-proxy": "registry:npm/http-proxy#1.12.0+20161206164214",
