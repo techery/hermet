@@ -1,6 +1,6 @@
 import ElasticRepository from './ElasticRepository';
 
-export default class BaseRepository extends ElasticRepository {
+abstract class BaseRepository extends ElasticRepository {
 
     /**
      * @param {Object} data
@@ -59,3 +59,5 @@ export default class BaseRepository extends ElasticRepository {
             });
     }
 }
+
+export default BaseRepository;

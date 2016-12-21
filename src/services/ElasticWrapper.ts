@@ -43,7 +43,7 @@ export default class ElasticWrapper {
      */
     public create(type: string, data: any, parentId?: string): Promise<any> {
         return this.promisify((callback: any) => {
-            let options: IndexDocumentParams<any> = {index: this.index, type: type, body: data};
+            let options: IndexDocumentParams = {index: this.index, type: type, body: data};
 
             if (parentId) {
                 options.parent = parentId;

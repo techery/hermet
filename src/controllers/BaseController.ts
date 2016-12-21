@@ -2,7 +2,7 @@ import config from '../config';
 import NotFound from './errors/NotFound';
 import {Response} from 'express';
 
-export default class BaseController {
+abstract class BaseController {
     /**
      * Return json response
      *
@@ -43,3 +43,5 @@ export default class BaseController {
         throw new NotFound('The requested resource couldn\'t be found');
     }
 }
+
+export default BaseController;

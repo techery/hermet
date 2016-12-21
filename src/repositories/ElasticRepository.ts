@@ -1,6 +1,6 @@
 import ElasticWrapper from '../services/ElasticWrapper';
 
-export default class ElasticRepository {
+abstract class ElasticRepository {
 
     protected client: ElasticWrapper;
 
@@ -14,7 +14,7 @@ export default class ElasticRepository {
     /**
      * @returns string
      */
-    protected getType(): string {
-        throw new Error('getType method should be redefined in the child class');
-    }
+    abstract getType(): string;
 }
+
+export default ElasticRepository;
