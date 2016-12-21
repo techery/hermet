@@ -1,12 +1,10 @@
+import BaseRepository from './BaseRepository';
 
-export default class SessionsRepository {
-  protected elasticClient: any;
+export const MODEL_TYPE_SESSION = 'session';
 
-  /**
-   * @param {elasticClient} elasticClient
-   */
-  constructor(elasticClient: any) {
-    super();
-    this.elasticClient = elasticClient;
-  }
+export default class SessionsRepository extends BaseRepository {
+
+    protected getType(): string {
+        return MODEL_TYPE_SESSION;
+    }
 }

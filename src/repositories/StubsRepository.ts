@@ -1,9 +1,12 @@
 import ElasticRepository from './ElasticRepository';
 
+export const MODEL_TYPE_STUB = 'stub';
+export const DEFAULT_SESSION_ID = 'default';
+
 export default class StubsRepository extends ElasticRepository {
-    protected sessionId: string = 'default';
+
+    protected sessionId: string = DEFAULT_SESSION_ID;
     protected serviceId: string;
-    protected type: string = 'stub';
 
     /**
      * @param {string} serviceId
@@ -32,7 +35,7 @@ export default class StubsRepository extends ElasticRepository {
     public create(data: any): Promise<any> {
         data.sessionId = this.sessionId;
 
-        return this.client.create(this.type, data, this.serviceId);
+        return this.client.create(this.getType(), data, this.serviceId);
     }
 
     /**
@@ -40,7 +43,7 @@ export default class StubsRepository extends ElasticRepository {
      * @returns {Promise}
      */
     public get(id: string): Promise<any> {
-        return this.client.get(this.type, id, this.serviceId).then((response: any) => {
+        return this.client.get(this.getType(), id, this.serviceId).then((response: any) => {
             let result: any = response._source;
 
             result.id = response._id;
@@ -57,7 +60,7 @@ export default class StubsRepository extends ElasticRepository {
     public update(id: string, data: any): Promise<any> {
         data.sessionId = this.sessionId;
 
-        return this.client.update(this.type, id, data, this.serviceId);
+        return this.client.update(this.getType(), id, data, this.serviceId);
     }
 
     /**
@@ -65,14 +68,14 @@ export default class StubsRepository extends ElasticRepository {
      * @returns {Promise}
      */
     public remove(id: string): Promise<any> {
-        return this.client.remove(this.type, id, this.serviceId);
+        return this.client.remove(this.getType(), id, this.serviceId);
     }
 
     /**
      * @returns {Promise}
      */
     public all(): Promise<any> {
-        return this.client.search(this.type, this.prepareSearchParams())
+        return this.client.search(this.getType(), this.prepareSearchParams())
             .then((response: any) => {
                 let result: any[] = [];
 
@@ -91,7 +94,7 @@ export default class StubsRepository extends ElasticRepository {
      * @returns {Promise}
      */
     public removeAll(): Promise<any> {
-        return this.client.removeByQuery(this.type, this.prepareSearchParams());
+        return this.client.removeByQuery(this.getType(), this.prepareSearchParams());
     }
 
     /**
@@ -109,7 +112,7 @@ export default class StubsRepository extends ElasticRepository {
                         },
                         {
                             parent_id: {
-                                type: this.type,
+                                type: this.getType(),
                                 id: this.serviceId
                             }
                         }
@@ -117,5 +120,9 @@ export default class StubsRepository extends ElasticRepository {
                 }
             }
         };
+    }
+
+    protected getType(): string {
+        return MODEL_TYPE_STUB;
     }
 }

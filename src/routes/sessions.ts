@@ -1,10 +1,8 @@
-import SessionsController from "../controllers/SessionsController";
 import wrap from './wrapper';
+import {sessionController} from '../container';
 
 let express = require('express');
 let router = new express.Router();
-let stubsRepository = require('../repositories/StubsRepository');
-let sessionController = new SessionsController(stubsRepository);
 
 router.route('/')
   .get(wrap(async (req, res, next) => sessionController.list(req, res)))
