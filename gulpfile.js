@@ -17,6 +17,14 @@ const config = {
   },
   typings: {
     config: './typings.json'
+  },
+  lint: {
+    files: [
+      './src/**/*.ts',
+      '!./src/tests/proxy/**/*.ts',
+      '!./src/proxy/util/**/*.ts',
+      '!./src/proxy/predicates.ts'
+    ]
   }
 };
 
@@ -35,7 +43,7 @@ gulp.task('transpile', ['typings'], () => {
 });
 
 gulp.task('lint', () => {
-  return gulp.src(config.dirs.src)
+  return gulp.src(config.lint.files)
     .pipe(tslint())
     .pipe(tslint.report({
       emitError: false,
