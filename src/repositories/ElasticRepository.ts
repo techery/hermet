@@ -1,6 +1,7 @@
 import ElasticWrapper from '../services/ElasticWrapper';
 
-export default class ElasticRepository {
+abstract class ElasticRepository {
+
     protected client: ElasticWrapper;
 
     /**
@@ -9,4 +10,11 @@ export default class ElasticRepository {
     constructor(client: ElasticWrapper) {
         this.client = client;
     }
+
+    /**
+     * @returns string
+     */
+    protected abstract getType(): string;
 }
+
+export default ElasticRepository;

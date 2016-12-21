@@ -22,5 +22,19 @@ module.exports = {
       proxyHost:  'stubs-crud.proxy.io:5050',
       targetUrl: 'http://techery-dt-preprod.techery.io:3020'
     }
+  },
+  sessions: {
+    create: {
+      name: "QA autamation Android",
+      ttl: 3000
+    },
+    update: {
+      name: "QA autamation iOS",
+      ttl: 3000
+    },
+    delete: {
+      name: "Dump session",
+      ttl: 3000
+    },
   }
 };
