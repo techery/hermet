@@ -14,7 +14,7 @@ abstract class ElasticRepository {
     /**
      * @returns string
      */
-    abstract getType(): string;
+    protected abstract getType(): string;
 }
 
 export default ElasticRepository;
