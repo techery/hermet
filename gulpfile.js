@@ -46,8 +46,8 @@ gulp.task('lint', () => {
   return gulp.src(config.lint.files)
     .pipe(tslint())
     .pipe(tslint.report({
-      emitError: false,
-      summarizeFailureOutput: false
+      emitError: true,
+      summarizeFailureOutput: true
     }))
 });
 

@@ -1,5 +1,5 @@
 import config from '../config';
-import NotFound from './errors/NotFound';
+import NotFound from './../errors/NotFound';
 import {Response} from 'express';
 
 abstract class BaseController {
@@ -20,7 +20,7 @@ abstract class BaseController {
      * @param {string} uri
      */
     protected respondWithCreated(response: Response, uri: string): void {
-        response.set('Location', config.app.hermet_api_base_url + uri)
+        response.set('Location', config.app.base_url + uri)
             .status(201)
             .end();
     }

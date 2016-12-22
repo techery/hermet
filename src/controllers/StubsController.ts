@@ -23,7 +23,7 @@ export default class StubsController extends BaseController {
     public async create(request: Request, response: Response): Promise<void> {
         let result = await this.prepareStubRepositiory(request).create(request.body);
 
-        this.respondWithCreated(response, '/services/' + request.params.serviceId + '/stubs/' + result._id);
+        this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result._id);
     }
 
     /**
@@ -96,7 +96,7 @@ export default class StubsController extends BaseController {
      * @returns {Object}
      */
     protected prepareStubRepositiory(request: Request): StubsRepository {
-        const sessionId = request.get(config.app.hermet_session_header) || 'default';
+        const sessionId = request.get(config.app.session_header) || 'default';
 
         return this.stubsRepository
             .setServiceId(request.params.serviceId)

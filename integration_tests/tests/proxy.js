@@ -14,7 +14,7 @@ describe('Proxy', function () {
     var serviceData = {
       name: 'Hermet proxy rule',
       proxyHost: SERVICE_HOST_ALIAS,
-      targetUrl: config.app.hermet_api_base_url
+      targetUrl: config.app.base_url
     };
 
     before(function() {

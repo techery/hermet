@@ -23,7 +23,7 @@ export default class SessionsController extends BaseController {
     public async create(request: Request, response: Response): Promise<void> {
         let result = await this.sessionsRepository.create(request.body);
 
-        this.respondWithCreated(response, '/sessions/' + result._id);
+        this.respondWithCreated(response, 'api/sessions/' + result._id);
     }
 
     /**
