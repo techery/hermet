@@ -1,45 +1,42 @@
+import {IncomingMessage} from 'http';
+import * as url from 'url';
+import {proxyLogger as logger} from '../container';
+
 let predicateResolver = require('./predicates');
-let url = require('url');
-let logger = require('../components/logger').proxyLogger;
 
-class StubResolver {
+export default class StubResolver {
+    /**
+     * Create simple request. It is need to optimize normalization during comparing.
+     *
+     * @param {IncomingMessage} request Protocol request
+     * @returns Object
+     */
+    private prepareRequest(request: IncomingMessage): Object {
+        return {
+            method: request.method,
+            path: url.parse(request.url).pathname,
+            headers: request.headers
+        };
+    }
 
-  /**
-   * Create simple request. It is need to optimize normalization during comparing.
-   *
-   * @param req Protocol request
-   * @returns Object
-   */
-  static prepareRequest(req) {
-    let urlParts = url.parse(req.url);
+    /**
+     * Try to get stub for request param satisfying for the stub predicates
+     *
+     * @param {any[]} stubs Map(id, stub)
+     * @param {IncomingMessage} request     Protocol request
+     * @returns Object
+     */
+    public resolveStubByRequest(stubs: any[], request: IncomingMessage): any {
+        return stubs.find((stub: any) => {
+            let predicates: any[] = stub.predicates || [];
 
-    return {
-      method: req.method,
-      path: urlParts.pathname,
-      headers: req.headers
-    };
-  }
+            if (!predicates.length) {
+                return true;
+            }
 
-  /**
-   * Try to get stub for request param satisfying for the stub predicates
-   *
-   * @param stubs Map(id, stub)
-   * @param req     Protocol request
-   * @returns Object
-   */
-  resolveStubByRequest(stubs, req) {
-    return stubs.find(function (stub) {
-      let predicates = stub.predicates || [];
-
-      if (!predicates.length) {
-        return true;
-      }
-
-      return predicates.every(function (predicate) {
-        return predicateResolver.resolve(predicate, StubResolver.prepareRequest(req), 'utf8', logger);
-      });
-    });
-  }
+            return predicates.every((predicate: any) => {
+                return predicateResolver.resolve(predicate, this.prepareRequest(request), 'utf8', logger);
+            });
+        });
+    }
 }
-
-module.exports = new StubResolver();

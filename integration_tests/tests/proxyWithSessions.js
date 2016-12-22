@@ -7,7 +7,7 @@ describe('Proxy with sessions', function () {
   var headers = {};
 
   before(function() {
-    headers[config.app.hermet_session_header] = "tests_session";
+    headers[config.app.session_header] = "tests_session";
     return utils.flushDB();
   });
 
@@ -17,7 +17,7 @@ describe('Proxy with sessions', function () {
     var serviceData = {
       name: 'Hermet proxy rule',
       proxyHost: SERVICE_HOST_ALIAS,
-      targetUrl: config.app.hermet_api_base_url
+      targetUrl: config.app.base_url
     };
 
     before(function() {

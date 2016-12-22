@@ -1,10 +1,9 @@
-import NotFound from './controllers/errors/NotFound';
+import NotFound from './errors/NotFound';
 import {Request, Response, NextFunction} from 'express';
 import routes from './routes/routes';
 import * as parser from 'body-parser';
 import * as express from 'express';
-
-let logger = require('./components/logger').apiLogger;
+import {appLogger as logger, appHandler as errorHandler} from './container';
 
 const app = express();
 
@@ -20,16 +19,8 @@ app.use(function (request: Request, response: Response): void {
 
 // error handler
 app.use(function (err: any, request: Request, response: Response, next: NextFunction): any {
-    logger.error('Request: ' + logger.curlify(request, request.body || null) + '\r\n' + err.stack);
-    if (err instanceof NotFound) {
-        response.status(404).json({error: err.name + ': ' + err.message});
-    } else if (err instanceof Error) {
-        response.status(500).json({error: err.name + ': ' + err.message});
-    } else {
-        response.status(500).json({error: 'Hermet API error.'});
-    }
-
+    errorHandler.handle(err, request, response);
     next();
 });
 
-module.exports = app;
+export default app;

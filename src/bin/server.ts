@@ -3,27 +3,23 @@
 
 import config from '../config';
 import {createServer} from 'http';
+import app from '../app';
+import proxy from '../proxy';
+import {appLogger, proxyLogger} from '../container';
 import ErrnoException = NodeJS.ErrnoException;
-
-/**
- * Module dependencies.
- */
-let app = require('../app');
-let proxy = require('../proxy');
-let http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
-let apiPort = config.app.hermet_api_port;
-let proxyPort = config.app.hermet_proxy_port;
+let apiPort = config.app.port;
+let proxyPort = config.proxy.port;
 
 app.set('port', apiPort);
 
 /**
  * Create API server.
  */
-let server = http.createServer(app);
+let server = createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -31,19 +27,17 @@ let server = http.createServer(app);
 server.listen(apiPort);
 server.on('error', onError);
 server.on('listening', () => {
-    // TODO: Replace console.log with logger.info
-    console.log('API server listening on ' + apiPort);
+    appLogger.info('API server listening on ' + apiPort);
 });
 
 /**
  * Create Proxy service
  */
-let proxySever = http.createServer(proxy);
+let proxySever = createServer(proxy);
 
 proxySever.listen(proxyPort);
 proxySever.on('listening', () => {
-    // TODO: Replace console.log with logger.info
-    console.log('Proxy server listening on ' + proxyPort);
+    proxyLogger.info('Proxy server listening on ' + proxyPort);
 });
 
 /**
@@ -61,13 +55,11 @@ function onError(error: ErrnoException): void {
     // handle specific listen errors with friendly messages
     switch (error.code) {
         case 'EACCES':
-            // TODO: Replace console.log with logger.info
-            console.error('Port requires elevated privileges');
+            appLogger.error('Port requires elevated privileges');
             process.exit(1);
             break;
         case 'EADDRINUSE':
-            // TODO: Replace console.log with logger.info
-            console.error('Port is already in use');
+            appLogger.error('Port is already in use');
             process.exit(1);
             break;
         default:
