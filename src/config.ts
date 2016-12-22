@@ -10,8 +10,8 @@ const config: Config = Object.freeze({
         session_header: env('HERMET_SESSION_HEADER', 'x-session-id')
     },
     log: {
-        app: env('LOG_API_FILE_NAME', 'api.log'),
-        proxy: env('LOG_PROXY_FILE_NAME', 'proxy.log'),
+        app: env('LOG_API_FILE_NAME', 'log/api.log'),
+        proxy: env('LOG_PROXY_FILE_NAME', 'log/proxy.log'),
         level: env('LOG_LEVEL', 'warn')
     },
     proxy: {
