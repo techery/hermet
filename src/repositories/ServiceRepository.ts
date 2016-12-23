@@ -1,8 +1,9 @@
-import BaseRepository from './BaseRepository';
+import SearchParams = Elasticsearch.SearchParams;
+import ElasticRepository from './ElasticRepository';
 
 export const MODEL_TYPE_SERVICE = 'service';
 
-export default class ServiceRepository extends BaseRepository {
+export default class ServiceRepository extends ElasticRepository {
 
     protected getType(): string {
         return MODEL_TYPE_SERVICE;
@@ -13,16 +14,15 @@ export default class ServiceRepository extends BaseRepository {
      * @returns {Promise}
      */
     public getByProxyHost(proxyHost: string): Promise<any> {
-        let options = {
-            type: this.getType(),
-            body: {
-                'query': {
-                    'match': {'proxyHost': proxyHost}
-                }
+
+        let options: SearchParams = this.optionsFactory.getSearchParams(this.getType());
+        options.body = {
+            'query': {
+                'match': {'proxyHost': proxyHost}
             }
         };
 
-        return this.client.searchByOptions(options)
+        return this.client.search(options)
             .then(response => {
 
                 if (response.hits.total === 0) {

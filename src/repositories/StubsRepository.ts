@@ -1,22 +1,13 @@
 import ElasticRepository from './ElasticRepository';
+import IndexDocumentParams = Elasticsearch.IndexDocumentParams;
+import GetParams = Elasticsearch.GetParams;
+import SearchParams = Elasticsearch.SearchParams;
 
 export const MODEL_TYPE_STUB = 'stub';
-export const DEFAULT_SESSION_ID = 'default';
 
 export default class StubsRepository extends ElasticRepository {
 
-    protected sessionId: string = DEFAULT_SESSION_ID;
-    protected serviceId: string;
-
-    /**
-     * @param {string} serviceId
-     * @returns {StubsRepository}
-     */
-    public setServiceId(serviceId: string): StubsRepository {
-        this.serviceId = serviceId;
-
-        return this;
-    }
+    protected sessionId: string;
 
     /**
      * @param {string} sessionId
@@ -29,53 +20,13 @@ export default class StubsRepository extends ElasticRepository {
     }
 
     /**
-     * @param {Object} data
-     * @returns {Promise}
-     */
-    public create(data: any): Promise<any> {
-        data.sessionId = this.sessionId;
-
-        return this.client.create(this.getType(), data, this.serviceId);
-    }
-
-    /**
-     * @param {string} id
-     * @returns {Promise}
-     */
-    public get(id: string): Promise<any> {
-        return this.client.get(this.getType(), id, this.serviceId).then((response: any) => {
-            let result: any = response._source;
-
-            result.id = response._id;
-
-            return result;
-        });
-    }
-
-    /**
-     * @param {string} id
-     * @param {Object} data
-     * @returns {Promise}
-     */
-    public update(id: string, data: any): Promise<any> {
-        data.sessionId = this.sessionId;
-
-        return this.client.update(this.getType(), id, data, this.serviceId);
-    }
-
-    /**
-     * @param {string} id
-     * @returns {Promise}
-     */
-    public remove(id: string): Promise<any> {
-        return this.client.remove(this.getType(), id, this.serviceId);
-    }
-
-    /**
      * @returns {Promise}
      */
     public all(): Promise<any> {
-        return this.client.search(this.getType(), this.prepareSearchParams())
+        let options: SearchParams = this.optionsFactory.getSearchParams(this.getType());
+        options.body = this.prepareSearchBody();
+
+        return this.client.search(options)
             .then((response: any) => {
                 let result: any[] = [];
 
@@ -94,13 +45,16 @@ export default class StubsRepository extends ElasticRepository {
      * @returns {Promise}
      */
     public removeAll(): Promise<any> {
-        return this.client.removeByQuery(this.getType(), this.prepareSearchParams());
+        let options: SearchParams = this.optionsFactory.getDeleteByQueryParams(this.getType());
+        options.body = this.prepareSearchBody();
+
+        return this.client.removeByQuery(options);
     }
 
     /**
      * @returns {Object}
      */
-    protected prepareSearchParams(): Object {
+    protected prepareSearchBody(): Object {
         return {
             query: {
                 bool: {
@@ -113,7 +67,7 @@ export default class StubsRepository extends ElasticRepository {
                         {
                             parent_id: {
                                 type: this.getType(),
-                                id: this.serviceId
+                                id: this.parentId
                             }
                         }
                     ]

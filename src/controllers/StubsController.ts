@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
-import config from '../config';
 import BaseController from './BaseController';
 import StubsRepository from '../repositories/StubsRepository';
+import {SessionRequest} from '../interfaces/requests/SessionRequest';
 
 export default class StubsController extends BaseController {
     protected stubsRepository: StubsRepository;
@@ -20,7 +20,8 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async create(request: Request, response: Response): Promise<void> {
+    public async create(request: SessionRequest, response: Response): Promise<void> {
+        request.body.sessionId = request.session.id;
         let result = await this.prepareStubRepositiory(request).create(request.body);
 
         this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result._id);
@@ -32,7 +33,7 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async get(request: Request, response: Response): Promise<void> {
+    public async get(request: SessionRequest, response: Response): Promise<void> {
         try {
             let stub = await this.prepareStubRepositiory(request).get(request.params.stubId);
 
@@ -88,6 +89,7 @@ export default class StubsController extends BaseController {
      */
     public async removeAll(request: Request, response: Response): Promise<void> {
         await this.prepareStubRepositiory(request).removeAll();
+
         this.respondWithNoContent(response);
     }
 
@@ -95,11 +97,10 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @returns {Object}
      */
-    protected prepareStubRepositiory(request: Request): StubsRepository {
-        const sessionId = request.get(config.app.session_header) || 'default';
-
+    protected prepareStubRepositiory(request: SessionRequest): StubsRepository {
         return this.stubsRepository
-            .setServiceId(request.params.serviceId)
-            .setSessionId(sessionId);
+            .setParentId(request.params.serviceId)
+            .setTtl(null)
+            .setSessionId(request.session.id);
     }
 }

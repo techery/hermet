@@ -2,7 +2,6 @@ import {Router, Request, Response} from 'express';
 import services from './services';
 import stubs from './stubs';
 import sessions from './sessions';
-import web from './stubs';
 
 let router = Router({mergeParams: true});
 

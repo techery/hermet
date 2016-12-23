@@ -59,7 +59,7 @@ export default async (request: IncomingMessage, response: ServerResponse) => {
     try {
         let sessionId = request.headers[config.app.session_header] || 'default';
         let stubs = await stubsRepository
-            .setServiceId(service.id)
+            .setParentId(service.id)
             .setSessionId(sessionId)
             .all();
 
