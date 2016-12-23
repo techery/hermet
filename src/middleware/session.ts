@@ -1,16 +1,16 @@
-import {Response, Request} from 'express';
+import {Response} from 'express';
 import config from '../config';
 import {sessionRepository} from '../container';
 import {SessionRequest} from '../interfaces/requests/SessionRequest';
 import {Session} from '../interfaces/models/Session';
 import wrap from '../routes/wrapper';
 
-async function sessionMiddleware(req: SessionRequest, res: Response, next: Function): any {
+async function sessionMiddleware(request: SessionRequest, response: Response, next: Function): Promise<any> {
 
-    const sessionId: string = req.get(config.app.session_header);
+    const sessionId: string = request.get(config.app.session_header);
 
     if (!sessionId) {
-        req.session = {
+        request.session = {
             id: 'default',
             ttl: 1000
         } as Session;
@@ -18,11 +18,13 @@ async function sessionMiddleware(req: SessionRequest, res: Response, next: Funct
     }
 
     try {
-        req.session = await sessionRepository.get(sessionId) as Session;
+        request.session = await sessionRepository.get(sessionId) as Session;
         next();
     } catch (err) {
         throw new Error('Session with id [' + sessionId +  '] not found');
     }
 }
 
-export default wrap(async (req: SessionRequest, res, next) => sessionMiddleware(req, res, next));
+export default wrap(
+    async (request: SessionRequest, response: Response, next: Function) => sessionMiddleware(request, response, next)
+);
