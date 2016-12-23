@@ -1,14 +1,22 @@
 'use strict';
 
-const SERVICE_HOST_ALIAS = config.env.localhost_alias + ':' + config.app.hermet_proxy_port;
+const SERVICE_HOST_ALIAS = config.env.localhost_alias + ':' + config.proxy.port;
 
 describe('Proxy with sessions', function () {
 
   var headers = {};
 
   before(function() {
-    headers[config.app.session_header] = "tests_session";
-    return utils.flushDB();
+    return utils.flushDB().then(function(result) {
+        return hermetApiClient.post('/sessions', fixtures.sessions.create);
+      }).then(function(result) {
+        expect(result).to.have.status(201);
+        var sessionId = utils.getItemIdFromLocation(result.response.headers.location);
+
+        headers[config.app.hermet_session_header] = sessionId;
+
+        return chakram.wait();
+      });
   });
 
   context('should proxy requests for existing rules', function() {
@@ -17,7 +25,7 @@ describe('Proxy with sessions', function () {
     var serviceData = {
       name: 'Hermet proxy rule',
       proxyHost: SERVICE_HOST_ALIAS,
-      targetUrl: config.app.base_url
+      targetUrl: config.app.api_base_url
     };
 
     before(function() {

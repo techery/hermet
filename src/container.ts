@@ -15,6 +15,7 @@ import SessionsRepository from './repositories/SessionsRepository';
 import StubResolver from './proxy/StubResolver';
 import ProxyHandler from './errors/ProxyHandler';
 import AppHandler from './errors/AppHandler';
+import ElasticOptionsFactory from './services/ElasticOptonsFactory';
 
 require('winston-daily-rotate-file');
 
@@ -22,10 +23,11 @@ let elasticsearch = new Client({
     host: 'localhost:9200',
     log: config.debug ? 'trace' : 'warning'
 });
-let elastic = new ElasticWrapper(elasticsearch, config.elasticsearch.index);
-let serviceRepository = new ServiceRepository(elastic);
-let stubsRepository = new StubsRepository(elastic);
-let sessionRepository = new SessionsRepository(elastic);
+let elastic = new ElasticWrapper(elasticsearch);
+let elasticOptionsFactory = new ElasticOptionsFactory(config.elasticsearch.index);
+let serviceRepository = new ServiceRepository(elastic, elasticOptionsFactory);
+let stubsRepository = new StubsRepository(elastic, elasticOptionsFactory);
+let sessionRepository = new SessionsRepository(elastic, elasticOptionsFactory);
 
 let servicesController = new ServicesController(serviceRepository);
 let stubsController = new StubsController(stubsRepository);
@@ -61,8 +63,10 @@ let proxyHandler = new ProxyHandler(proxyLogger);
 
 export {
     elastic,
+    elasticOptionsFactory,
     serviceRepository,
     stubsRepository,
+    sessionRepository,
     servicesController,
     stubsController,
     sessionController,
