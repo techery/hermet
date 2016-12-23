@@ -11,6 +11,14 @@ export default class ProxyHandler extends Handler {
      * @param {ServerResponse} response
      */
     public handle(error: any, request: IncomingMessage, response: ServerResponse): void {
+        /*
+            Some internal proxy error did't pass request and response objects
+            and we need throw its again for proper handling.
+         */
+        if (!request) {
+            throw new ProxyError(500, error.message);
+        }
+
         this.log(request, error);
 
         if (error instanceof ProxyError) {
