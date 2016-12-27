@@ -5,6 +5,7 @@ let moment = require('moment');
 export class Session implements SessionInterface {
     public id: string;
     public name: string;
+    public createAt: string;
     public expireAt: string;
     public ttl: number;
 
@@ -12,6 +13,8 @@ export class Session implements SessionInterface {
         this.id = params.id;
         this.name = params.name || '';
         this.ttl = params.ttl || null;
-        this.expireAt = moment().add(this.ttl, 's').format();
+        let now = moment();
+        this.createAt = now.format();
+        this.expireAt = this.ttl ? now.add(this.ttl, 's').format() : null;
     }
 }

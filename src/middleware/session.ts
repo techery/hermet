@@ -12,7 +12,8 @@ async function sessionMiddleware(request: SessionRequest, response: Response, ne
     if (!sessionId) {
         request.session = {
             id: 'default',
-            name: 'Default session'
+            name: 'Default session',
+            expireAt: null
         } as SessionInterface;
         return next();
     }

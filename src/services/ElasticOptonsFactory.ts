@@ -20,11 +20,10 @@ export default class ElasticOptionsFactory {
      * @param {string} type
      * @param {Object} data
      * @param {string} parentId
-     * @param {string} ttl
      *
      * @returns {IndexDocumentParams<any>}
      */
-    public getIndexParams(type: string, data: any, parentId: string, ttl: string): IndexDocumentParams<any> {
+    public getIndexParams(type: string, data: any, parentId: string): IndexDocumentParams<any> {
         let options: IndexDocumentParams<any> = {
                 index: this.index,
                 type: type,
@@ -34,10 +33,6 @@ export default class ElasticOptionsFactory {
 
         if (parentId) {
             options.parent = parentId;
-        }
-
-        if (ttl) {
-            options.ttl = ttl;
         }
 
         return options;

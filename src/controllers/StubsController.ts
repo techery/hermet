@@ -2,6 +2,7 @@ import {Request, Response} from 'express';
 import BaseController from './BaseController';
 import StubsRepository from '../repositories/StubsRepository';
 import {SessionRequest} from '../interfaces/requests/SessionRequest';
+import {Stub} from '../models/Stub';
 
 export default class StubsController extends BaseController {
     protected stubsRepository: StubsRepository;
@@ -21,8 +22,13 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public async create(request: SessionRequest, response: Response): Promise<void> {
-        request.body.sessionId = request.session.id;
-        let result = await this.prepareStubRepositiory(request).create(request.body);
+
+        let stub: Stub = new Stub(request.body);
+        stub.sessionId = request.session.id;
+        stub.expireAt = request.session.expireAt;
+        stub.serviceId = request.params.serviceId;
+
+        let result = await this.prepareStubRepositiory(request).create(stub);
 
         this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result._id);
     }
@@ -100,7 +106,6 @@ export default class StubsController extends BaseController {
     protected prepareStubRepositiory(request: SessionRequest): StubsRepository {
         return this.stubsRepository
             .setParentId(request.params.serviceId)
-            .setTtl(null)
             .setSessionId(request.session.id);
     }
 }
