@@ -8,7 +8,7 @@ describe('Stubs api', function () {
 
     var stubData = {
       response: 'Ok',
-      predicate: {equals: {field: 'value'}}
+      predicates: [{equals: {field: 'value'}}]
     };
 
     before(function() {

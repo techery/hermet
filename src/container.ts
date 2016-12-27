@@ -16,6 +16,7 @@ import StubResolver from './proxy/StubResolver';
 import ProxyHandler from './errors/ProxyHandler';
 import AppHandler from './errors/AppHandler';
 import ElasticOptionsFactory from './services/ElasticOptonsFactory';
+import SessionTransformer from './transformers/SessionTransformer';
 
 require('winston-daily-rotate-file');
 
@@ -29,6 +30,7 @@ let serviceRepository = new ServiceRepository(elastic, elasticOptionsFactory);
 let stubsRepository = new StubsRepository(elastic, elasticOptionsFactory);
 let sessionRepository = new SessionsRepository(elastic, elasticOptionsFactory);
 
+let sessionTransformer = new SessionTransformer();
 let servicesController = new ServicesController(serviceRepository);
 let stubsController = new StubsController(stubsRepository);
 let sessionController = new SessionsController(sessionRepository);
@@ -74,5 +76,6 @@ export {
     appLogger,
     proxyLogger,
     appHandler,
-    proxyHandler
+    proxyHandler,
+    sessionTransformer
 };

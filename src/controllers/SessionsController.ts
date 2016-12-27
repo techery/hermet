@@ -1,6 +1,9 @@
 import {Response, Request} from 'express';
 import BaseController from './BaseController';
 import SessionsRepository from '../repositories/SessionsRepository';
+import {sessionTransformer} from '../container';
+import {Session} from '../models/Session';
+import {SessionInterface} from '../interfaces/models/SessionInterface';
 
 export default class SessionsController extends BaseController {
 
@@ -21,7 +24,8 @@ export default class SessionsController extends BaseController {
      * @param {Response} response
      */
     public async create(request: Request, response: Response): Promise<void> {
-        let result = await this.sessionsRepository.create(request.body);
+        let session: Session = new Session(request.body);
+        let result = await this.sessionsRepository.create(session);
 
         this.respondWithCreated(response, 'api/sessions/' + result._id);
     }
@@ -34,9 +38,9 @@ export default class SessionsController extends BaseController {
      */
     public async get(request: Request, response: Response): Promise<void> {
         try {
-            let item = await this.sessionsRepository.get(request.params.sessionId);
+            let session: SessionInterface = await this.sessionsRepository.get(request.params.sessionId);
 
-            this.respondJson(response, item);
+            this.respondJson(response, sessionTransformer.transform(session));
         } catch (err) {
             this.respondWithNotFound();
         }

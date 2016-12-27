@@ -34,24 +34,13 @@ abstract class ElasticRepository {
     }
 
     /**
-     * @param {string} ttl
-     *
-     * @returns {ElasticRepository}
-     */
-    public setTtl(ttl: string): this {
-        this.ttl = ttl;
-
-        return this;
-    }
-
-    /**
      * @param {Object} data
      *
      * @returns {Promise}
      */
     public create(data: any): Promise<any> {
         return this.client.create(
-            this.optionsFactory.getIndexParams(this.getType(), data, this.parentId, this.ttl)
+            this.optionsFactory.getIndexParams(this.getType(), data, this.parentId)
         );
     }
 
