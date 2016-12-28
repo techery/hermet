@@ -1,6 +1,7 @@
 import config from './config';
 import {createProxy} from 'http-proxy';
 import {ServerResponse, IncomingMessage} from 'http';
+import {PassThrough} from 'stream';
 import ProxyError from './errors/ProxyError';
 import {
     serviceRepository,
@@ -56,24 +57,40 @@ export default async (request: IncomingMessage, response: ServerResponse) => {
         return errorHandler.handle(new ProxyError(400, message), request, response);
     }
 
-    try {
-        let sessionId = request.headers[config.app.session_header] || 'default';
-        let stubs = await stubsRepository
-            .setParentId(service.id)
-            .setSessionId(sessionId)
-            .all();
+    let body: any[] = [];
 
-        if (isStubsApplied(stubs, request, response)) {
-            return;
+    request.on('error', function(error: Error): void {
+        errorHandler.handle(error, request, response);
+    }).on('data', function(chunk: string): void {
+        body.push(chunk);
+    }).on('end', async function(): Promise<void> {
+        let buffer = Buffer.concat(body);
+
+        let bufferStream = new PassThrough();
+        bufferStream.end(new Buffer(buffer));
+
+        try {
+
+            let sessionId = request.headers[config.app.session_header] || 'default';
+            let stubs = await stubsRepository
+                .setParentId(service.id)
+                .setSessionId(sessionId)
+                .all();
+
+            if (isStubsApplied(stubs, request, response)) {
+                return;
+            }
+
+            const options: any = {
+                target: service.targetUrl,
+                proxyTimeout: service.proxyTimeout || config.proxy.timeout,
+                buffer: bufferStream
+            };
+
+            proxy.web(request, response, options);
+
+        } catch (error) {
+            return errorHandler.handle(error, request, response);
         }
-
-        const options: any = {
-            target: service.targetUrl,
-            proxyTimeout: service.proxyTimeout || config.proxy.timeout
-        };
-
-        proxy.web(request, response, options);
-    } catch (error) {
-        return errorHandler.handle(error, request, response);
-    }
+    });
 };
