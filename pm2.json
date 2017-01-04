@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "Hermet",
+      "script": "./dist/bin/server.js",
+      "node_args": "--harmony --use_strict",
+      "instances": 2
+    }
+  ]
+}
