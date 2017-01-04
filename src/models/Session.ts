@@ -1,6 +1,6 @@
 import TimeSpan = Elasticsearch.TimeSpan;
 import {SessionInterface} from '../interfaces/models/SessionInterface';
-let moment = require('moment');
+import * as moment from 'moment';
 
 export class Session implements SessionInterface {
     public id: string;

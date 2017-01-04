@@ -37,10 +37,10 @@ npm start
 
 This command invokes `node dist/bin/server.js` command which is responsible for starting the service.
 
-For starting cluster with 2 instances use: 
+For starting cluster use:
 
 ```
-pm2 start ./dist/bin/server.js -i 2 --name 'hermet'
+pm2 start pm2.json
 ```
 
 ### Integration tests
