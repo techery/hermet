@@ -19,6 +19,7 @@ const config: Config = Object.freeze({
         timeout: env('PROXY_DEFAULT_TIMEOUT', 10000)
     },
     elasticsearch: {
+        host: env('ELASTIC_HOST', 'elasticsearch:9200'),
         index: env('ELASTIC_INDEX', 'hermet')
     }
 });
@@ -44,6 +45,7 @@ class Config {
     };
 
     public elasticsearch: {
+        host: string,
         index: string
     };
 }
