@@ -21,9 +21,10 @@ import SessionTransformer from './transformers/SessionTransformer';
 require('winston-daily-rotate-file');
 
 let elasticsearch = new Client({
-    host: 'localhost:9200',
+    host: config.elasticsearch.host,
     log: config.debug ? 'trace' : 'warning'
 });
+
 let elastic = new ElasticWrapper(elasticsearch);
 let elasticOptionsFactory = new ElasticOptionsFactory(config.elasticsearch.index);
 let serviceRepository = new ServiceRepository(elastic, elasticOptionsFactory);

@@ -3,44 +3,27 @@ Make your server hermetic.
 Techery internal service for proxying third party services and stub them if needed.
  
 ### System requirements
- 
- * Nodejs ~4.1
- * npm    ~3.8.6
- * couchbase ~4.5
- 
+ * Docker
 
-### Installation.
-
-#### Use npm and install all local dependencies
-
+### Installation
+For the production:
 ```
-npm install pm2 mocha -g 
-npm install && gulp
-```
-
-This command will install all the needed npm dependencies.
-
-#### Set required environment variables
-
-```
+# Copy and edit .env file
 cp .env.sample .env
-```
-Then set custom variables as needed
 
-Also create "log" directory for log files into the root of project.
-
-### Running service
-
-```
-npm start
+# Run docker composer
+docker-compose up hermet
 ```
 
-This command invokes `node dist/bin/server.js` command which is responsible for starting the service.
-
-For starting cluster use:
-
+For the development:
 ```
-pm2 start pm2.json
+npm install
+docker-compose up hermet_dev
+```
+
+Create database index:
+```bash
+curl -XPUT 'localhost:9200/hermet?pretty' -d"$(< src/resources/mapping.json)"
 ```
 
 ### Integration tests

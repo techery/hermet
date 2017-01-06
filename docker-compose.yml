@@ -1,0 +1,54 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: elasticsearch:5
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    mem_limit: 1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  hermet:
+    build: .
+    container_name: hermet
+    env_file: .env
+    environment:
+      NODE_ENV: production
+    ports:
+      - '5000:5000'
+      - '5050:5050'
+    depends_on:
+      - elasticsearch
+
+  hermet_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: pm2 start pm2.json --no-daemon
+    container_name: hermet_dev
+    env_file: .env
+    environment:
+      NODE_ENV: development
+    ports:
+      - '5000:5000'
+      - '5050:5050'
+    volumes:
+      - .:/home/hermet/app
+    depends_on:
+      - elasticsearch
+
+volumes:
+  esdata:
+    driver: local
