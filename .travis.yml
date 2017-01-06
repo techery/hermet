@@ -3,6 +3,5 @@ node_js:
   - "4.2.6"
 script:
   - ./node_modules/.bin/gulp build
-  - npm test
 notifications:
   email: false

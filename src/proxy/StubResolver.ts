@@ -2,7 +2,7 @@ import {IncomingMessage} from 'http';
 import * as url from 'url';
 import {proxyLogger as logger} from '../container';
 
-let predicateResolver = require('./predicates');
+let predicateResolver = require('hermet-predicates');
 
 export default class StubResolver {
     /**
