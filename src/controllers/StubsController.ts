@@ -105,7 +105,7 @@ export default class StubsController extends BaseController {
      */
     protected prepareStubRepositiory(request: SessionRequest): StubsRepository {
         return this.stubsRepository
-            .setParentId(request.params.serviceId)
+            .setServiceId(request.params.serviceId)
             .setSessionId(request.session.id);
     }
 }

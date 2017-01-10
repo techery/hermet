@@ -5,8 +5,6 @@ abstract class ElasticRepository {
 
     protected client: ElasticWrapper;
     protected optionsFactory: ElasticOptionsFactory;
-    protected parentId: string = null;
-    protected ttl: string = null;
 
     /**
      * @param {ElasticWrapper} client
@@ -23,24 +21,13 @@ abstract class ElasticRepository {
     protected abstract getType(): string;
 
     /**
-     * @param {string} parentId
-     *
-     * @returns {ElasticRepository}
-     */
-    public setParentId(parentId: string): this {
-        this.parentId = parentId;
-
-        return this;
-    }
-
-    /**
      * @param {Object} data
      *
      * @returns {Promise}
      */
     public create(data: any): Promise<any> {
         return this.client.create(
-            this.optionsFactory.getIndexParams(this.getType(), data, this.parentId)
+            this.optionsFactory.getIndexParams(this.getType(), data)
         );
     }
 
@@ -51,7 +38,7 @@ abstract class ElasticRepository {
      */
     public get(id: string): Promise<any> {
         return this.client.get(
-            this.optionsFactory.getGetParams(this.getType(), id, this.parentId)
+            this.optionsFactory.getGetParams(this.getType(), id)
         ).then((response: any) => {
             let result = response._source;
 
@@ -69,7 +56,7 @@ abstract class ElasticRepository {
      */
     public update(id: string, data: any): Promise<any> {
         return this.client.update(
-            this.optionsFactory.getUpdateParams(this.getType(), id, data, this.parentId)
+            this.optionsFactory.getUpdateParams(this.getType(), id, data)
         );
     }
 
@@ -80,7 +67,7 @@ abstract class ElasticRepository {
      */
     public remove(id: string): Promise<any> {
         return this.client.remove(
-            this.optionsFactory.getDeleteParams(this.getType(), id, this.parentId)
+            this.optionsFactory.getDeleteParams(this.getType(), id)
         );
     }
 

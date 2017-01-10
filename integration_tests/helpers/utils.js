@@ -11,13 +11,26 @@ module.exports = {
     return httpCLient.delete('http://localhost:9200/hermet').then(function (response) {
       return httpCLient.put('http://localhost:9200/hermet', {
         "mappings": {
-          "service": {}, "stub": {
-            "_parent": {"type": "service"}, "properties": {
+          "service": {
+            "properties": {
+              "proxyHost": {
+                "type": "keyword"
+              }
+            }
+          },
+          "stub": {
+            "properties": {
               "response": {
                 "enabled": false
               },
               "predicates": {
                 "enabled": false
+              },
+              "serviceId": {
+                "type":  "keyword"
+              },
+              "sessionId": {
+                "type":  "keyword"
               }
             }
           }
