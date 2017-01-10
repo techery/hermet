@@ -19,56 +19,41 @@ export default class ElasticOptionsFactory {
     /**
      * @param {string} type
      * @param {Object} data
-     * @param {string} parentId
      *
      * @returns {IndexDocumentParams<any>}
      */
-    public getIndexParams(type: string, data: any, parentId: string): IndexDocumentParams<any> {
-        let options: IndexDocumentParams<any> = {
+    public getIndexParams(type: string, data: any): IndexDocumentParams<any> {
+        return {
                 index: this.index,
                 type: type,
                 body: data,
                 refresh: 'true'
             } as IndexDocumentParams<any>;
-
-        if (parentId) {
-            options.parent = parentId;
-        }
-
-        return options;
     }
 
     /**
      * @param {string} type
      * @param {string} id
-     * @param {string} parentId
      *
      * @returns {GetParams}
      */
-    public getGetParams(type: string, id: string, parentId: string): GetParams {
-        let options: GetParams = {
+    public getGetParams(type: string, id: string): GetParams {
+        return {
                 index: this.index,
                 type: type,
                 id: id
-            };
-
-        if (parentId) {
-            options.parent = parentId;
-        }
-
-        return options;
+            } as GetParams;
     }
 
     /**
      * @param {string} type
      * @param {string} id
      * @param {Object} data
-     * @param {string} parentId
      *
      * @returns {UpdateDocumentParams}
      */
-    public getUpdateParams(type: string, id: string, data: any, parentId: string): UpdateDocumentParams {
-        let options: UpdateDocumentParams = {
+    public getUpdateParams(type: string, id: string, data: any): UpdateDocumentParams {
+        return {
             index: this.index,
             type: type,
             id: id,
@@ -76,34 +61,21 @@ export default class ElasticOptionsFactory {
             body: {
                 doc: data
             }
-        };
-
-        if (parentId) {
-            options.parent = parentId;
-        }
-
-        return options;
+        } as UpdateDocumentParams;
     }
 
     /**
      * @param {string} type
      * @param {string} id
-     * @param {string} parentId
      *
      * @returns {DeleteDocumentParams}
      */
-    public getDeleteParams(type: string, id: string, parentId: string): DeleteDocumentParams {
-        let options: DeleteDocumentParams = {
+    public getDeleteParams(type: string, id: string): DeleteDocumentParams {
+        return {
             index: this.index,
             type: type,
             id: id
-        };
-
-        if (parentId) {
-            options.parent = parentId;
-        }
-
-        return options;
+        } as DeleteDocumentParams;
     }
 
     /**

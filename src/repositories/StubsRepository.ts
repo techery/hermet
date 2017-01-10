@@ -8,13 +8,24 @@ export const MODEL_TYPE_STUB = 'stub';
 export default class StubsRepository extends ElasticRepository {
 
     protected sessionId: string;
-
+    protected serviceId: string;
     /**
      * @param {string} sessionId
      * @returns {StubsRepository}
      */
     public setSessionId(sessionId: string): StubsRepository {
         this.sessionId = sessionId;
+
+        return this;
+    }
+
+    /**
+     * @param {string} serviceId
+     *
+     * @returns {ElasticRepository}
+     */
+    public setServiceId(serviceId: string): this {
+        this.serviceId = serviceId;
 
         return this;
     }
@@ -58,16 +69,15 @@ export default class StubsRepository extends ElasticRepository {
         return {
             query: {
                 bool: {
-                    filter: [
+                    must: [
                         {
-                            match: {
+                            term: {
                                 sessionId: this.sessionId
                             }
                         },
                         {
-                            parent_id: {
-                                type: this.getType(),
-                                id: this.parentId
+                            term: {
+                                serviceId: this.serviceId
                             }
                         }
                     ]

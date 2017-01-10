@@ -18,7 +18,7 @@ export default class ServiceRepository extends ElasticRepository {
         let options: SearchParams = this.optionsFactory.getSearchParams(this.getType());
         options.body = {
             'query': {
-                'match': {'proxyHost': proxyHost}
+                'term': {'proxyHost': proxyHost}
             }
         };
 
