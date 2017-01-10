@@ -1,7 +1,7 @@
 import {Router, Response} from 'express';
 import wrap from './wrapper';
 import {stubsController} from '../container';
-import {SessionRequest} from '../interfaces/requests/SessionRequest';
+import {SessionRequest} from '../requests/SessionRequest';
 
 let router = Router();
 

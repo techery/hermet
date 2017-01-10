@@ -1,7 +1,7 @@
 import {Response} from 'express';
 import config from '../config';
 import {sessionRepository} from '../container';
-import {SessionRequest} from '../interfaces/requests/SessionRequest';
+import {SessionRequest} from '../requests/SessionRequest';
 import wrap from '../routes/wrapper';
 import {Session} from '../models/Session';
 
