@@ -2,8 +2,8 @@ import {Request} from 'express';
 import {ParsedAsJson} from 'body-parser';
 
 import RequestValidation = ExpressValidator.RequestValidation;
-import {SessionInterface} from '../models/SessionInterface';
+import {Session} from '../../models/Session';
 
 export interface SessionRequest extends ParsedAsJson, Request, RequestValidation {
-    session?: SessionInterface;
+    session?: Session;
 }
