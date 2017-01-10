@@ -3,7 +3,6 @@ import BaseController from './BaseController';
 import SessionsRepository from '../repositories/SessionsRepository';
 import {sessionTransformer} from '../container';
 import {Session} from '../models/Session';
-import {SessionInterface} from '../interfaces/models/SessionInterface';
 
 export default class SessionsController extends BaseController {
 
@@ -38,7 +37,7 @@ export default class SessionsController extends BaseController {
      */
     public async get(request: Request, response: Response): Promise<void> {
         try {
-            let session: SessionInterface = await this.sessionsRepository.get(request.params.sessionId);
+            let session: Session = await this.sessionsRepository.get(request.params.sessionId);
 
             this.respondJson(response, sessionTransformer.transform(session));
         } catch (err) {

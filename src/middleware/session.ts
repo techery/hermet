@@ -3,7 +3,7 @@ import config from '../config';
 import {sessionRepository} from '../container';
 import {SessionRequest} from '../interfaces/requests/SessionRequest';
 import wrap from '../routes/wrapper';
-import {SessionInterface} from '../interfaces/models/SessionInterface';
+import {Session} from '../models/Session';
 
 async function sessionMiddleware(request: SessionRequest, response: Response, next: Function): Promise<any> {
 
@@ -14,12 +14,12 @@ async function sessionMiddleware(request: SessionRequest, response: Response, ne
             id: 'default',
             name: 'Default session',
             expireAt: null
-        } as SessionInterface;
+        } as Session;
         return next();
     }
 
     try {
-        request.session = await sessionRepository.get(sessionId) as SessionInterface;
+        request.session = await sessionRepository.get(sessionId) as Session;
         next();
     } catch (err) {
         throw new Error('Session with id [' + sessionId +  '] not found');
