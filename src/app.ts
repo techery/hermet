@@ -4,12 +4,14 @@ import * as parser from 'body-parser';
 import * as express from 'express';
 import {appLogger as logger, appHandler as errorHandler} from './container';
 import sessionMiddleware from './middleware/session';
-
+import validationOptions from './validators/options';
+import * as ExpressValidator from 'express-validator';
 const app = express();
 
 app.use(parser.json());
 app.use(parser.urlencoded({extended: false}));
 app.use(sessionMiddleware);
+app.use(ExpressValidator(validationOptions));
 
 app.use('/', routes);
 
