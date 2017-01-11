@@ -12,19 +12,21 @@ describe('Stubs api', function () {
     };
 
     before(function() {
-      return hermetApiClient.post('/services', fixtures.services.stubCrud).then(function (result) {
-          expect(result).to.have.status(201);
+      return utils.flushDB().then(function() {
+        return hermetApiClient.post('/services', fixtures.services.stubCrud);
+      }).then(function (result) {
+        expect(result).to.have.status(201);
 
-          serviceId = utils.getItemIdFromLocation(result.response.headers.location);
+        serviceId = utils.getItemIdFromLocation(result.response.headers.location);
 
-          return hermetApiClient.post('/services/' + serviceId + '/stubs', stubData);
-        }).then(function(result) {
-          expect(result).to.have.status(201);
+        return hermetApiClient.post('/services/' + serviceId + '/stubs', stubData);
+      }).then(function(result) {
+        expect(result).to.have.status(201);
 
-          stubId = utils.getItemIdFromLocation(result.response.headers.location);
+        stubId = utils.getItemIdFromLocation(result.response.headers.location);
 
-          return chakram.wait();
-        });
+        return chakram.wait();
+      });
     });
 
     it('should create new stub for proxy rule', function () {
