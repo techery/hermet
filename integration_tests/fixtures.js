@@ -9,7 +9,7 @@ module.exports = {
     },
     update: {
       name: 'merchant-service-preprod',
-      proxyHost:  'upate-service.proxy.io:5050',
+      proxyHost:  'update-service.proxy.io:5050',
       targetUrl: 'http://techery-dt-preprod.techery.io:3020'
     },
     delete: {

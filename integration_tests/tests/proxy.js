@@ -18,7 +18,9 @@ describe('Proxy', function () {
     };
 
     before(function() {
-      return hermetApiClient.post('/services', serviceData).then(function (result) {
+      return utils.flushDB().then(function() {
+        return hermetApiClient.post('/services', serviceData)
+      }).then(function (result) {
         expect(result).to.have.status(201);
 
         serviceId  = utils.getItemIdFromLocation(result.response.headers.location);
