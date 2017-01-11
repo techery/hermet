@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-/// <reference path="../../typings/index.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 
-import config from '../config';
+import config from './config';
 import {createServer} from 'http';
-import app from '../app';
-import proxy from '../proxy';
-import {appLogger, proxyLogger} from '../container';
+import app from './app';
+import proxy from './proxy';
+import {appLogger, proxyLogger} from './container';
 import ErrnoException = NodeJS.ErrnoException;
 
 /**

@@ -10,7 +10,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node --harmony ./dist/bin/server.js",
+    "start": "node --harmony ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

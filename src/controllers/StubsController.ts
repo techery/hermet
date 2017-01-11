@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import BaseController from './BaseController';
 import StubsRepository from '../repositories/StubsRepository';
-import {SessionRequest} from '../interfaces/requests/SessionRequest';
+import {SessionRequest} from '../requests/SessionRequest';
 import {Stub} from '../models/Stub';
 
 export default class StubsController extends BaseController {
