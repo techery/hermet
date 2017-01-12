@@ -32,9 +32,9 @@ let stubsRepository = new StubsRepository(elastic, elasticOptionsFactory);
 let sessionRepository = new SessionsRepository(elastic, elasticOptionsFactory);
 
 let sessionTransformer = new SessionTransformer();
-let servicesController = new ServicesController(serviceRepository);
+let servicesController = new ServicesController(serviceRepository, stubsRepository);
 let stubsController = new StubsController(stubsRepository);
-let sessionController = new SessionsController(sessionRepository);
+let sessionController = new SessionsController(sessionRepository, stubsRepository);
 
 let stubResolver = new StubResolver();
 

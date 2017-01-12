@@ -3,17 +3,21 @@ import BaseController from './BaseController';
 import SessionsRepository from '../repositories/SessionsRepository';
 import {sessionTransformer} from '../container';
 import {Session} from '../models/Session';
+import StubsRepository from '../repositories/StubsRepository';
 
 export default class SessionsController extends BaseController {
 
     protected sessionsRepository: SessionsRepository;
+    protected stubsRepository: StubsRepository;
 
     /**
      * @param {SessionsRepository} sessionsRepository
+     * @param {StubsRepository}    stubsRepository
      */
-    constructor(sessionsRepository: SessionsRepository) {
+    constructor(sessionsRepository: SessionsRepository, stubsRepository: StubsRepository) {
         super();
         this.sessionsRepository = sessionsRepository;
+        this.stubsRepository = stubsRepository;
     }
 
     /**
@@ -65,6 +69,9 @@ export default class SessionsController extends BaseController {
     public async remove(request: Request, response: Response): Promise<void> {
         try {
             await this.sessionsRepository.remove(request.params.sessionId);
+            await this.stubsRepository.removeAll({
+                sessionId: request.params.sessionId
+            });
             this.respondWithNoContent(response);
         } catch (err) {
             this.respondWithNotFound();
