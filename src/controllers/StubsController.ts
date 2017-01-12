@@ -28,7 +28,7 @@ export default class StubsController extends BaseController {
         stub.expireAt = request.session.expireAt;
         stub.serviceId = request.params.serviceId;
 
-        let result = await this.prepareStubRepositiory(request).create(stub);
+        let result = await this.stubsRepository.create(stub);
 
         this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result._id);
     }
@@ -41,7 +41,7 @@ export default class StubsController extends BaseController {
      */
     public async get(request: SessionRequest, response: Response): Promise<void> {
         try {
-            let stub = await this.prepareStubRepositiory(request).get(request.params.stubId);
+            let stub = await this.stubsRepository.get(request.params.stubId);
 
             this.respondJson(response, stub);
         } catch (err) {
@@ -56,7 +56,7 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public async update(request: Request, response: Response): Promise<void> {
-        await this.prepareStubRepositiory(request).update(request.params.stubId, request.body);
+        await this.stubsRepository.update(request.params.stubId, request.body);
         this.respondWithNoContent(response);
     }
 
@@ -68,7 +68,7 @@ export default class StubsController extends BaseController {
      */
     public async remove(request: Request, response: Response): Promise<void> {
         try {
-            await this.prepareStubRepositiory(request).remove(request.params.stubId);
+            await this.stubsRepository.remove(request.params.stubId);
             this.respondWithNoContent(response);
         } catch (err) {
             this.respondWithNotFound();
@@ -81,8 +81,11 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async list(request: Request, response: Response): Promise<void> {
-        let items = await this.prepareStubRepositiory(request).all();
+    public async list(request: SessionRequest, response: Response): Promise<void> {
+        let items = await this.stubsRepository.all({
+            serviceId: request.params.serviceId,
+            sessionId: request.session.id
+        });
 
         this.respondJson(response, items);
     }
@@ -93,19 +96,21 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async removeAll(request: Request, response: Response): Promise<void> {
-        await this.prepareStubRepositiory(request).removeAll();
+    public async removeAll(request: SessionRequest, response: Response): Promise<void> {
+        let searchParams: any = {
+            sessionId: request.session.id
+        };
+
+        if (request.params.suitId) {
+            searchParams.serviceId = request.params.serviceId;
+        }
+
+        if (request.params.suitId) {
+            searchParams.suitId = request.params.suitId;
+        }
+
+        await this.stubsRepository.removeAll();
 
         this.respondWithNoContent(response);
-    }
-
-    /**
-     * @param {Request} request
-     * @returns {Object}
-     */
-    protected prepareStubRepositiory(request: SessionRequest): StubsRepository {
-        return this.stubsRepository
-            .setServiceId(request.params.serviceId)
-            .setSessionId(request.session.id);
     }
 }

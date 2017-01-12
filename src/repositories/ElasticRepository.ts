@@ -74,7 +74,7 @@ abstract class ElasticRepository {
     /**
      * @returns {Promise}
      */
-    public all(): Promise<any> {
+    public all(params: any = {}): Promise<any> {
         return this.client.search(
             this.optionsFactory.getSearchParams(this.getType())
         ).then((response: any) => {

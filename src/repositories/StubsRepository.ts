@@ -7,35 +7,12 @@ export const MODEL_TYPE_STUB = 'stub';
 
 export default class StubsRepository extends ElasticRepository {
 
-    protected sessionId: string;
-    protected serviceId: string;
-    /**
-     * @param {string} sessionId
-     * @returns {StubsRepository}
-     */
-    public setSessionId(sessionId: string): StubsRepository {
-        this.sessionId = sessionId;
-
-        return this;
-    }
-
-    /**
-     * @param {string} serviceId
-     *
-     * @returns {ElasticRepository}
-     */
-    public setServiceId(serviceId: string): this {
-        this.serviceId = serviceId;
-
-        return this;
-    }
-
     /**
      * @returns {Promise}
      */
-    public all(): Promise<any> {
+    public all(params: any = {}): Promise<any> {
         let options: SearchParams = this.optionsFactory.getSearchParams(this.getType());
-        options.body = this.prepareSearchBody();
+        options.body = this.prepareSearchBody(params);
 
         return this.client.search(options)
             .then((response: any) => {
@@ -55,9 +32,9 @@ export default class StubsRepository extends ElasticRepository {
     /**
      * @returns {Promise}
      */
-    public removeAll(): Promise<any> {
+    public removeAll(params: any = {}): Promise<any> {
         let options: SearchParams = this.optionsFactory.getDeleteByQueryParams(this.getType());
-        options.body = this.prepareSearchBody();
+        options.body = this.prepareSearchBody(params);
 
         return this.client.removeByQuery(options);
     }
@@ -65,22 +42,25 @@ export default class StubsRepository extends ElasticRepository {
     /**
      * @returns {Object}
      */
-    protected prepareSearchBody(): Object {
+    protected prepareSearchBody(params: any = {}): Object {
+        let queryParams: any[] = [];
+
+        Object.keys(params).map(key => {
+            let term: any = {};
+            term[key] = params[key];
+            queryParams.push({
+                term: term
+            });
+        });
+
+        if (!queryParams.length) {
+            return {};
+        }
+
         return {
             query: {
                 bool: {
-                    must: [
-                        {
-                            term: {
-                                sessionId: this.sessionId
-                            }
-                        },
-                        {
-                            term: {
-                                serviceId: this.serviceId
-                            }
-                        }
-                    ]
+                    must: queryParams
                 }
             }
         };

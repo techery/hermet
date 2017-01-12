@@ -23,6 +23,12 @@ module.exports = {
       targetUrl: 'http://techery-dt-preprod.techery.io:3020'
     }
   },
+  stubs: {
+    base: {
+      response: 'Ok',
+      predicates: [{equals: {field: 'value'}}]
+    }
+  },
   sessions: {
     create: {
       name: "QA autamation Android",
