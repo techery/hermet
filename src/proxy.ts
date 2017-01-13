@@ -72,10 +72,10 @@ export default async (request: IncomingMessage, response: ServerResponse) => {
         try {
 
             let sessionId = request.headers[config.app.session_header] || 'default';
-            let stubs = await stubsRepository
-                .setServiceId(service.id)
-                .setSessionId(sessionId)
-                .all();
+            let stubs = await stubsRepository.all({
+                    serviceId: service.id,
+                    sessionId: sessionId
+                });
 
             if (isStubsApplied(stubs, request, response)) {
                 return;

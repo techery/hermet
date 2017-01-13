@@ -1,16 +1,22 @@
 import {Response, Request} from 'express';
 import BaseController from './BaseController';
 import ServiceRepository from '../repositories/ServiceRepository';
+import {SessionRequest} from '../requests/SessionRequest';
+import StubsRepository from '../repositories/StubsRepository';
 
 export default class ServicesController extends BaseController {
+
     protected serviceRepository: ServiceRepository;
+    protected stubsRepository: StubsRepository;
 
     /**
-     * @param {serviceRepository} serviceRepository
+     * @param {ServiceRepository} serviceRepository
+     * @param {StubsRepository} stubsRepository
      */
-    constructor(serviceRepository: ServiceRepository) {
+    constructor(serviceRepository: ServiceRepository, stubsRepository: StubsRepository) {
         super();
         this.serviceRepository = serviceRepository;
+        this.stubsRepository = stubsRepository;
     }
 
     /**
@@ -58,9 +64,13 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async remove(request: Request, response: Response): Promise<void> {
+    public async remove(request: SessionRequest, response: Response): Promise<void> {
         try {
             await this.serviceRepository.remove(request.params.serviceId);
+            await this.stubsRepository.removeAll({
+                sessionId: request.session.id,
+                serviceId: request.params.serviceId
+            });
             this.respondWithNoContent(response);
         } catch (err) {
             this.respondWithNotFound();
