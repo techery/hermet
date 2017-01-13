@@ -1,5 +1,6 @@
 import ElasticWrapper from '../services/ElasticWrapper';
 import ElasticOptionsFactory from '../services/ElasticOptonsFactory';
+import SearchParams = Elasticsearch.SearchParams;
 
 abstract class ElasticRepository {
 
@@ -72,12 +73,15 @@ abstract class ElasticRepository {
     }
 
     /**
+     * @param {Object} params
+     *
      * @returns {Promise}
      */
     public all(params: any = {}): Promise<any> {
-        return this.client.search(
-            this.optionsFactory.getSearchParams(this.getType())
-        ).then((response: any) => {
+        let options: SearchParams = this.optionsFactory.getSearchParams(this.getType());
+        options.body = this.prepareSearchBody(params);
+
+        return this.client.search(options).then((response: any) => {
             let result: any[] = [];
 
             response.hits.hits.map((item: any) => {
@@ -88,6 +92,35 @@ abstract class ElasticRepository {
 
             return result;
         });
+    }
+
+    /**
+     * @param {Object} params
+     *
+     * @returns {Object}
+     */
+    protected prepareSearchBody(params: any = {}): Object {
+        let queryParams: any[] = [];
+
+        Object.keys(params).map(key => {
+            let term: any = {};
+            term[key] = params[key];
+            queryParams.push({
+                term: term
+            });
+        });
+
+        if (!queryParams.length) {
+            return {};
+        }
+
+        return {
+            query: {
+                bool: {
+                    must: queryParams
+                }
+            }
+        };
     }
 }
 

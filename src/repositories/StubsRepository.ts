@@ -39,33 +39,6 @@ export default class StubsRepository extends ElasticRepository {
         return this.client.removeByQuery(options);
     }
 
-    /**
-     * @returns {Object}
-     */
-    protected prepareSearchBody(params: any = {}): Object {
-        let queryParams: any[] = [];
-
-        Object.keys(params).map(key => {
-            let term: any = {};
-            term[key] = params[key];
-            queryParams.push({
-                term: term
-            });
-        });
-
-        if (!queryParams.length) {
-            return {};
-        }
-
-        return {
-            query: {
-                bool: {
-                    must: queryParams
-                }
-            }
-        };
-    }
-
     protected getType(): string {
         return MODEL_TYPE_STUB;
     }
