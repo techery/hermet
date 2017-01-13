@@ -34,13 +34,21 @@ describe('Proxy', function () {
 
     context('should use stubs by predicates', function() {
       var stubPath = '/path';
+      var stubRequestBody = {test: "test"};
       var stubData = {
         response: {
           body: {status: 'Ok'},
           headers: {'Content-Type': 'application/json'}
         },
         predicates: [
-          {equals: {method: 'POST', path: '/path'}}
+          {
+            equals: {method: 'POST', path: '/path'}
+          },
+          {
+            equals: {body: stubRequestBody},
+            caseSensitive: true,
+            except: '!$'
+          }
         ]
       };
 
@@ -53,7 +61,7 @@ describe('Proxy', function () {
       });
 
       it('should return stubbed response', function() {
-        var response = httpClient.post('http://' + SERVICE_HOST_ALIAS +  stubPath);
+        var response = httpClient.post('http://' + SERVICE_HOST_ALIAS +  stubPath, stubRequestBody);
 
         expect(response).to.have.status(200);
         expect(response).to.comprise.of.json(stubData.response.body);
