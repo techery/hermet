@@ -1,12 +1,31 @@
 'use strict';
 
-require('dotenv').load();
+require('dotenv').load({path: './.env'});
 
 function _getEnv(key, defaultValue) {
-    return process.env[key] || defaultValue;
+    var value = process.env[key];
+
+    switch (value) {
+        case 'true':
+            value = true;
+            break;
+        case 'false':
+            value = false;
+            break;
+        default:
+            // Hack to convert numbers
+            if (!isNaN(+value)) {
+                value = +value;
+            }
+
+            value = value || defaultValue;
+    }
+
+    return value;
 }
 
 const config = {
+    standalone: _getEnv('STANDALONE', false),
     app: {
         api_port: _getEnv('HERMET_API_PORT', 5000),
         api_base_url: _getEnv('HERMET_API_BASE_URL', 'http://localhost:5000'),
