@@ -1,8 +1,8 @@
 import {Response, Request} from 'express';
 import BaseController from './BaseController';
-import ServiceRepository from '../repositories/ServiceRepository';
+import ServiceRepository from '../repositories/elastic/ServiceRepository';
 import {SessionRequest} from '../requests/SessionRequest';
-import StubsRepository from '../repositories/StubsRepository';
+import StubsRepository from '../repositories/elastic/StubsRepository';
 
 export default class ServicesController extends BaseController {
 
@@ -28,7 +28,7 @@ export default class ServicesController extends BaseController {
     public async create(request: Request, response: Response): Promise<void> {
         let result = await this.serviceRepository.create(request.body);
 
-        this.respondWithCreated(response, 'api/services/' + result._id);
+        this.respondWithCreated(response, 'api/services/' + result.id);
     }
 
     /**

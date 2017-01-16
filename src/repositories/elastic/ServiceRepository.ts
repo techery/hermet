@@ -1,9 +1,9 @@
 import SearchParams = Elasticsearch.SearchParams;
-import ElasticRepository from './ElasticRepository';
+import BaseRepository from './BaseRepository';
 
 export const MODEL_TYPE_SERVICE = 'service';
 
-export default class ServiceRepository extends ElasticRepository {
+export default class ServiceRepository extends BaseRepository {
 
     protected getType(): string {
         return MODEL_TYPE_SERVICE;

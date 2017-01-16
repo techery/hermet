@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import BaseController from './BaseController';
-import StubsRepository from '../repositories/StubsRepository';
+import StubsRepository from '../repositories/elastic/StubsRepository';
 import {SessionRequest} from '../requests/SessionRequest';
 import {Stub} from '../models/Stub';
 
@@ -30,7 +30,7 @@ export default class StubsController extends BaseController {
 
         let result = await this.stubsRepository.create(stub);
 
-        this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result._id);
+        this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result.id);
     }
 
     /**
