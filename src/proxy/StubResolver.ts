@@ -1,6 +1,6 @@
 import * as url from 'url';
 import {proxyLogger as logger} from '../container';
-import {ProxyIncomingMessage} from './ProxyIncomingMessage';
+import {ProxyIncomingMessage} from './interfaces/ProxyIncomingMessage';
 
 let predicateResolver = require('hermet-predicates');
 
