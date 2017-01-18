@@ -109,7 +109,7 @@ export default class StubsController extends BaseController {
             searchParams.suitId = request.params.suitId;
         }
 
-        await this.stubsRepository.removeAll();
+        await this.stubsRepository.removeAll(searchParams);
 
         this.respondWithNoContent(response);
     }
