@@ -95,6 +95,16 @@ abstract class ElasticRepository {
     }
 
     /**
+     * @returns {Promise}
+     */
+    public removeAll(params: any = {}): Promise<any> {
+        let options: SearchParams = this.optionsFactory.getDeleteByQueryParams(this.getType());
+        options.body = this.prepareSearchBody(params);
+
+        return this.client.removeByQuery(options);
+    }
+
+    /**
      * @param {Object} params
      *
      * @returns {Object}
