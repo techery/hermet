@@ -1,6 +1,6 @@
-import {IncomingMessage} from 'http';
 import * as url from 'url';
 import {proxyLogger as logger} from '../container';
+import {ProxyIncomingMessage} from './ProxyIncomingMessage';
 
 let predicateResolver = require('hermet-predicates');
 
@@ -8,14 +8,15 @@ export default class StubResolver {
     /**
      * Create simple request. It is need to optimize normalization during comparing.
      *
-     * @param {IncomingMessage} request Protocol request
+     * @param {ProxyIncomingMessage} request Protocol request
      * @returns Object
      */
-    private prepareRequest(request: IncomingMessage): Object {
+    private prepareRequest(request: ProxyIncomingMessage): Object {
         return {
             method: request.method,
             path: url.parse(request.url).pathname,
-            headers: request.headers
+            headers: request.headers,
+            body: request.body
         };
     }
 
@@ -23,10 +24,10 @@ export default class StubResolver {
      * Try to get stub for request param satisfying for the stub predicates
      *
      * @param {any[]} stubs Map(id, stub)
-     * @param {IncomingMessage} request     Protocol request
+     * @param {ProxyIncomingMessage} request     Protocol request
      * @returns Object
      */
-    public resolveStubByRequest(stubs: any[], request: IncomingMessage): any {
+    public resolveStubByRequest(stubs: any[], request: ProxyIncomingMessage): any {
         return stubs.find((stub: any) => {
             let predicates: any[] = stub.predicates || [];
 
@@ -34,7 +35,7 @@ export default class StubResolver {
                 return true;
             }
 
-            return predicates.every((predicate: any) => {
+            return predicates.every((predicate: any): boolean => {
                 return predicateResolver.resolve(predicate, this.prepareRequest(request), 'utf8', logger);
             });
         });

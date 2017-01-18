@@ -10,6 +10,7 @@ import {
     proxyLogger as logger,
     proxyHandler as errorHandler
 } from './container';
+import {ProxyIncomingMessage} from './proxy/ProxyIncomingMessage';
 
 //
 // Create a proxy server with custom application logic
@@ -18,11 +19,11 @@ const proxy = createProxy({});
 
 /**
  * @param {any[]} stubs
- * @param {IncomingMessage} request
+ * @param {ProxyIncomingMessage} request
  * @param {ServerResponse} response
  * @returns {boolean}
  */
-function isStubsApplied(stubs: any[], request: IncomingMessage, response: ServerResponse): boolean {
+function isStubsApplied(stubs: any[], request: ProxyIncomingMessage, response: ServerResponse): boolean {
     let stub: any = stubResolver.resolveStubByRequest(stubs, request);
 
     if (stub) {
@@ -43,7 +44,7 @@ proxy.on('error', function (error: any, request: IncomingMessage, response: Serv
     errorHandler.handle(error, request, response);
 });
 
-export default async (request: IncomingMessage, response: ServerResponse) => {
+export default async (request: ProxyIncomingMessage, response: ServerResponse) => {
     let service: any;
 
     try {
@@ -76,6 +77,9 @@ export default async (request: IncomingMessage, response: ServerResponse) => {
                     serviceId: service.id,
                     sessionId: sessionId
                 });
+
+            let postData = buffer.toString();
+            request.body = postData ? JSON.parse(postData) : {};
 
             if (isStubsApplied(stubs, request, response)) {
                 return;
