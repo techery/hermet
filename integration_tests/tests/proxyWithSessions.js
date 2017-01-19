@@ -5,13 +5,14 @@ const SERVICE_HOST_ALIAS = config.env.localhost_alias + ':' + config.proxy.port;
 describe('Proxy with sessions', function () {
 
   var headers = {};
+  var sessionId;
 
   before(function() {
     return utils.flushDB().then(function(result) {
         return hermetApiClient.post('/sessions', fixtures.sessions.create);
       }).then(function(result) {
         expect(result).to.have.status(201);
-        var sessionId = utils.getItemIdFromLocation(result.response.headers.location);
+        sessionId = utils.getItemIdFromLocation(result.response.headers.location);
 
         headers[config.app.hermet_session_header] = sessionId;
 

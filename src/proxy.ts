@@ -8,9 +8,11 @@ import {
     stubsRepository,
     stubResolver,
     proxyLogger as logger,
-    proxyHandler as errorHandler
+    proxyHandler as errorHandler,
+    proxyHistory
 } from './container';
-import {ProxyIncomingMessage} from './proxy/ProxyIncomingMessage';
+import {ProxyIncomingMessage} from './proxy/interfaces/ProxyIncomingMessage';
+import {ProxyServerResponse} from './proxy/interfaces/ProxyServerResponse';
 
 //
 // Create a proxy server with custom application logic
@@ -42,6 +44,18 @@ function isStubsApplied(stubs: any[], request: ProxyIncomingMessage, response: S
 
 proxy.on('error', function (error: any, request: IncomingMessage, response: ServerResponse): void {
     errorHandler.handle(error, request, response);
+});
+
+proxy.on('proxyRes', function (proxyResponse: ProxyServerResponse, request: ProxyIncomingMessage, response: ServerResponse): void {
+    let responseBody = '';
+    proxyResponse.on('data', function (chunk: string): void {
+        responseBody += chunk;
+    });
+
+    proxyResponse.on('end', function (): void {
+        proxyResponse.body = responseBody;
+        proxyHistory.add(proxyResponse, request);
+    });
 });
 
 export default async (request: ProxyIncomingMessage, response: ServerResponse) => {
@@ -79,7 +93,9 @@ export default async (request: ProxyIncomingMessage, response: ServerResponse) =
                 });
 
             let postData = buffer.toString();
-            request.body = postData ? JSON.parse(postData) : {};
+            request.body = postData ? JSON.parse(postData) : null;
+            request.serviceId = service.id;
+            request.sessionId = sessionId;
 
             if (isStubsApplied(stubs, request, response)) {
                 return;
