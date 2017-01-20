@@ -1,8 +1,10 @@
-let uid = require('uid');
+import uid = require('uid');
 
 abstract class BaseRepository implements Repository {
 
     protected storage: any;
+
+    protected abstract type: string;
     /**
      * @param storage
      */
@@ -10,10 +12,9 @@ abstract class BaseRepository implements Repository {
         this.storage = storage;
     }
 
-    /**
-     * @returns string
-     */
-    protected abstract getType(): string;
+    protected getCollection(): any {
+        return this.storage[this.type];
+    }
 
     /**
      * @param {Object} data
@@ -23,7 +24,7 @@ abstract class BaseRepository implements Repository {
     public create(data: any): any {
         let newId: string = uid();
         data.id = newId;
-        this.storage[this.getType()][newId] = data;
+        this.getCollection()[newId] = data;
 
         return data;
     }
@@ -34,8 +35,9 @@ abstract class BaseRepository implements Repository {
      * @returns {any}
      */
     public get(id: string): any {
-        if (this.storage[this.getType()][id]) {
-            return this.storage[this.getType()][id];
+        let collection: any = this.getCollection();
+        if (collection[id]) {
+            return collection[id];
         }
         throw new Error('Not found');
     }
@@ -47,13 +49,14 @@ abstract class BaseRepository implements Repository {
      * @returns {Promise}
      */
     public update(id: string, data: any): any {
-        if (!this.storage[this.getType()][id]) {
+        let collection: any = this.getCollection();
+        if (!collection[id]) {
             throw new Error('Not found');
         }
 
-        let item = this.storage[this.getType()][id];
+        let item = collection[id];
         Object.keys(data).map(property => {
-            this.storage[this.getType()][id][property] = data[property];
+            collection[id][property] = data[property];
         });
     }
 
@@ -63,22 +66,30 @@ abstract class BaseRepository implements Repository {
      * @returns {Promise}
      */
     public remove(id: string): any {
-        delete this.storage[this.getType()][id];
+        delete this.getCollection()[id];
     }
 
     /**
-     * @param {Object} params
-     *
      * @returns {Promise}
      */
     public all(params: any = {}): any[] {
-        let collection: any = this.storage[this.getType()];
-        let list: any[] = [];
-        Object.keys(collection).map(id => {
-            list.push(collection[id]);
+        let collection: any = this.getCollection();
+        return Object.keys(collection).map((id: string) : any => {
+            return collection[id];
+        }).filter(item => {
+            return Object.keys(params).every((element: any, index: number, array: any[]) => {
+                return params[element] === item[element];
+            });
         });
+    }
 
-        return list;
+    /**
+     * @returns {Promise}
+     */
+    public removeAll(params: any = {}): any {
+        this.all(params).map((item: any): void => {
+            delete(this.getCollection()[item.id]);
+        });
     }
 }
 

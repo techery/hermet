@@ -5,8 +5,12 @@
 import ElasticWrapper from './services/ElasticWrapper';
 import ElasticServiceRepository from './repositories/elastic/ServiceRepository';
 import ElasticStubsRepository from './repositories/elastic/StubsRepository';
-import ServiceRepository from './repositories/standalone/ServiceRepository';
-import StubsRepository from './repositories/standalone/StubsRepository';
+import InMemoryServiceRepository from './repositories/standalone/ServiceRepository';
+import InMemoryStubsRepository from './repositories/standalone/StubsRepository';
+import ElasticSessionsRepository from './repositories/elastic/SessionsRepository';
+import InMemorySessionsRepository from './repositories/standalone/SessionsRepository';
+import ElasticRequestsRepository from './repositories/elastic/RequestsRepository';
+import InMemoryRequestsRepository from './repositories/standalone/RequestsRepository';
 import config from './config';
 import {Client} from 'elasticsearch';
 import * as winston from 'winston';
@@ -14,14 +18,11 @@ import ServicesController from './controllers/ServicesController';
 import StubsController from './controllers/StubsController';
 import SessionsController from './controllers/SessionsController';
 import FlushController from './controllers/FlushController';
-import ElasticSessionsRepository from './repositories/elastic/SessionsRepository';
-import SessionsRepository from './repositories/standalone/SessionsRepository';
 import StubResolver from './proxy/StubResolver';
 import ProxyHandler from './errors/ProxyHandler';
 import AppHandler from './errors/AppHandler';
 import ElasticOptionsFactory from './services/ElasticOptonsFactory';
 import SessionTransformer from './transformers/SessionTransformer';
-import RequestsRepository from './repositories/RequestsRepository';
 import ProxyHistory from './proxy/ProxyHistory';
 import HistoryController from './controllers/HistoryController';
 
@@ -38,13 +39,37 @@ let elasticOptionsFactory = new ElasticOptionsFactory(config.elasticsearch.index
 let storage = {
     service: {},
     session: {},
-    stub: {}
+    stub: {},
+    log: {}
 };
 
-let serviceRepository = config.standalone ? new ServiceRepository(storage) : new ElasticServiceRepository(elastic, elasticOptionsFactory);
-let stubsRepository = config.standalone ? new StubsRepository(storage) : new ElasticStubsRepository(elastic, elasticOptionsFactory);
-let sessionRepository = config.standalone ? new SessionsRepository(storage) : new ElasticSessionsRepository(elastic, elasticOptionsFactory);
-let requestsRepository = new RequestsRepository(elastic, elasticOptionsFactory);
+let serviceRepository;
+if (config.standalone) {
+    serviceRepository = new InMemoryServiceRepository(storage);
+} else {
+    serviceRepository = new ElasticServiceRepository(elastic, elasticOptionsFactory);
+}
+
+let stubsRepository;
+if (config.standalone) {
+    stubsRepository = new InMemoryStubsRepository(storage);
+} else {
+    stubsRepository = new ElasticStubsRepository(elastic, elasticOptionsFactory);
+}
+
+let sessionRepository;
+if (config.standalone) {
+    sessionRepository = new InMemorySessionsRepository(storage);
+} else {
+    sessionRepository = new ElasticSessionsRepository(elastic, elasticOptionsFactory);
+}
+
+let requestsRepository;
+if (config.standalone) {
+    requestsRepository = new InMemoryRequestsRepository(storage);
+} else {
+    requestsRepository = new ElasticRequestsRepository(elastic, elasticOptionsFactory);
+}
 
 let sessionTransformer = new SessionTransformer();
 let servicesController = new ServicesController(serviceRepository, stubsRepository);

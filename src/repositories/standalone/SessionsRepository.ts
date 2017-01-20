@@ -1,13 +1,9 @@
 import BaseRepository from './BaseRepository';
 import {Session} from '../../models/Session';
 
-export const MODEL_TYPE_SESSION = 'session';
-
 export default class SessionsRepository extends BaseRepository {
 
-    protected getType(): string {
-        return MODEL_TYPE_SESSION;
-    }
+    protected type: string = 'session';
 
     /**
      * @param {string} id

@@ -17,6 +17,7 @@ export default class FlushController extends BaseController {
         this.storage.session = {};
         this.storage.service = {};
         this.storage.stub = {};
+        this.storage.log = {};
 
         this.respondWithNoContent(response);
     }
