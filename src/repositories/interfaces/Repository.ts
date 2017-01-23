@@ -1,19 +1,17 @@
 interface Repository {
-    getType(): string;
-
     /**
      * @param {Object} data
      *
-     * @returns {any}
+     * @returns {Promise<any>}
      */
-    create(data: any): any;
+    create(data: any): Promise<any>;
 
     /**
      * @param {string} id
      *
-     * @returns {any}
+     * @returns {Promise<any>}
      */
-    get(id: string): any;
+    get(id: string): Promise<any>;
 
     /**
      * @param {string} id
@@ -21,19 +19,19 @@ interface Repository {
      *
      * @returns {Promise}
      */
-    update(id: string, data: any): any;
+    update(id: string, data: any): Promise;
 
     /**
      * @param {string} id
      *
      * @returns {Promise}
      */
-    remove(id: string): any;
+    remove(id: string): Promise<any>;
 
     /**
      * @param {Object} params
      *
-     * @returns {Promise}
+     * @returns {Promise<any[]>}
      */
-    all(params: any = {}): any[];
+    all(params: any = {}): Promise<any[]>;
 }

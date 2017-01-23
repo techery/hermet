@@ -22,11 +22,13 @@ abstract class BaseRepository implements Repository {
      * @returns {any}
      */
     public create(data: any): any {
-        let newId: string = uid();
-        data.id = newId;
-        this.getCollection()[newId] = data;
+        return new Promise((resolve, reject) => {
+            let newId: string = uid();
+            data.id = newId;
+            this.getCollection()[newId] = data;
 
-        return data;
+            resolve(data);
+        });
     }
 
     /**
@@ -35,11 +37,13 @@ abstract class BaseRepository implements Repository {
      * @returns {any}
      */
     public get(id: string): any {
-        let collection: any = this.getCollection();
-        if (collection[id]) {
-            return collection[id];
-        }
-        throw new Error('Not found');
+        return new Promise((resolve, reject) => {
+            let collection: any = this.getCollection();
+            if (collection[id]) {
+                resolve(collection[id]);
+            }
+            reject('Not found');
+        });
     }
 
     /**
@@ -49,14 +53,15 @@ abstract class BaseRepository implements Repository {
      * @returns {Promise}
      */
     public update(id: string, data: any): any {
-        let collection: any = this.getCollection();
-        if (!collection[id]) {
-            throw new Error('Not found');
-        }
+        return new Promise((resolve, reject) => {
+            let collection: any = this.getCollection();
+            if (!collection[id]) {
+                reject('Not found');
+            }
 
-        let item = collection[id];
-        Object.keys(data).map(property => {
-            collection[id][property] = data[property];
+            resolve(Object.keys(data).map(property => {
+                collection[id][property] = data[property];
+            }));
         });
     }
 
@@ -66,14 +71,25 @@ abstract class BaseRepository implements Repository {
      * @returns {Promise}
      */
     public remove(id: string): any {
-        delete this.getCollection()[id];
+        return new Promise((resolve, reject) => {
+            resolve(delete this.getCollection()[id]);
+        });
+
     }
 
     /**
      * @returns {Promise}
      */
-    public all(params: any = {}): any[] {
+    public all(params: any = {}): Promise<any[]> {
+        return new Promise((resolve, reject) => {
+            resolve(this.retrieveItemsByParam(params));
+        });
+
+    }
+
+    protected retrieveItemsByParam(params: any = {}): any[] {
         let collection: any = this.getCollection();
+
         return Object.keys(collection).map((id: string) : any => {
             return collection[id];
         }).filter(item => {
@@ -86,9 +102,12 @@ abstract class BaseRepository implements Repository {
     /**
      * @returns {Promise}
      */
-    public removeAll(params: any = {}): any {
-        this.all(params).map((item: any): void => {
-            delete(this.getCollection()[item.id]);
+    public removeAll(params: any = {}): Promise {
+        return new Promise((resolve, reject) => {
+            let result: any[] = this.retrieveItemsByParam(params).map((item: any): any => {
+                return delete(this.getCollection()[item.id]);
+            });
+            resolve(result);
         });
     }
 }

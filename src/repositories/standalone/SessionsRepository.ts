@@ -8,10 +8,11 @@ export default class SessionsRepository extends BaseRepository {
     /**
      * @param {string} id
      *
-     * @returns {Session}
+     * @returns {Promise<Session>}
      */
-    public get(id: string): Session {
-        let sessionData: any = super.get(id);
-        return new Session(sessionData);
+    public get(id: string): Promise<Session> {
+        return super.get(id).then((result: Session) => {
+            return new Session(result);
+        });
     }
 }
