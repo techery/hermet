@@ -3,6 +3,8 @@ import BaseController from './BaseController';
 import ServiceRepository from '../repositories/elastic/ServiceRepository';
 import {SessionRequest} from '../requests/SessionRequest';
 import StubsRepository from '../repositories/elastic/StubsRepository';
+import {Service} from '../models/Service';
+import config from '../config';
 
 export default class ServicesController extends BaseController {
 
@@ -26,8 +28,9 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public async create(request: Request, response: Response): Promise<void> {
-        let result = await this.serviceRepository.create(request.body);
-
+        request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
+        let service: Service = new Service(request.body);
+        let result = await this.serviceRepository.create(service);
         this.respondWithCreated(response, 'api/services/' + result.id);
     }
 

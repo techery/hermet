@@ -21,6 +21,7 @@
     "hermet-predicates": "techery/hermet-predicates#1.0.0",
     "http-proxy": "^1.15.2",
     "moment": "^2.17.1",
+    "node-cron": "^1.2.0",
     "reflect-metadata": "0.1.8",
     "request-as-curl": "^0.1.0",
     "url": "^0.11.0",

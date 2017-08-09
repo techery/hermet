@@ -1,4 +1,5 @@
 import config from './config';
+import cron from './cron';
 import {createProxy} from 'http-proxy';
 import {ServerResponse, IncomingMessage} from 'http';
 import {PassThrough} from 'stream';
@@ -18,6 +19,9 @@ import {ProxyServerResponse} from './proxy/interfaces/ProxyServerResponse';
 // Create a proxy server with custom application logic
 //
 const proxy = createProxy({});
+
+// Start cron job
+cron();
 
 /**
  * @param {any[]} stubs
