@@ -35,10 +35,11 @@ function isStubsApplied(stubs: any[], request: ProxyIncomingMessage, response: S
     if (stub) {
         let statusCode = stub.response.statusCode || 200;
         let headers = stub.response.headers || {};
-        let body = stub.response.body || '';
+        let body = stub.response.body || null;
 
         response.writeHead(statusCode, headers);
-        response.end(body ? JSON.stringify(body) : body);
+        let isJsonBody = body !== null && typeof body === 'object';
+        response.end(isJsonBody ? JSON.stringify(body) : body);
 
         return true;
     }
