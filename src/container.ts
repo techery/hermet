@@ -25,6 +25,7 @@ import ElasticOptionsFactory from './services/ElasticOptonsFactory';
 import SessionTransformer from './transformers/SessionTransformer';
 import ProxyHistory from './proxy/ProxyHistory';
 import HistoryController from './controllers/HistoryController';
+import StubValidator from './validators/StubValidator';
 
 require('winston-daily-rotate-file');
 
@@ -107,6 +108,8 @@ let proxyLogger = initLogger(config.log.proxy);
 let appHandler = new AppHandler(appLogger);
 let proxyHandler = new ProxyHandler(proxyLogger);
 
+let stubValidator = new StubValidator();
+
 export {
     elastic,
     elasticOptionsFactory,
@@ -126,5 +129,6 @@ export {
     proxyLogger,
     appHandler,
     proxyHandler,
-    sessionTransformer
+    sessionTransformer,
+    stubValidator
 };
