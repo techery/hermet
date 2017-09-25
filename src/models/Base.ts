@@ -1,5 +1,4 @@
 import * as moment from 'moment';
-const now = moment();
 
 export class Base {
     public id: string;
@@ -11,7 +10,7 @@ export class Base {
     constructor(params: any) {
         this.id = params.id || null;
         this.ttl = params.ttl || null;
-        this.createAt = now.format();
+        this.createAt = moment().format();
         this.expireAt = this.ttl ? now.add(this.ttl, 's').format() : null;
     }
 }
