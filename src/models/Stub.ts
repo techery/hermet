@@ -1,18 +1,17 @@
+import {Base} from './Base';
 
-export class Stub {
-    public id: string;
+export class Stub extends Base {
+
     public response: any;
     public predicates: any;
     public serviceId: string;
     public sessionId: string;
-    public expireAt: string;
 
     constructor(params: any) {
-        this.id = params.id || null;
+        super(params);
         this.response = params.response || {};
         this.predicates = params.predicates || [];
         this.serviceId = params.serviceId || null;
         this.sessionId = params.sessionId || null;
-        this.expireAt = params.expireAt || null;
     }
 }

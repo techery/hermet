@@ -4,7 +4,7 @@
       "name": "Hermet",
       "script": "./dist/server.js",
       "node_args": "--harmony --use_strict",
-      "instances": 2
+      "instances": 1
     }
   ]
 }

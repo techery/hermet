@@ -1,8 +1,8 @@
-import ElasticWrapper from '../services/ElasticWrapper';
-import ElasticOptionsFactory from '../services/ElasticOptonsFactory';
+import ElasticWrapper from '../../services/ElasticWrapper';
+import ElasticOptionsFactory from '../../services/ElasticOptonsFactory';
 import SearchParams = Elasticsearch.SearchParams;
 
-abstract class ElasticRepository {
+abstract class BaseRepository implements Repository {
 
     protected client: ElasticWrapper;
     protected optionsFactory: ElasticOptionsFactory;
@@ -29,7 +29,11 @@ abstract class ElasticRepository {
     public create(data: any): Promise<any> {
         return this.client.create(
             this.optionsFactory.getIndexParams(this.getType(), data)
-        );
+        ).then((response: any) => {
+            return {
+                id: response._id
+            };
+        });
     }
 
     /**
@@ -134,4 +138,4 @@ abstract class ElasticRepository {
     }
 }
 
-export default ElasticRepository;
+export default BaseRepository;

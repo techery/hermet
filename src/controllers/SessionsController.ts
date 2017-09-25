@@ -1,9 +1,10 @@
 import {Response, Request} from 'express';
 import BaseController from './BaseController';
-import SessionsRepository from '../repositories/SessionsRepository';
+import SessionsRepository from '../repositories/elastic/SessionsRepository';
 import {sessionTransformer} from '../container';
 import {Session} from '../models/Session';
-import StubsRepository from '../repositories/StubsRepository';
+import StubsRepository from '../repositories/elastic/StubsRepository';
+import config from '../config';
 
 export default class SessionsController extends BaseController {
 
@@ -27,10 +28,11 @@ export default class SessionsController extends BaseController {
      * @param {Response} response
      */
     public async create(request: Request, response: Response): Promise<void> {
+        request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_session_ttl;
         let session: Session = new Session(request.body);
         let result = await this.sessionsRepository.create(session);
 
-        this.respondWithCreated(response, 'api/sessions/' + result._id);
+        this.respondWithCreated(response, 'api/sessions/' + result.id);
     }
 
     /**

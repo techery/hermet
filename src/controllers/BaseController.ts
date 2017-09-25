@@ -1,6 +1,7 @@
 import config from '../config';
 import NotFound from './../errors/NotFound';
 import {Response} from 'express';
+import ValidationError from '../errors/ValidationError';
 
 abstract class BaseController {
     /**
@@ -41,6 +42,15 @@ abstract class BaseController {
      */
     protected respondWithNotFound(): void {
         throw new NotFound('The requested resource couldn\'t be found');
+    }
+
+    /**
+     * Return 400 with validation error message
+     *
+     * @param {string} message
+     */
+    protected respondWithValidationError(message: String): void {
+        throw new ValidationError(400, message);
     }
 }
 

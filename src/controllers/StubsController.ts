@@ -1,8 +1,10 @@
 import {Request, Response} from 'express';
 import BaseController from './BaseController';
-import StubsRepository from '../repositories/StubsRepository';
+import StubsRepository from '../repositories/standalone/StubsRepository';
 import {SessionRequest} from '../requests/SessionRequest';
 import {Stub} from '../models/Stub';
+import config from '../config';
+import {stubValidator} from '../container';
 
 export default class StubsController extends BaseController {
     protected stubsRepository: StubsRepository;
@@ -22,15 +24,20 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public async create(request: SessionRequest, response: Response): Promise<void> {
+        let items = await this.stubsRepository.all({
+            serviceId: request.params.serviceId,
+            sessionId: request.session.id
+        });
+        stubValidator.validate(request.body, items);
 
+        request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_stub_ttl;
         let stub: Stub = new Stub(request.body);
         stub.sessionId = request.session.id;
-        stub.expireAt = request.session.expireAt;
         stub.serviceId = request.params.serviceId;
 
         let result = await this.stubsRepository.create(stub);
 
-        this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result._id);
+        this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result.id);
     }
 
     /**

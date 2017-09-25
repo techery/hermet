@@ -1,6 +1,7 @@
 import Handler from './Handler';
 import {Request, Response} from 'express';
 import NotFound from './NotFound';
+import ValidationError from './ValidationError';
 
 export default class AppHandler extends Handler {
     /**
@@ -15,6 +16,8 @@ export default class AppHandler extends Handler {
 
         if (error instanceof NotFound) {
             this.error(response, 404, error.name + ': ' + error.message);
+        } else if (error instanceof ValidationError) {
+            this.error(response, error.httpCode, error.message);
         } else if (error instanceof Error) {
             this.error(response, 500, error.name + ': ' + error.message);
         } else {

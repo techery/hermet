@@ -12,11 +12,13 @@ export default class StubResolver {
      * @returns Object
      */
     private prepareRequest(request: ProxyIncomingMessage): Object {
+        const parsedUrl = url.parse(request.url, true);
         return {
             method: request.method,
-            path: url.parse(request.url).pathname,
+            path: parsedUrl.pathname,
             headers: request.headers,
-            body: request.body
+            body: request.body,
+            query: parsedUrl.query
         };
     }
 

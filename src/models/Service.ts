@@ -1,14 +1,15 @@
-export class Service {
+import {Base} from './Base';
 
-    public id: string;
+export class Service extends Base {
+
     public name: string;
     public proxyHost: string;
     public targetUrl: string;
 
     constructor(params: any) {
-        this.id = params.id || null;
+        super(params);
         this.name = params.name || null;
-        this.proxyHost = params.predicates || null;
-        this.targetUrl = params.serviceId || null;
+        this.proxyHost = params.proxyHost || null;
+        this.targetUrl = params.targetUrl || null;
     }
 }

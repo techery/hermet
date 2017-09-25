@@ -46,6 +46,8 @@ abstract class Handler {
 
         if (error instanceof Error) {
             message += error.stack + '\r\n';
+        } else {
+            message += JSON.stringify(error) + '\r\n';
         }
 
         this.logger.error(message);
