@@ -1,16 +1,15 @@
 import config from './config';
 import cron from './cron';
 import {createProxy} from 'http-proxy';
-import {ServerResponse, IncomingMessage} from 'http';
+import {IncomingMessage, ServerResponse} from 'http';
 import {PassThrough} from 'stream';
 import ProxyError from './errors/ProxyError';
 import {
-    serviceRepository,
-    stubsRepository,
-    stubResolver,
-    proxyLogger as logger,
     proxyHandler as errorHandler,
-    proxyHistory
+    proxyHistory,
+    serviceRepository,
+    stubResolver,
+    stubsRepository
 } from './container';
 import {ProxyIncomingMessage} from './proxy/interfaces/ProxyIncomingMessage';
 import {ProxyServerResponse} from './proxy/interfaces/ProxyServerResponse';
@@ -30,7 +29,13 @@ cron();
  * @returns {boolean}
  */
 function isStubsApplied(stubs: any[], request: ProxyIncomingMessage, response: ServerResponse): boolean {
-    let stub: any = stubResolver.resolveStubByRequest(stubs, request);
+    let stub: any;
+
+    try {
+        stub = stubResolver.resolveStubByRequest(stubs, request);
+    } catch (e) {
+        throw new ProxyError(400, 'Stub resolving failure');
+    }
 
     if (stub) {
         let statusCode = stub.response.statusCode || 200;
@@ -79,11 +84,11 @@ export default async (request: ProxyIncomingMessage, response: ServerResponse) =
 
     let body: any[] = [];
 
-    request.on('error', function(error: Error): void {
+    request.on('error', function (error: Error): void {
         errorHandler.handle(error, request, response);
-    }).on('data', function(chunk: string): void {
+    }).on('data', function (chunk: string): void {
         body.push(chunk);
-    }).on('end', async function(): Promise<void> {
+    }).on('end', async function (): Promise<void> {
         let buffer = Buffer.concat(body);
 
         let bufferStream = new PassThrough();
@@ -93,9 +98,9 @@ export default async (request: ProxyIncomingMessage, response: ServerResponse) =
 
             let sessionId = request.headers[config.app.session_header] || 'default';
             let stubs = await stubsRepository.all({
-                    serviceId: service.id,
-                    sessionId: sessionId
-                });
+                serviceId: service.id,
+                sessionId: sessionId
+            });
 
             let postData = buffer.toString();
             request.body = postData ? JSON.parse(postData) : null;
