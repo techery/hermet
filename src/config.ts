@@ -4,7 +4,6 @@ load();
 
 const config: Config = Object.freeze({
     debug: env('DEBUG', false),
-    standalone: env('STANDALONE', true),
     app: {
         port: env('HERMET_API_PORT', 5000),
         base_url: env('HERMET_API_BASE_URL', 'http://localhost:5000/'),
@@ -21,16 +20,11 @@ const config: Config = Object.freeze({
     proxy: {
         port: env('HERMET_PROXY_PORT', 5050),
         timeout: env('PROXY_DEFAULT_TIMEOUT', 10000)
-    },
-    elasticsearch: {
-        host: env('ELASTIC_HOST', 'elasticsearch:9200'),
-        index: env('ELASTIC_INDEX', 'hermet')
     }
 });
 
 class Config {
     public debug: boolean;
-    public standalone: boolean;
 
     public app: {
         port: number,
@@ -50,11 +44,6 @@ class Config {
     public proxy: {
         timeout: number,
         port: number
-    };
-
-    public elasticsearch: {
-        host: string,
-        index: string
     };
 }
 

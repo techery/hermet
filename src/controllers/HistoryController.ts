@@ -1,6 +1,6 @@
 import BaseController from './BaseController';
 import {Response, Request} from 'express';
-import RequestsRepository from '../repositories/elastic/RequestsRepository';
+import RequestsRepository from '../repositories/standalone/RequestsRepository';
 import {SessionRequest} from '../requests/SessionRequest';
 
 export default class HistoryController extends BaseController {

@@ -1,9 +1,9 @@
 import {Response, Request} from 'express';
 import BaseController from './BaseController';
-import SessionsRepository from '../repositories/elastic/SessionsRepository';
+import SessionsRepository from '../repositories/standalone/SessionsRepository';
 import {sessionTransformer} from '../container';
 import {Session} from '../models/Session';
-import StubsRepository from '../repositories/elastic/StubsRepository';
+import StubsRepository from '../repositories/standalone/StubsRepository';
 import config from '../config';
 
 export default class SessionsController extends BaseController {

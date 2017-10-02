@@ -1,5 +1,5 @@
 import * as url from 'url';
-import RequestsRepository from '../repositories/elastic/RequestsRepository';
+import RequestsRepository from '../repositories/standalone/RequestsRepository';
 import {ProxyIncomingMessage} from './interfaces/ProxyIncomingMessage';
 import {ProxyServerResponse} from './interfaces/ProxyServerResponse';
 

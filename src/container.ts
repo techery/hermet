@@ -2,17 +2,11 @@
  * Temporary services container
  * TODO: Replace with IoC & providers
  */
-import ElasticWrapper from './services/ElasticWrapper';
-import ElasticServiceRepository from './repositories/elastic/ServiceRepository';
-import ElasticStubsRepository from './repositories/elastic/StubsRepository';
 import InMemoryServiceRepository from './repositories/standalone/ServiceRepository';
 import InMemoryStubsRepository from './repositories/standalone/StubsRepository';
-import ElasticSessionsRepository from './repositories/elastic/SessionsRepository';
 import InMemorySessionsRepository from './repositories/standalone/SessionsRepository';
-import ElasticRequestsRepository from './repositories/elastic/RequestsRepository';
 import InMemoryRequestsRepository from './repositories/standalone/RequestsRepository';
 import config from './config';
-import {Client} from 'elasticsearch';
 import * as winston from 'winston';
 import ServicesController from './controllers/ServicesController';
 import StubsController from './controllers/StubsController';
@@ -21,21 +15,12 @@ import FlushController from './controllers/FlushController';
 import StubResolver from './proxy/StubResolver';
 import ProxyHandler from './errors/ProxyHandler';
 import AppHandler from './errors/AppHandler';
-import ElasticOptionsFactory from './services/ElasticOptonsFactory';
 import SessionTransformer from './transformers/SessionTransformer';
 import ProxyHistory from './proxy/ProxyHistory';
 import HistoryController from './controllers/HistoryController';
 import StubValidator from './validators/StubValidator';
 
 require('winston-daily-rotate-file');
-
-let elasticsearch = new Client({
-    host: config.elasticsearch.host,
-    log: config.debug ? 'trace' : 'warning'
-});
-
-let elastic = new ElasticWrapper(elasticsearch);
-let elasticOptionsFactory = new ElasticOptionsFactory(config.elasticsearch.index);
 
 let storage = {
     service: {},
@@ -44,33 +29,10 @@ let storage = {
     log: {}
 };
 
-let serviceRepository: any;
-if (config.standalone) {
-    serviceRepository = new InMemoryServiceRepository(storage);
-} else {
-    serviceRepository = new ElasticServiceRepository(elastic, elasticOptionsFactory);
-}
-
-let stubsRepository: any;
-if (config.standalone) {
-    stubsRepository = new InMemoryStubsRepository(storage);
-} else {
-    stubsRepository = new ElasticStubsRepository(elastic, elasticOptionsFactory);
-}
-
-let sessionRepository: any;
-if (config.standalone) {
-    sessionRepository = new InMemorySessionsRepository(storage);
-} else {
-    sessionRepository = new ElasticSessionsRepository(elastic, elasticOptionsFactory);
-}
-
-let requestsRepository: any;
-if (config.standalone) {
-    requestsRepository = new InMemoryRequestsRepository(storage);
-} else {
-    requestsRepository = new ElasticRequestsRepository(elastic, elasticOptionsFactory);
-}
+let serviceRepository = new InMemoryServiceRepository(storage);
+let stubsRepository = new InMemoryStubsRepository(storage);
+let sessionRepository = new InMemorySessionsRepository(storage);
+let requestsRepository = new InMemoryRequestsRepository(storage);
 
 let sessionTransformer = new SessionTransformer();
 let servicesController = new ServicesController(serviceRepository, stubsRepository);
@@ -111,8 +73,6 @@ let proxyHandler = new ProxyHandler(proxyLogger);
 let stubValidator = new StubValidator();
 
 export {
-    elastic,
-    elasticOptionsFactory,
     serviceRepository,
     storage,
     stubsRepository,
