@@ -28,7 +28,7 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public async create(request: Request, response: Response): Promise<void> {
-        const proxyHost: String = request.body.proxyHost;
+        const proxyHost: string = request.body.proxyHost;
 
         let services: Service[] = this.serviceRepository.getServicesByProxyHost(proxyHost);
         if (services.length > 0) {

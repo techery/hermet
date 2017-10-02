@@ -1,4 +1,4 @@
-import deepDiff = require('deep-diff');
+let deepDiff = require('deep-diff');
 import {Stub} from '../models/Stub';
 import ValidationError from '../errors/ValidationError';
 
@@ -27,7 +27,7 @@ export default class StubValidator {
         let deleteDiff: any[] = [];
         let isValid = false;
 
-        differences.forEach(difference => {
+        differences.forEach((difference: any) => {
             const diffKind = difference.kind;
             if (diffKind !== 'N' && diffKind !== 'D') {
                 isValid = true;

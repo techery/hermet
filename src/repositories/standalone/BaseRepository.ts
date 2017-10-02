@@ -1,4 +1,4 @@
-import uid = require('uid');
+let uid = require('uid');
 
 abstract class BaseRepository implements Repository {
 
@@ -102,7 +102,7 @@ abstract class BaseRepository implements Repository {
     /**
      * @returns {Promise}
      */
-    public removeAll(params: any = {}): Promise {
+    public removeAll(params: any = {}): Promise<any> {
         return new Promise((resolve, reject) => {
             let result: any[] = this.retrieveItemsByParam(params).map((item: any): any => {
                 return delete(this.getCollection()[item.id]);

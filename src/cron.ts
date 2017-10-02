@@ -4,12 +4,12 @@ import {
 } from './container';
 import * as moment from 'moment';
 import {Base} from './models/Base';
-import cron = require('node-cron');
+let cron = require('node-cron');
 
 export default () => {
     cron.schedule('*/15 * * * * *', (): any => {
-        async function removeExpiredItems(repository: Repository): any {
-            let items: Base[] = await repository.all();
+        async function removeExpiredItems(repository: Repository): Promise<any> {
+            let items: Base[] = await repository.all({});
             items.forEach((item: Base) => {
                 if (moment().isAfter(item.expireAt)) {
                     serviceRepository.remove(item.id);

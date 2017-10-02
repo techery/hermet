@@ -44,28 +44,28 @@ let storage = {
     log: {}
 };
 
-let serviceRepository;
+let serviceRepository: any;
 if (config.standalone) {
     serviceRepository = new InMemoryServiceRepository(storage);
 } else {
     serviceRepository = new ElasticServiceRepository(elastic, elasticOptionsFactory);
 }
 
-let stubsRepository;
+let stubsRepository: any;
 if (config.standalone) {
     stubsRepository = new InMemoryStubsRepository(storage);
 } else {
     stubsRepository = new ElasticStubsRepository(elastic, elasticOptionsFactory);
 }
 
-let sessionRepository;
+let sessionRepository: any;
 if (config.standalone) {
     sessionRepository = new InMemorySessionsRepository(storage);
 } else {
     sessionRepository = new ElasticSessionsRepository(elastic, elasticOptionsFactory);
 }
 
-let requestsRepository;
+let requestsRepository: any;
 if (config.standalone) {
     requestsRepository = new InMemoryRequestsRepository(storage);
 } else {

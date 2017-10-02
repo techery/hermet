@@ -49,7 +49,7 @@ abstract class BaseController {
      *
      * @param {string} message
      */
-    protected respondWithValidationError(message: String): void {
+    protected respondWithValidationError(message: string): void {
         throw new ValidationError(400, message);
     }
 }

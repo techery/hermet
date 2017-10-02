@@ -19,7 +19,7 @@ interface Repository {
      *
      * @returns {Promise}
      */
-    update(id: string, data: any): Promise;
+    update(id: string, data: any): Promise<any>;
 
     /**
      * @param {string} id
@@ -33,5 +33,5 @@ interface Repository {
      *
      * @returns {Promise<any[]>}
      */
-    all(params: any = {}): Promise<any[]>;
+    all(params: any): Promise<any[]>;
 }
