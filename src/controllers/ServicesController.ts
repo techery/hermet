@@ -13,7 +13,7 @@ export default class ServicesController extends BaseController {
 
     /**
      * @param {ServiceRepository} serviceRepository
-     * @param {StubsRepository} stubRepository
+     * @param {StubRepository} stubRepository
      */
     constructor(serviceRepository: ServiceRepository, stubRepository: StubRepository) {
         super();

@@ -13,7 +13,7 @@ export default class SessionsController extends BaseController {
 
     /**
      * @param {SessionRepository} sessionRepository
-     * @param {StubsRepository}    stubRepository
+     * @param {StubRepository}    stubRepository
      */
     constructor(sessionRepository: SessionRepository, stubRepository: StubRepository) {
         super();
