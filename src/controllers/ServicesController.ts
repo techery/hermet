@@ -35,6 +35,14 @@ export default class ServicesController extends BaseController {
             this.respondWithValidationError('Service with proxy host [' + proxyHost + '] already exists');
         }
 
+        if (!request.body.proxyHost) {
+            return this.respondWithValidationError('Proxy host should not be empty!');
+        }
+
+        if (!request.body.targetUrl) {
+            return this.respondWithValidationError('Target url should not be empty!');
+        }
+
         request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
         let service: Service = new Service(request.body);
         let result = this.serviceRepository.create(service);
