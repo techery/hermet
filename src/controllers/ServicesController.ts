@@ -28,19 +28,19 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public create(request: Request, response: Response): void {
-        const proxyHost: string = request.body.proxyHost;
-
-        let servicesCount = this.serviceRepository.count({proxyHost: proxyHost});
-        if (servicesCount > 0) {
-            this.respondWithValidationError('Service with proxy host [' + proxyHost + '] already exists');
-        }
-
         if (!request.body.proxyHost) {
             return this.respondWithValidationError('Proxy host should not be empty!');
         }
 
         if (!request.body.targetUrl) {
             return this.respondWithValidationError('Target url should not be empty!');
+        }
+
+        const proxyHost: string = request.body.proxyHost;
+
+        let servicesCount = this.serviceRepository.count({proxyHost: proxyHost});
+        if (servicesCount > 0) {
+            this.respondWithValidationError('Service with proxy host [' + proxyHost + '] already exists');
         }
 
         request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
