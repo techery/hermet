@@ -4,15 +4,9 @@ import {createProxy} from 'http-proxy';
 import {IncomingMessage, ServerResponse} from 'http';
 import {PassThrough} from 'stream';
 import ProxyError from './errors/ProxyError';
-import {
-    proxyHandler as errorHandler,
-    proxyHistory,
-    serviceRepository,
-    stubResolver,
-    stubsRepository
-} from './container';
+import {proxyHandler as errorHandler, serviceRepository, stubRepository, stubResolver} from './container';
 import {ProxyIncomingMessage} from './proxy/interfaces/ProxyIncomingMessage';
-import {ProxyServerResponse} from './proxy/interfaces/ProxyServerResponse';
+import {Stub} from './models/Stub';
 
 //
 // Create a proxy server with custom application logic
@@ -56,23 +50,11 @@ proxy.on('error', function (error: any, request: IncomingMessage, response: Serv
     errorHandler.handle(error, request, response);
 });
 
-proxy.on('proxyRes', function (proxyResponse: ProxyServerResponse, request: ProxyIncomingMessage, response: ServerResponse): void {
-    let responseBody = '';
-    proxyResponse.on('data', function (chunk: string): void {
-        responseBody += chunk;
-    });
-
-    proxyResponse.on('end', function (): void {
-        proxyResponse.body = responseBody;
-        proxyHistory.add(proxyResponse, request);
-    });
-});
-
 export default async (request: ProxyIncomingMessage, response: ServerResponse) => {
     let service: any;
 
     try {
-        service = await serviceRepository.getByProxyHost(request.headers.host);
+        service = serviceRepository.findOne({proxyHost: request.headers.host});
         if (!service) {
             throw new Error('There is no proxy rules for this host:' + request.headers.host);
         }
@@ -97,7 +79,7 @@ export default async (request: ProxyIncomingMessage, response: ServerResponse) =
         try {
 
             let sessionId = request.headers[config.app.session_header] || 'default';
-            let stubs = await stubsRepository.all({
+            let stubs: Stub[] = stubRepository.find({
                 serviceId: service.id,
                 sessionId: sessionId
             });

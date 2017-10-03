@@ -20,6 +20,9 @@ const config: Config = Object.freeze({
     proxy: {
         port: env('HERMET_PROXY_PORT', 5050),
         timeout: env('PROXY_DEFAULT_TIMEOUT', 10000)
+    },
+    database: {
+        file: 'database/db.json'
     }
 });
 
@@ -44,6 +47,10 @@ class Config {
     public proxy: {
         timeout: number,
         port: number
+    };
+
+    public database: {
+        file: string
     };
 }
 

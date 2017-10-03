@@ -19,7 +19,7 @@ async function sessionMiddleware(request: SessionRequest, response: Response, ne
     }
 
     try {
-        request.session = await sessionRepository.get(sessionId) as Session;
+        request.session = sessionRepository.get(sessionId);
         next();
     } catch (err) {
         throw new Error('Session with id [' + sessionId +  '] not found');

@@ -4,7 +4,6 @@ import stubs from './stubs';
 import sessions from './sessions';
 import groupStub from './groupStub';
 import flush from './flush';
-import history from './history';
 
 let router = Router({mergeParams: true});
 
@@ -14,7 +13,6 @@ router.get('/', function (request: Request, response: Response): void {
 
 router.use('/api/services', services);
 router.use('/api/services', stubs);
-router.use('/api/services', history);
 router.use('/api/stubs', groupStub);
 router.use('/api/sessions', sessions);
 router.use('/api/flush', flush);
