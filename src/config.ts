@@ -22,7 +22,8 @@ const config: Config = Object.freeze({
         timeout: env('PROXY_DEFAULT_TIMEOUT', 10000)
     },
     database: {
-        file: 'database/db.json'
+        file: 'database/db.json',
+        autosave_interval: env('HERMET_DATABASE_AUTOSAVE_INTERVAL', 5000)
     }
 });
 
@@ -50,7 +51,8 @@ class Config {
     };
 
     public database: {
-        file: string
+        file: string,
+        autosave_interval: number
     };
 }
 

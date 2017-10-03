@@ -24,7 +24,7 @@ require('winston-daily-rotate-file');
 let db = new loki(config.database.file, {
     autoload: true,
     autosave: true,
-    autosaveInterval: 5000
+    autosaveInterval: config.database.autosave_interval
 });
 
 let serviceRepository = new ServiceRepository(db);
