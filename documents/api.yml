@@ -1,0 +1,389 @@
+openapi: "3.0.0"
+info:
+  title: Hermet API
+  version: v2
+paths:
+  /api/services:
+    get:
+      summary: Services list
+      tags:
+        - Services
+      responses:
+        '200':
+          description: Array of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+    post:
+      summary: Create new service
+      tags:
+        - Services
+      requestBody:
+        description: Service details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '201':
+          description: Service created
+
+  /api/services/{service_id}:
+    get:
+      summary: Get service by id
+      tags:
+        - Services
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Service details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+    put:
+      summary: Update service details
+      tags:
+        - Services
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Service details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+      responses:
+        '204':
+          description: Service updated
+
+    delete:
+      summary: Update service details
+      tags:
+        - Services
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Service deleted
+  /api/services/{service_id}/stubs:
+    get:
+      summary: Get stubs list
+      tags:
+        - Stubs
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stubs list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stub'
+    post:
+      summary: Create new stub
+      tags:
+        - Stubs
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Stub details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stub'
+      responses:
+        '201':
+          description: Stub created
+
+    delete:
+      summary: Delete all stubs from the service
+      tags:
+        - Stubs
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Stubs deleted
+
+  /api/services/{service_id}/stubs/{stub_id}:
+    get:
+      summary: Get stub by id
+      tags:
+        - Stubs
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+        - name: stub_id
+          in: path
+          description: ID of stub to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stub details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stub'
+    put:
+      summary: Update stub details
+      tags:
+        - Stubs
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+        - name: stub_id
+          in: path
+          description: ID of stub to fetch
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Stub details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stub'
+      responses:
+        '204':
+          description: Stub updated
+
+    delete:
+      summary: Delete stub by id
+      tags:
+        - Stubs
+      parameters:
+        - name: service_id
+          in: path
+          description: ID of service to fetch
+          required: true
+          schema:
+            type: string
+        - name: stub_id
+          in: path
+          description: ID of stub to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Stub deleted
+  /api/stubs:
+    delete:
+      summary: Delete all stubs
+      tags:
+        - Stubs
+      responses:
+        '204':
+          description: Stubs deleted
+
+  /api/sessions:
+    get:
+      summary: Sessions list
+      tags:
+        - Sessions
+      responses:
+        '200':
+          description: Array of sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+    post:
+      summary: Create new session
+      tags:
+        - Sessions
+      requestBody:
+        description: Session details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+      responses:
+        '201':
+          description: Session created
+
+  /api/sessions/{session_id}:
+    get:
+      summary: Get session details by id
+      tags:
+        - Sessions
+      parameters:
+        - name: session_id
+          in: path
+          description: ID of session to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+    put:
+      summary: Update session
+      tags:
+        - Sessions
+      parameters:
+        - name: session_id
+          in: path
+          description: ID of session to fetch
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Session details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Session'
+      responses:
+        '204':
+          description: Session updated
+    delete:
+      summary: Delete session
+      tags:
+        - Sessions
+      parameters:
+        - name: session_id
+          in: path
+          description: ID of session to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Session deleted
+  /api/flush:
+    post:
+      tags:
+        - Database Reset
+      summary: Global database reset
+      description: Will delete all stubs, services and sessions
+      responses:
+        '204':
+          description: Database flush success
+
+components:
+  schemas:
+    BaseModel:
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+        createAt:
+          type: string
+          nullable: true
+          description: Creation time
+        expireAt:
+          type: string
+          nullable: true
+          description: Expiration time
+        ttl:
+          type: integer
+          description: Time to life in seconds
+
+    Service:
+      allOf:
+        - $ref: '#/components/schemas/BaseModel'
+        - properties:
+            name:
+              type: string
+              description: Service name
+            proxyHost:
+              type: string
+              description: Proxy host
+            targetUrl:
+              type: string
+              description: Proxy target url
+
+    Session:
+      allOf:
+        - $ref: '#/components/schemas/BaseModel'
+        - properties:
+            name:
+              type: string
+              description: Session name
+
+    Stub:
+      allOf:
+        - $ref: '#/components/schemas/BaseModel'
+        - properties:
+            serviceId:
+              type: string
+              description: Service ID
+            sessionId:
+              type: string
+              description: Session ID
+            response:
+              $ref: '#/components/schemas/StubbedResponse'
+            predicates:
+              type: array
+              description: Array of predicates
+              items:
+                type: object
+
+    StubbedResponse:
+      properties:
+        statusCode:
+          type: integer
+          description: Stub response code
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        body:
+          oneOf:
+            - type: object
+            - type: string
+          nullable: true

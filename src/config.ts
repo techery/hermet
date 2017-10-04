@@ -24,6 +24,10 @@ const config: Config = Object.freeze({
     database: {
         file: 'database/db.json',
         autosave_interval: env('HERMET_DATABASE_AUTOSAVE_INTERVAL', 5000)
+    },
+
+    api: {
+        documentation: 'documents/api.yml'
     }
 });
 
@@ -53,6 +57,10 @@ class Config {
     public database: {
         file: string,
         autosave_interval: number
+    };
+
+    public api: {
+        documentation: string
     };
 }
 

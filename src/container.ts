@@ -10,6 +10,7 @@ import * as winston from 'winston';
 import ServicesController from './controllers/ServicesController';
 import StubsController from './controllers/StubsController';
 import SessionsController from './controllers/SessionsController';
+import DocumentationController from './controllers/DocumentationController';
 import FlushController from './controllers/FlushController';
 import StubResolver from './proxy/StubResolver';
 import ProxyHandler from './errors/ProxyHandler';
@@ -36,6 +37,7 @@ let servicesController = new ServicesController(serviceRepository, stubRepositor
 let stubsController = new StubsController(stubRepository);
 let sessionController = new SessionsController(sessionRepository, stubRepository);
 let flushController = new FlushController(serviceRepository, stubRepository, sessionRepository);
+let documentationController = new DocumentationController();
 
 let stubResolver = new StubResolver();
 
@@ -72,6 +74,7 @@ export {
     stubRepository,
     sessionRepository,
     servicesController,
+    documentationController,
     stubsController,
     sessionController,
     flushController,
