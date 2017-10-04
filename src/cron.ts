@@ -9,7 +9,7 @@ export default () => {
     cron.schedule('*/15 * * * * *', (): any => {
         function removeExpiredItems(repository: Repository): void {
             repository.removeWhere((item: Base) => {
-                return moment().isAfter(item.expireAt);
+                return item.expireAt !== null && moment().isAfter(item.expireAt);
             });
         }
 
