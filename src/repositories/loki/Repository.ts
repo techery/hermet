@@ -22,10 +22,6 @@ abstract class Repository {
     }
 
     protected toModel(data: any): any {
-        if (data instanceof this.model) {
-            return data;
-        }
-
         if (Array.isArray(data)) {
             let result: any[] = [];
 
