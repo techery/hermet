@@ -1,7 +1,7 @@
 {
   "name": "techery-proxy-service",
-  "version": "0.1.0",
-  "description": "Internal Techery service",
+  "version": "1.0.0",
+  "description": "Service for the smart API stubbing",
   "repository": {
     "type": "git",
     "url": "https://github.com/techery/techery-proxy-service.git"
@@ -10,8 +10,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node --harmony ./dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "pm2 start pm2.json",
+    "test": "mocha --timeout 10000 ./integration_tests/bootstrap.js ./integration_tests/tests/**/*.js "
   },
   "dependencies": {
     "body-parser": "1.15.2",
