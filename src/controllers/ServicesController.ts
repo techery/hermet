@@ -72,6 +72,14 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public update(request: Request, response: Response): void {
+        if (!request.body.proxyHost) {
+            return this.respondWithValidationError('Proxy host should not be empty!');
+        }
+
+        if (!request.body.targetUrl) {
+            return this.respondWithValidationError('Target url should not be empty!');
+        }
+
         this.serviceRepository.findAndUpdate(request.params.serviceId, request.body);
         this.respondWithNoContent(response);
     }
