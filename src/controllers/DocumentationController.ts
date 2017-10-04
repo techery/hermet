@@ -11,6 +11,9 @@ export default class DocumentationController extends BaseController {
      */
     public show(request: Request, response: Response): any {
         let documentation = yaml.load(config.api.documentation);
-        this.respondJson(response, documentation);
+
+        response.set('Access-Control-Allow-Origin', '*')
+            .status(200)
+            .json(documentation);
     }
 }
