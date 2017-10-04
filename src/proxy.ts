@@ -7,6 +7,7 @@ import ProxyError from './errors/ProxyError';
 import {proxyHandler as errorHandler, serviceRepository, stubRepository, stubResolver} from './container';
 import {ProxyIncomingMessage} from './proxy/interfaces/ProxyIncomingMessage';
 import {Stub} from './models/Stub';
+import {ProxyServerResponse} from './proxy/interfaces/ProxyServerResponse';
 
 //
 // Create a proxy server with custom application logic
@@ -59,9 +60,7 @@ export default async (request: ProxyIncomingMessage, response: ServerResponse) =
             throw new Error('There is no proxy rules for this host:' + request.headers.host);
         }
     } catch (error) {
-        const message = 'Can not get proxy rules for host: ' + request.headers.host + '\r\n' + error.message;
-
-        return errorHandler.handle(new ProxyError(400, message), request, response);
+        return errorHandler.handle(new ProxyError(400, error.message), request, response);
     }
 
     let body: any[] = [];
