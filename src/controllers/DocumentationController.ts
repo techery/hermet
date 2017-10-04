@@ -12,7 +12,12 @@ export default class DocumentationController extends BaseController {
      */
     public show(request: Request, response: Response): any {
         let documentation = yaml.load(config.api.documentation);
-        let ui: string = fs.readFileSync('documents/swagger/swagger.html').toString();
+        let ui = fs.readFileSync(config.api.swagger).toString();
+
+        documentation.servers = documentation.servers || [];
+        documentation.servers.push({
+            url: config.app.base_url + ':' + config.app.port
+        });
 
         response.send(ui.replace('{{specification}}', JSON.stringify(documentation)));
     }

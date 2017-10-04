@@ -6,7 +6,7 @@ const config: Config = Object.freeze({
     debug: env('DEBUG', false),
     app: {
         port: env('HERMET_API_PORT', 5000),
-        base_url: env('HERMET_API_BASE_URL', 'http://localhost:5000/'),
+        base_url: env('HERMET_API_BASE_URL', 'http://localhost'),
         session_header: env('HERMET_SESSION_HEADER', 'x-session-id'),
         default_stub_ttl: env('HERMET_DEFAULT_STUB_TTL', 300),
         default_service_ttl: env('HERMET_DEFAULT_SERVICE_TTL', 0),
@@ -27,7 +27,8 @@ const config: Config = Object.freeze({
     },
 
     api: {
-        documentation: 'documents/api.yml'
+        documentation: 'documents/api.yml',
+        swagger: 'documents/swagger/swagger.html'
     }
 });
 
@@ -60,7 +61,8 @@ class Config {
     };
 
     public api: {
-        documentation: string
+        documentation: string,
+        swagger: string
     };
 }
 
