@@ -4,10 +4,9 @@ load();
 
 const config: Config = Object.freeze({
     debug: env('DEBUG', false),
-    standalone: env('STANDALONE', true),
     app: {
         port: env('HERMET_API_PORT', 5000),
-        base_url: env('HERMET_API_BASE_URL', 'http://localhost:5000/'),
+        base_url: env('HERMET_API_BASE_URL', 'http://localhost'),
         session_header: env('HERMET_SESSION_HEADER', 'x-session-id'),
         default_stub_ttl: env('HERMET_DEFAULT_STUB_TTL', 300),
         default_service_ttl: env('HERMET_DEFAULT_SERVICE_TTL', 0),
@@ -22,15 +21,19 @@ const config: Config = Object.freeze({
         port: env('HERMET_PROXY_PORT', 5050),
         timeout: env('PROXY_DEFAULT_TIMEOUT', 10000)
     },
-    elasticsearch: {
-        host: env('ELASTIC_HOST', 'elasticsearch:9200'),
-        index: env('ELASTIC_INDEX', 'hermet')
+    database: {
+        file: 'database/db.json',
+        autosave_interval: env('HERMET_DATABASE_AUTOSAVE_INTERVAL', 5000)
+    },
+
+    api: {
+        documentation: 'documents/api.yml',
+        swagger: 'documents/swagger/swagger.html'
     }
 });
 
 class Config {
     public debug: boolean;
-    public standalone: boolean;
 
     public app: {
         port: number,
@@ -52,9 +55,14 @@ class Config {
         port: number
     };
 
-    public elasticsearch: {
-        host: string,
-        index: string
+    public database: {
+        file: string,
+        autosave_interval: number
+    };
+
+    public api: {
+        documentation: string,
+        swagger: string
     };
 }
 

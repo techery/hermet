@@ -1,20 +1,20 @@
 import {Request, Response} from 'express';
 import BaseController from './BaseController';
-import StubsRepository from '../repositories/standalone/StubsRepository';
 import {SessionRequest} from '../requests/SessionRequest';
 import {Stub} from '../models/Stub';
 import config from '../config';
 import {stubValidator} from '../container';
+import StubRepository from '../repositories/loki/StubRepository';
 
 export default class StubsController extends BaseController {
-    protected stubsRepository: StubsRepository;
+    protected stubRepository: StubRepository;
 
     /**
-     * @param {Object} stubsRepository
+     * @param {Object} stubRepository
      */
-    constructor(stubsRepository: StubsRepository) {
+    constructor(stubRepository: StubRepository) {
         super();
-        this.stubsRepository = stubsRepository;
+        this.stubRepository = stubRepository;
     }
 
     /**
@@ -23,8 +23,8 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async create(request: SessionRequest, response: Response): Promise<void> {
-        let items = await this.stubsRepository.all({
+    public create(request: SessionRequest, response: Response): void {
+        let items: Stub[] = this.stubRepository.find({
             serviceId: request.params.serviceId,
             sessionId: request.session.id
         });
@@ -35,7 +35,7 @@ export default class StubsController extends BaseController {
         stub.sessionId = request.session.id;
         stub.serviceId = request.params.serviceId;
 
-        let result = await this.stubsRepository.create(stub);
+        let result = this.stubRepository.create(stub);
 
         this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result.id);
     }
@@ -46,9 +46,9 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async get(request: SessionRequest, response: Response): Promise<void> {
+    public get(request: SessionRequest, response: Response): void {
         try {
-            let stub = await this.stubsRepository.get(request.params.stubId);
+            let stub = this.stubRepository.get(request.params.stubId);
 
             this.respondJson(response, stub);
         } catch (err) {
@@ -62,8 +62,8 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async update(request: Request, response: Response): Promise<void> {
-        await this.stubsRepository.update(request.params.stubId, request.body);
+    public update(request: Request, response: Response): void {
+        this.stubRepository.findAndUpdate(request.params.stubId, request.body);
         this.respondWithNoContent(response);
     }
 
@@ -73,9 +73,9 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async remove(request: Request, response: Response): Promise<void> {
+    public remove(request: Request, response: Response): void {
         try {
-            await this.stubsRepository.remove(request.params.stubId);
+            this.stubRepository.delete({id: request.params.stubId});
             this.respondWithNoContent(response);
         } catch (err) {
             this.respondWithNotFound();
@@ -88,8 +88,8 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async list(request: SessionRequest, response: Response): Promise<void> {
-        let items = await this.stubsRepository.all({
+    public list(request: SessionRequest, response: Response): void {
+        let items: Stub[] = this.stubRepository.find({
             serviceId: request.params.serviceId,
             sessionId: request.session.id
         });
@@ -103,20 +103,16 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async removeAll(request: SessionRequest, response: Response): Promise<void> {
+    public removeAll(request: SessionRequest, response: Response): void {
         let searchParams: any = {
             sessionId: request.session.id
         };
 
-        if (request.params.suitId) {
+        if (request.params.serviceId) {
             searchParams.serviceId = request.params.serviceId;
         }
 
-        if (request.params.suitId) {
-            searchParams.suitId = request.params.suitId;
-        }
-
-        await this.stubsRepository.removeAll(searchParams);
+        this.stubRepository.findAndRemove(searchParams);
 
         this.respondWithNoContent(response);
     }

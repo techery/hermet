@@ -15,17 +15,6 @@ cp .env.sample .env
 docker-compose up hermet
 ```
 
-For the development:
-```
-npm install
-docker-compose up hermet_dev
-```
-
-Create database index:
-```bash
-curl -XPUT 'localhost:9200/hermet?pretty' -d"$(< src/resources/mapping.json)"
-```
-
 ### Integration tests
 
 Need to add localhost alias "hermet.proxy.io" in /etc/hosts.

@@ -1,22 +1,19 @@
-import {
-    serviceRepository,
-    stubsRepository, sessionRepository
-} from './container';
+import {serviceRepository, sessionRepository, stubRepository} from './container';
 import * as moment from 'moment';
 import {Base} from './models/Base';
+import Repository from './repositories/loki/Repository';
+
 let cron = require('node-cron');
 
 export default () => {
     cron.schedule('*/15 * * * * *', (): any => {
-        async function removeExpiredItems(repository: Repository): Promise<any> {
-            let items: Base[] = await repository.all({});
-            items.forEach((item: Base) => {
-                if (moment().isAfter(item.expireAt)) {
-                    serviceRepository.remove(item.id);
-                }
+        function removeExpiredItems(repository: Repository): void {
+            repository.removeWhere((item: Base) => {
+                return item.expireAt !== null && moment().isAfter(item.expireAt);
             });
         }
-        removeExpiredItems(stubsRepository);
+
+        removeExpiredItems(stubRepository);
         removeExpiredItems(serviceRepository);
         removeExpiredItems(sessionRepository);
     });

@@ -25,7 +25,6 @@ function _getEnv(key, defaultValue) {
 }
 
 const config = {
-    standalone: _getEnv('STANDALONE', false),
     app: {
         api_port: _getEnv('HERMET_API_PORT', 5000),
         api_base_url: _getEnv('HERMET_API_BASE_URL', 'http://localhost:5000'),

@@ -49,6 +49,7 @@ describe('Stubs api', function () {
       var stubId;
 
       var response = hermetApiClient.post('/services/' + serviceId + '/stubs', fixtures.stubs.base).then(function(result) {
+        console.log(serviceId);
         expect(result).to.have.status(201);
 
         stubId = utils.getItemIdFromLocation(result.response.headers.location);

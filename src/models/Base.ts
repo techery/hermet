@@ -11,7 +11,7 @@ export class Base {
         const now = moment();
         this.id = params.id || null;
         this.ttl = params.ttl || null;
-        this.createAt = now.format();
-        this.expireAt = this.ttl ? now.add(this.ttl, 's').format() : null;
+        this.createAt = params.createAt || now.format();
+        this.expireAt = params.expireAt || this.ttl ? now.add(this.ttl, 's').format() : null;
     }
 }

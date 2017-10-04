@@ -1,24 +1,24 @@
-import {Response, Request} from 'express';
+import {Request, Response} from 'express';
 import BaseController from './BaseController';
-import ServiceRepository from '../repositories/standalone/ServiceRepository';
+import ServiceRepository from '../repositories/loki/ServiceRepository';
 import {SessionRequest} from '../requests/SessionRequest';
-import StubsRepository from '../repositories/standalone/StubsRepository';
+import StubRepository from '../repositories/loki/StubRepository';
 import {Service} from '../models/Service';
 import config from '../config';
 
 export default class ServicesController extends BaseController {
 
     protected serviceRepository: ServiceRepository;
-    protected stubsRepository: StubsRepository;
+    protected stubRepository: StubRepository;
 
     /**
      * @param {ServiceRepository} serviceRepository
-     * @param {StubsRepository} stubsRepository
+     * @param {StubRepository} stubRepository
      */
-    constructor(serviceRepository: ServiceRepository, stubsRepository: StubsRepository) {
+    constructor(serviceRepository: ServiceRepository, stubRepository: StubRepository) {
         super();
         this.serviceRepository = serviceRepository;
-        this.stubsRepository = stubsRepository;
+        this.stubRepository = stubRepository;
     }
 
     /**
@@ -27,17 +27,25 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async create(request: Request, response: Response): Promise<void> {
+    public create(request: Request, response: Response): void {
+        if (!request.body.proxyHost) {
+            return this.respondWithValidationError('Proxy host should not be empty!');
+        }
+
+        if (!request.body.targetUrl) {
+            return this.respondWithValidationError('Target url should not be empty!');
+        }
+
         const proxyHost: string = request.body.proxyHost;
 
-        let services: Service[] = this.serviceRepository.getServicesByProxyHost(proxyHost);
-        if (services.length > 0) {
+        let servicesCount = this.serviceRepository.count({proxyHost: proxyHost});
+        if (servicesCount > 0) {
             this.respondWithValidationError('Service with proxy host [' + proxyHost + '] already exists');
         }
 
         request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
         let service: Service = new Service(request.body);
-        let result = await this.serviceRepository.create(service);
+        let result = this.serviceRepository.create(service);
         this.respondWithCreated(response, 'api/services/' + result.id);
     }
 
@@ -47,9 +55,9 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async get(request: Request, response: Response): Promise<void> {
+    public get(request: Request, response: Response): void {
         try {
-            let item = await this.serviceRepository.get(request.params.serviceId);
+            let item = this.serviceRepository.get(request.params.serviceId);
 
             this.respondJson(response, item);
         } catch (err) {
@@ -63,8 +71,16 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async update(request: Request, response: Response): Promise<void> {
-        await this.serviceRepository.update(request.params.serviceId, request.body);
+    public update(request: Request, response: Response): void {
+        if (!request.body.proxyHost) {
+            return this.respondWithValidationError('Proxy host should not be empty!');
+        }
+
+        if (!request.body.targetUrl) {
+            return this.respondWithValidationError('Target url should not be empty!');
+        }
+
+        this.serviceRepository.findAndUpdate(request.params.serviceId, request.body);
         this.respondWithNoContent(response);
     }
 
@@ -74,10 +90,10 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async remove(request: SessionRequest, response: Response): Promise<void> {
+    public remove(request: SessionRequest, response: Response): void {
         try {
-            await this.serviceRepository.remove(request.params.serviceId);
-            await this.stubsRepository.removeAll({
+            this.serviceRepository.delete({id: request.params.serviceId});
+            this.stubRepository.delete({
                 sessionId: request.session.id,
                 serviceId: request.params.serviceId
             });
@@ -93,8 +109,8 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async list(request: Request, response: Response): Promise<void> {
-        let items = await this.serviceRepository.all();
+    public list(request: Request, response: Response): void {
+        let items = this.serviceRepository.all();
 
         this.respondJson(response, items);
     }

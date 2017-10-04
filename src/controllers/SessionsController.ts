@@ -1,24 +1,24 @@
 import {Response, Request} from 'express';
 import BaseController from './BaseController';
-import SessionsRepository from '../repositories/elastic/SessionsRepository';
+import SessionRepository from '../repositories/loki/SessionRepository';
 import {sessionTransformer} from '../container';
 import {Session} from '../models/Session';
-import StubsRepository from '../repositories/elastic/StubsRepository';
 import config from '../config';
+import StubRepository from '../repositories/loki/StubRepository';
 
 export default class SessionsController extends BaseController {
 
-    protected sessionsRepository: SessionsRepository;
-    protected stubsRepository: StubsRepository;
+    protected sessionRepository: SessionRepository;
+    protected stubRepository: StubRepository;
 
     /**
-     * @param {SessionsRepository} sessionsRepository
-     * @param {StubsRepository}    stubsRepository
+     * @param {SessionRepository} sessionRepository
+     * @param {StubRepository}    stubRepository
      */
-    constructor(sessionsRepository: SessionsRepository, stubsRepository: StubsRepository) {
+    constructor(sessionRepository: SessionRepository, stubRepository: StubRepository) {
         super();
-        this.sessionsRepository = sessionsRepository;
-        this.stubsRepository = stubsRepository;
+        this.sessionRepository = sessionRepository;
+        this.stubRepository = stubRepository;
     }
 
     /**
@@ -27,10 +27,10 @@ export default class SessionsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async create(request: Request, response: Response): Promise<void> {
+    public create(request: Request, response: Response): void {
         request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_session_ttl;
         let session: Session = new Session(request.body);
-        let result = await this.sessionsRepository.create(session);
+        let result = this.sessionRepository.create(session);
 
         this.respondWithCreated(response, 'api/sessions/' + result.id);
     }
@@ -41,9 +41,9 @@ export default class SessionsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async get(request: Request, response: Response): Promise<void> {
+    public get(request: Request, response: Response): void {
         try {
-            let session: Session = await this.sessionsRepository.get(request.params.sessionId);
+            let session: Session = this.sessionRepository.get(request.params.sessionId);
 
             this.respondJson(response, sessionTransformer.transform(session));
         } catch (err) {
@@ -57,8 +57,8 @@ export default class SessionsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async update(request: Request, response: Response): Promise<void> {
-        await this.sessionsRepository.update(request.params.sessionId, request.body);
+    public update(request: Request, response: Response): void {
+        this.sessionRepository.findAndUpdate(request.params.sessionId, request.body);
         this.respondWithNoContent(response);
     }
 
@@ -68,12 +68,10 @@ export default class SessionsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async remove(request: Request, response: Response): Promise<void> {
+    public remove(request: Request, response: Response): void {
         try {
-            await this.sessionsRepository.remove(request.params.sessionId);
-            await this.stubsRepository.removeAll({
-                sessionId: request.params.sessionId
-            });
+            this.sessionRepository.delete({id: request.params.sessionId});
+            this.stubRepository.delete({sessionId: request.params.sessionId});
             this.respondWithNoContent(response);
         } catch (err) {
             this.respondWithNotFound();
@@ -86,8 +84,8 @@ export default class SessionsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public async list(request: Request, response: Response): Promise<void> {
-        let items = await this.sessionsRepository.all();
+    public list(request: Request, response: Response): void {
+        let items: Session[] = this.sessionRepository.all();
 
         this.respondJson(response, items);
     }
