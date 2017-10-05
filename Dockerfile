@@ -2,7 +2,7 @@ FROM ubuntu:14.04
 
 # Environment configuration
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 4.1.2
+ENV NODE_VERSION 8.6.0
 ENV HERMET_DIR /home/hermet/app
 
 # Replace shell with bash so we can source files
@@ -61,11 +61,11 @@ RUN mkdir -p ${HERMET_DIR}
 WORKDIR ${HERMET_DIR}
 
 # Install node dependencies
-COPY package.json ${HERMET_DIR}
+COPY --chown=hermet package.json ${HERMET_DIR}
 RUN npm install
 
 # Copy project files
-COPY . ${HERMET_DIR}
+COPY --chown=hermet . ${HERMET_DIR}
 
 # Run gulp
 RUN node_modules/.bin/gulp build

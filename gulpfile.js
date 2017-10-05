@@ -3,10 +3,7 @@
 let gulp = require('gulp');
 let ts = require('gulp-typescript');
 let tslint = require('gulp-tslint');
-let sourcemaps = require('gulp-sourcemaps');
 let gulpTypings = require("gulp-typings");
-let babel = require("gulp-babel");
-let util = require('gulp-util');
 
 let tsProject = ts.createProject('tsconfig.json');
 
@@ -35,10 +32,7 @@ gulp.task('typings', () => {
 
 gulp.task('transpile', ['typings'], () => {
   return gulp.src(config.dirs.src)
-    .pipe(sourcemaps.init())
     .pipe(tsProject())
-    .pipe(babel())
-    .pipe(sourcemaps.write())
     .pipe(gulp.dest(config.dirs.build));
 });
 
