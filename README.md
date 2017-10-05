@@ -6,7 +6,6 @@ Techery internal service for proxying third party services and stub them if need
  * Docker
 
 ### Installation
-For the production:
 ```
 # Copy and edit .env file
 cp .env.sample .env
@@ -15,10 +14,11 @@ cp .env.sample .env
 docker-compose up hermet
 ```
 
+### API documentation
+By default it located here: [http://localhost:5000/api/documentation](http://localhost:5000/api/documentation)
+Or you can read raw documentation here: [./documents/api.yml](API Documentation)
+
 ### Integration tests
-
-Need to add localhost alias "hermet.proxy.io" in /etc/hosts.
-
 For run tests use command:
 
 ```

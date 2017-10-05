@@ -10,7 +10,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "preserveConstEnums": true,
-    "alwaysStrict": true,
     "outDir": "build",
     "rootDir": "src",
     "sourceMap": false
