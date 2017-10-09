@@ -340,10 +340,7 @@ components:
         - properties:
             name:
               type: string
-              description: Service name
-            proxyHost:
-              type: string
-              description: Proxy host
+              description: Service name. Must be unique.
             targetUrl:
               type: string
               description: Proxy target url

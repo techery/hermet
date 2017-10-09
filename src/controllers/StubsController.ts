@@ -3,18 +3,21 @@ import BaseController from './BaseController';
 import {SessionRequest} from '../requests/SessionRequest';
 import {Stub} from '../models/Stub';
 import config from '../config';
-import {stubValidator} from '../container';
 import StubRepository from '../repositories/loki/StubRepository';
+import StubValidator from '../validators/StubValidator';
 
 export default class StubsController extends BaseController {
     protected stubRepository: StubRepository;
+    protected stubValidator: StubValidator;
 
     /**
      * @param {Object} stubRepository
+     * @param {StubValidator} stubValidator
      */
-    constructor(stubRepository: StubRepository) {
+    constructor(stubRepository: StubRepository, stubValidator: StubValidator) {
         super();
         this.stubRepository = stubRepository;
+        this.stubValidator = stubValidator;
     }
 
     /**
@@ -28,7 +31,7 @@ export default class StubsController extends BaseController {
             serviceId: request.params.serviceId,
             sessionId: request.session.id
         });
-        stubValidator.validate(request.body, items);
+        this.stubValidator.validate(request.body, items);
 
         request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_stub_ttl;
         let stub: Stub = new Stub(request.body);

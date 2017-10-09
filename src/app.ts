@@ -1,11 +1,13 @@
-import {Request, Response, NextFunction} from 'express';
-import routes from './routes/routes';
-import * as parser from 'body-parser';
 import * as express from 'express';
-import {appLogger as logger, appHandler as errorHandler} from './container';
+import {NextFunction, Request, Response} from 'express';
+import routes from './routes/routes';
+import {appHandler as errorHandler, proxyController} from './container';
+import * as parser from 'body-parser';
 import sessionMiddleware from './middleware/session';
 
 const app = express();
+
+app.use((req, res, next) => proxyController.proxy(req, res, next));
 
 app.use(parser.json());
 app.use(parser.urlencoded({extended: false}));
