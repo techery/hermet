@@ -8,4 +8,4 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - '127.0.0.1:5000:5000'
+      - '127.0.0.1:5025:5025'
