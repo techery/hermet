@@ -21,7 +21,7 @@ abstract class BaseController {
      * @param {string} uri
      */
     protected respondWithCreated(response: Response, uri: string): void {
-        response.set('Location', config.app.base_url + ':' + config.app.port + uri)
+        response.set('Location', config.app.base_url + uri)
             .status(201)
             .end();
     }
