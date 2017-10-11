@@ -4,7 +4,7 @@ export class Session extends Base {
 
     public name: string;
 
-    constructor(params: any) {
+    constructor(params: any = {}) {
         super(params);
         this.name = params.name || '';
     }

@@ -7,7 +7,7 @@ export class Stub extends Base {
     public serviceId: string;
     public sessionId: string;
 
-    constructor(params: any) {
+    constructor(params: any = {}) {
         super(params);
         this.response = params.response || {};
         this.predicates = params.predicates || [];

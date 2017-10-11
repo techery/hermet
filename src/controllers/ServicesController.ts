@@ -5,6 +5,8 @@ import {SessionRequest} from '../requests/SessionRequest';
 import StubRepository from '../repositories/loki/StubRepository';
 import {Service} from '../models/Service';
 import config from '../config';
+import * as moment from 'moment';
+import isTtl from '../validators/TtlValidator';
 
 export default class ServicesController extends BaseController {
 
@@ -28,9 +30,9 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public create(request: Request, response: Response): void {
-        const name = request.body.name;
+        const ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
 
-        if (!name || /[\w\d-_]{3,}/.test(name)) {
+        if (!request.body.hasOwnProperty('name') || !/[\w\d-_]{3,}/.test(request.body.name)) {
             return this.respondWithValidationError('Invalid service name format!');
         }
 
@@ -38,15 +40,24 @@ export default class ServicesController extends BaseController {
             return this.respondWithValidationError('Target url should not be empty!');
         }
 
-        let servicesCount = this.serviceRepository.count({name: name});
+        if (request.body.hasOwnProperty('ttl') && !isTtl(request.body.ttl)) {
+            return this.respondWithValidationError('Invalid time to life!');
+        }
+
+        const name = request.body.name;
+        const servicesCount = this.serviceRepository.count({name: name});
         if (servicesCount > 0) {
             this.respondWithValidationError('Service with name [' + name + '] already exists');
         }
 
-        request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
-        let service: Service = new Service(request.body);
-        let result = this.serviceRepository.create(service);
-        this.respondWithCreated(response, 'api/services/' + result.id);
+        const service: Service = this.serviceRepository.create({
+            name: name,
+            targetUrl: request.body.targetUrl,
+            ttl: ttl,
+            expireAt: ttl ? moment().add(ttl, 's').format() : null
+        });
+
+        this.respondWithCreated(response, 'api/services/' + service.id);
     }
 
     /**
@@ -57,9 +68,9 @@ export default class ServicesController extends BaseController {
      */
     public get(request: Request, response: Response): void {
         try {
-            let item = this.serviceRepository.get(request.params.serviceId);
+            const service: Service = this.serviceRepository.get(request.params.serviceId);
 
-            this.respondJson(response, item);
+            this.respondJson(response, service);
         } catch (err) {
             this.respondWithNotFound();
         }
@@ -72,15 +83,30 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public update(request: Request, response: Response): void {
-        if (!request.body.proxyHost) {
-            return this.respondWithValidationError('Proxy host should not be empty!');
+        if (request.body.hasOwnProperty('name') && !/[\w\d-_]{3,}/.test(request.body.name)) {
+            return this.respondWithValidationError('Invalid service name format!');
         }
 
-        if (!request.body.targetUrl) {
+        if (request.body.hasOwnProperty('targetUrl') && !request.body.targetUrl) {
             return this.respondWithValidationError('Target url should not be empty!');
         }
 
-        this.serviceRepository.findAndUpdate(request.params.serviceId, request.body);
+        if (request.body.hasOwnProperty('ttl') && !isTtl(request.body.ttl)) {
+            return this.respondWithValidationError('Invalid time to life!');
+        }
+
+        const service: Service = this.serviceRepository.get(request.params.serviceId);
+
+        service.name = request.body.name || service.name;
+        service.targetUrl = request.body.targetUrl || service.targetUrl;
+
+        if (request.body.hasOwnProperty('ttl')) {
+            service.ttl = request.body.ttl;
+            service.expireAt = moment(service.createAt).add(request.body.ttl).format();
+        }
+
+        this.serviceRepository.update(service);
+
         this.respondWithNoContent(response);
     }
 
@@ -110,7 +136,7 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public list(request: Request, response: Response): void {
-        let items = this.serviceRepository.all();
+        let items: Service[] = this.serviceRepository.all();
 
         this.respondJson(response, items);
     }

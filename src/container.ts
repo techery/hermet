@@ -1,7 +1,3 @@
-/**
- * Temporary services container
- * TODO: Replace with IoC & providers
- */
 import {createProxyServer} from 'http-proxy';
 import ServiceRepository from './repositories/loki/ServiceRepository';
 import StubRepository from './repositories/loki/StubRepository';
@@ -19,41 +15,45 @@ import AppHandler from './errors/AppHandler';
 import SessionTransformer from './transformers/SessionTransformer';
 import StubValidator from './validators/StubValidator';
 import ProxyController from './controllers/ProxyController';
+import DbFsAdapter from './DbFsAdapter';
 
-let loki = require('lokijs');
+const loki = require('lokijs');
 
 require('winston-daily-rotate-file');
 
-let db = new loki(config.database.file, {
-    autoload: true,
+const db = new loki(config.database.file, {
     autosave: true,
-    autosaveInterval: config.database.autosave_interval
+    autosaveInterval: config.database.autosave_interval,
+    adapter: new DbFsAdapter()
 });
+
+// Load DB synchronously (thanks to the custom DbFsAdapter)
+db.loadDatabase();
 
 // Create a proxy server with custom application logic
 const proxy = createProxyServer();
 proxy.on('error', (error: any, request: any, response: any) => proxyHandler.handle(error, request, response));
 
-let serviceRepository = new ServiceRepository(db);
-let stubRepository = new StubRepository(db);
-let sessionRepository = new SessionRepository(db);
+const serviceRepository = new ServiceRepository(db);
+const stubRepository = new StubRepository(db);
+const sessionRepository = new SessionRepository(db);
 
-let appLogger = initLogger(config.log.app);
-let proxyLogger = initLogger(config.log.proxy);
+const appLogger = initLogger(config.log.app);
+const proxyLogger = initLogger(config.log.proxy);
 
-let appHandler = new AppHandler(appLogger);
-let proxyHandler = new ProxyHandler(proxyLogger);
+const appHandler = new AppHandler(appLogger);
+const proxyHandler = new ProxyHandler(proxyLogger);
 
-let stubValidator = new StubValidator();
-let stubResolver = new StubResolver();
+const stubValidator = new StubValidator();
+const stubResolver = new StubResolver();
 
-let sessionTransformer = new SessionTransformer();
-let servicesController = new ServicesController(serviceRepository, stubRepository);
-let stubsController = new StubsController(stubRepository, stubValidator);
-let sessionController = new SessionsController(sessionRepository, stubRepository);
-let flushController = new FlushController(serviceRepository, stubRepository, sessionRepository);
-let documentationController = new DocumentationController();
-let proxyController = new ProxyController(proxy, proxyHandler, serviceRepository, stubResolver);
+const sessionTransformer = new SessionTransformer();
+const servicesController = new ServicesController(serviceRepository, stubRepository);
+const stubsController = new StubsController(stubRepository, stubValidator);
+const sessionController = new SessionsController(sessionRepository, stubRepository);
+const flushController = new FlushController(serviceRepository, stubRepository, sessionRepository);
+const documentationController = new DocumentationController();
+const proxyController = new ProxyController(proxy, proxyHandler, serviceRepository, stubResolver);
 
 function initLogger(file: string): winston.LoggerInstance {
     const level = config.debug ? 'debug' : config.log.level;

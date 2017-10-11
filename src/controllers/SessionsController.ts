@@ -5,6 +5,8 @@ import {sessionTransformer} from '../container';
 import {Session} from '../models/Session';
 import config from '../config';
 import StubRepository from '../repositories/loki/StubRepository';
+import * as moment from 'moment';
+import isTtl from '../validators/TtlValidator';
 
 export default class SessionsController extends BaseController {
 
@@ -28,11 +30,23 @@ export default class SessionsController extends BaseController {
      * @param {Response} response
      */
     public create(request: Request, response: Response): void {
-        request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_session_ttl;
-        let session: Session = new Session(request.body);
-        let result = this.sessionRepository.create(session);
+        const ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_session_ttl;
 
-        this.respondWithCreated(response, 'api/sessions/' + result.id);
+        if (!request.body.hasOwnProperty('name') || !/[\w\d-_]{3,}/.test(request.body.name)) {
+            return this.respondWithValidationError('Invalid session name format!');
+        }
+
+        if (request.body.hasOwnProperty('ttl') && !isTtl(request.body.ttl)) {
+            return this.respondWithValidationError('Invalid time to life!');
+        }
+
+        const session: Session = this.sessionRepository.create({
+            name: request.body.name,
+            ttl: ttl,
+            expireAt: ttl ? moment().add(ttl, 's').format() : null
+        });
+
+        this.respondWithCreated(response, 'api/sessions/' + session.id);
     }
 
     /**
@@ -43,7 +57,7 @@ export default class SessionsController extends BaseController {
      */
     public get(request: Request, response: Response): void {
         try {
-            let session: Session = this.sessionRepository.get(request.params.sessionId);
+            const session: Session = this.sessionRepository.get(request.params.sessionId);
 
             this.respondJson(response, sessionTransformer.transform(session));
         } catch (err) {
@@ -58,7 +72,24 @@ export default class SessionsController extends BaseController {
      * @param {Response} response
      */
     public update(request: Request, response: Response): void {
-        this.sessionRepository.findAndUpdate(request.params.sessionId, request.body);
+        if (request.body.hasOwnProperty('name') && !/[\w\d-_]{3,}/.test(request.body.name)) {
+            return this.respondWithValidationError('Invalid session name format!');
+        }
+
+        if (request.body.hasOwnProperty('ttl') && !isTtl(request.body.ttl)) {
+            return this.respondWithValidationError('Invalid time to life!');
+        }
+        const session: Session = this.sessionRepository.get(request.params.sessionId);
+
+        session.name = request.body.name || session.name;
+
+        if (request.body.hasOwnProperty('ttl')) {
+            session.ttl = request.body.ttl;
+            session.expireAt = moment(session.createAt).add(request.body.ttl).format();
+        }
+
+        this.sessionRepository.update(session);
+
         this.respondWithNoContent(response);
     }
 

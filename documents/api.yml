@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   title: Hermet API
-  version: 1.0.0
+  version: 1.1.0
   description: Service for the smart API stubbing
 paths:
   /api/services:
@@ -27,7 +27,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Service'
+              type: object
+              required:
+                - name
+                - targetUrl
+              properties:
+                name:
+                  type: string
+                  description: Service name. Must be unique.
+                targetUrl:
+                  type: string
+                  description: Proxy target url
+                ttl:
+                  type: integer
+                  description: Time to life in seconds
+                  nullable: true
       responses:
         '201':
           description: Service created
@@ -67,7 +81,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Service'
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Service name. Must be unique.
+                targetUrl:
+                  type: string
+                  description: Proxy target url
+                ttl:
+                  type: integer
+                  description: Time to life in seconds
+                  nullable: true
       responses:
         '204':
           description: Service updated
@@ -123,7 +148,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Stub'
+              type: object
+              required:
+                - serviceId
+                - sessionId
+                - response
+                - predicates
+              properties:
+                serviceId:
+                  type: string
+                  description: Service ID
+                sessionId:
+                  type: string
+                  description: Session ID
+                response:
+                  $ref: '#/components/schemas/StubbedResponse'
+                predicates:
+                  type: array
+                  description: Array of predicates
+                  items:
+                    type: object
+                ttl:
+                  type: integer
+                  description: Time to life in seconds
+                  nullable: true
       responses:
         '201':
           description: Stub created
@@ -190,7 +238,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Stub'
+              type: object
+              properties:
+                response:
+                  $ref: '#/components/schemas/StubbedResponse'
+                predicates:
+                  type: array
+                  description: Array of predicates
+                  items:
+                    type: object
+                ttl:
+                  type: integer
+                  description: Time to life in seconds
+                  nullable: true
       responses:
         '204':
           description: Stub updated
@@ -247,7 +307,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Session'
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Session name
+                ttl:
+                  type: integer
+                  description: Time to life in seconds
+                  nullable: true
       responses:
         '201':
           description: Session created
@@ -287,7 +357,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Session'
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Session name
+                ttl:
+                  type: integer
+                  description: Time to life in seconds
+                  nullable: true
       responses:
         '204':
           description: Session updated

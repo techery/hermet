@@ -9,3 +9,5 @@ services:
       NODE_ENV: production
     ports:
       - '127.0.0.1:5025:5025'
+    volumes:
+      - ./database:/home/hermet/app/database
