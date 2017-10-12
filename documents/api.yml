@@ -397,6 +397,9 @@ components:
   schemas:
     BaseModel:
       properties:
+        $loki:
+          type: string
+          description: internal DB index (to be removed)
         id:
           type: string
           description: Unique identifier
