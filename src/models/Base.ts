@@ -9,7 +9,7 @@ export class Base {
 
     constructor(params: any = {}) {
         if (params.$loki) {
-            this.$loki = params.$loki
+            this.$loki = params.$loki;
         }
 
         this.id = params.id || null;
