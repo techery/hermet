@@ -56,7 +56,7 @@ export default class StubsController extends BaseController {
             expireAt: ttl ? moment().add(ttl, 's').format() : null
         });
 
-        this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + stub.id);
+        this.respondJson(response, stub, 201);
     }
 
     /**
@@ -105,7 +105,7 @@ export default class StubsController extends BaseController {
         }
 
         this.stubRepository.update(stub);
-        this.respondWithNoContent(response);
+        this.respondJson(response, stub);
     }
 
     /**

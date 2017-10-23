@@ -45,6 +45,10 @@ paths:
       responses:
         '201':
           description: Service created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
 
   /api/services/{service_id}:
     get:
@@ -94,8 +98,12 @@ paths:
                   description: Time to life in seconds
                   nullable: true
       responses:
-        '204':
+        '200':
           description: Service updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
 
     delete:
       summary: Update service details
@@ -171,6 +179,10 @@ paths:
       responses:
         '201':
           description: Stub created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stub'
 
     delete:
       summary: Delete all stubs from the service
@@ -248,8 +260,12 @@ paths:
                   description: Time to life in seconds
                   nullable: true
       responses:
-        '204':
+        '200':
           description: Stub updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stub'
 
     delete:
       summary: Delete stub by id
@@ -294,9 +310,6 @@ components:
   schemas:
     BaseModel:
       properties:
-        $loki:
-          type: string
-          description: internal DB index (to be removed)
         id:
           type: string
           description: Unique identifier

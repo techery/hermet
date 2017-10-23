@@ -57,7 +57,7 @@ export default class ServicesController extends BaseController {
             expireAt: ttl ? moment().add(ttl, 's').format() : null
         });
 
-        this.respondWithCreated(response, 'api/services/' + service.id);
+        this.respondJson(response, service, 201);
     }
 
     /**
@@ -107,7 +107,7 @@ export default class ServicesController extends BaseController {
 
         this.serviceRepository.update(service);
 
-        this.respondWithNoContent(response);
+        this.respondJson(response, service);
     }
 
     /**

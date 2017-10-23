@@ -1,4 +1,3 @@
-import config from '../config';
 import NotFound from './../errors/NotFound';
 import {Response} from 'express';
 import ValidationError from '../errors/ValidationError';
@@ -9,21 +8,10 @@ abstract class BaseController {
      *
      * @param {Response} response
      * @param {*} json
+     * @param {number} status
      */
-    protected respondJson(response: Response, json: any): void {
-        response.status(200).json(json);
-    }
-
-    /**
-     * Return 201 Created response
-     *
-     * @param {Response} response
-     * @param {string} uri
-     */
-    protected respondWithCreated(response: Response, uri: string): void {
-        response.set('Location', config.app.base_url + uri)
-            .status(201)
-            .end();
+    protected respondJson(response: Response, json: any, status: number = 200): void {
+        response.status(status).json(json);
     }
 
     /**

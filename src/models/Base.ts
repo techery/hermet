@@ -16,4 +16,8 @@ export class Base {
         // Assign everything else
         Object.assign(this, _.omit(params, _.keys(this)));
     }
+
+    public toJSON() {
+        return _.omit(this, ['$loki', 'meta']);
+    }
 }
