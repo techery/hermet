@@ -10,7 +10,7 @@ abstract class BaseController {
      * @param {*} json
      * @param {number} status
      */
-    protected respondJson(response: Response, json: any, status: number = 200): void {
+    protected respondJson(response: Response, json: any, status = 200): void {
         response.status(status).json(json);
     }
 
