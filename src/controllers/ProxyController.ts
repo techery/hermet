@@ -63,14 +63,10 @@ export default class ProxyController extends BaseController {
             bufferStream.end(new Buffer(buffer));
 
             try {
-                let sessionId = request.headers[config.app.session_header] || 'default';
-
                 let postData = buffer.toString();
                 request.body = postData ? JSON.parse(postData) : null;
-                // request.serviceId = service.id;
-                // request.sessionId = sessionId;
 
-                if (this.stubResolver.applyStub(service.id, sessionId, request, response)) {
+                if (this.stubResolver.applyStub(service.id, request, response)) {
                     return;
                 }
 

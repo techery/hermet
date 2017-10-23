@@ -120,7 +120,6 @@ export default class ServicesController extends BaseController {
         try {
             this.serviceRepository.delete({id: request.params.serviceId});
             this.stubRepository.delete({
-                sessionId: request.session.id,
                 serviceId: request.params.serviceId
             });
             this.respondWithNoContent(response);

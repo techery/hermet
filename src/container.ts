@@ -1,18 +1,15 @@
 import {createProxyServer} from 'http-proxy';
 import ServiceRepository from './repositories/loki/ServiceRepository';
 import StubRepository from './repositories/loki/StubRepository';
-import SessionRepository from './repositories/loki/SessionRepository';
 import config from './config';
 import * as winston from 'winston';
 import ServicesController from './controllers/ServicesController';
 import StubsController from './controllers/StubsController';
-import SessionsController from './controllers/SessionsController';
 import DocumentationController from './controllers/DocumentationController';
 import FlushController from './controllers/FlushController';
 import StubResolver from './proxy/StubResolver';
 import ProxyHandler from './errors/ProxyHandler';
 import AppHandler from './errors/AppHandler';
-import SessionTransformer from './transformers/SessionTransformer';
 import StubValidator from './validators/StubValidator';
 import ProxyController from './controllers/ProxyController';
 import DbFsAdapter from './DbFsAdapter';
@@ -36,7 +33,6 @@ proxy.on('error', (error: any, request: any, response: any) => proxyHandler.hand
 
 const serviceRepository = new ServiceRepository(db);
 const stubRepository = new StubRepository(db);
-const sessionRepository = new SessionRepository(db);
 
 const appLogger = initLogger(config.log.app);
 const proxyLogger = initLogger(config.log.proxy);
@@ -47,11 +43,9 @@ const proxyHandler = new ProxyHandler(proxyLogger);
 const stubValidator = new StubValidator();
 const stubResolver = new StubResolver();
 
-const sessionTransformer = new SessionTransformer();
 const servicesController = new ServicesController(serviceRepository, stubRepository);
 const stubsController = new StubsController(stubRepository, stubValidator);
-const sessionController = new SessionsController(sessionRepository, stubRepository);
-const flushController = new FlushController(serviceRepository, stubRepository, sessionRepository);
+const flushController = new FlushController(serviceRepository, stubRepository);
 const documentationController = new DocumentationController();
 const proxyController = new ProxyController(proxy, proxyHandler, serviceRepository, stubResolver);
 
@@ -78,16 +72,13 @@ function initLogger(file: string): winston.LoggerInstance {
 export {
     serviceRepository,
     stubRepository,
-    sessionRepository,
     servicesController,
     documentationController,
     stubsController,
-    sessionController,
     flushController,
     appLogger,
     proxyLogger,
     appHandler,
     proxyHandler,
-    sessionTransformer,
     proxyController
 };

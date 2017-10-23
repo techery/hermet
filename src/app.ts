@@ -3,7 +3,6 @@ import {NextFunction, Request, Response} from 'express';
 import routes from './routes/routes';
 import {appHandler as errorHandler, proxyController} from './container';
 import * as parser from 'body-parser';
-import sessionMiddleware from './middleware/session';
 
 const app = express();
 
@@ -11,7 +10,6 @@ app.use((req, res, next) => proxyController.proxy(req, res, next));
 
 app.use(parser.json());
 app.use(parser.urlencoded({extended: false}));
-app.use(sessionMiddleware);
 
 app.use('/', routes);
 

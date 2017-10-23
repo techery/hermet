@@ -44,10 +44,7 @@ export default class StubsController extends BaseController {
             return this.respondWithValidationError('Invalid time to life!');
         }
 
-        const items: Stub[] = this.stubRepository.find({
-            serviceId: request.params.serviceId,
-            sessionId: request.session.id
-        });
+        const items: Stub[] = this.stubRepository.find({serviceId: request.params.serviceId});
 
         this.stubValidator.validate(request.body, items);
 
@@ -55,7 +52,6 @@ export default class StubsController extends BaseController {
             response: request.body.response,
             predicates: request.body.predicates,
             serviceId: request.params.serviceId,
-            sessionId: request.session.id,
             ttl: ttl,
             expireAt: ttl ? moment().add(ttl, 's').format() : null
         });
@@ -134,10 +130,7 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public list(request: SessionRequest, response: Response): void {
-        let items: Stub[] = this.stubRepository.find({
-            serviceId: request.params.serviceId,
-            sessionId: request.session.id
-        });
+        let items: Stub[] = this.stubRepository.find({serviceId: request.params.serviceId});
 
         this.respondJson(response, items);
     }
@@ -149,9 +142,7 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public removeAll(request: SessionRequest, response: Response): void {
-        let searchParams: any = {
-            sessionId: request.session.id
-        };
+        let searchParams: any = {};
 
         if (request.params.serviceId) {
             searchParams.serviceId = request.params.serviceId;

@@ -12,17 +12,13 @@ export default class StubResolver {
      * Find and apply stub to the request
      *
      * @param {string} serviceId
-     * @param {string} sessionId
      * @param {Request} request
      * @param {Response} response
      * @return {boolean}
      */
-    public applyStub(serviceId: string, sessionId: string, request: Request, response: Response): boolean {
+    public applyStub(serviceId: string, request: Request, response: Response): boolean {
         try {
-            let stubs: Stub[] = stubRepository.find({
-                serviceId: serviceId,
-                sessionId: sessionId
-            });
+            let stubs: Stub[] = stubRepository.find({serviceId: serviceId});
 
             let stub: Stub = this.resolveStubByRequest(stubs, request);
 

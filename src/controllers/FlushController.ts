@@ -2,19 +2,16 @@ import {Response, Request} from 'express';
 import BaseController from './BaseController';
 import ServiceRepository from '../repositories/loki/ServiceRepository';
 import StubRepository from '../repositories/loki/StubRepository';
-import SessionRepository from '../repositories/loki/SessionRepository';
 
 export default class FlushController extends BaseController {
 
     protected serviceRepository: ServiceRepository;
     protected stubRepository: StubRepository;
-    protected sessionRepository: SessionRepository;
 
-    constructor(serviceRepository: ServiceRepository, stubRepository: StubRepository, sessionRepository: SessionRepository) {
+    constructor(serviceRepository: ServiceRepository, stubRepository: StubRepository) {
         super();
         this.serviceRepository = serviceRepository;
         this.stubRepository = stubRepository;
-        this.sessionRepository = sessionRepository;
     }
     /**
      * @param {Request} request
@@ -23,7 +20,6 @@ export default class FlushController extends BaseController {
     public flush(request: Request, response: Response): any {
         this.serviceRepository.clear();
         this.stubRepository.clear();
-        this.sessionRepository.clear();
 
         this.respondWithNoContent(response);
     }

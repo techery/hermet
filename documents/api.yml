@@ -151,16 +151,12 @@ paths:
               type: object
               required:
                 - serviceId
-                - sessionId
                 - response
                 - predicates
               properties:
                 serviceId:
                   type: string
                   description: Service ID
-                sessionId:
-                  type: string
-                  description: Session ID
                 response:
                   $ref: '#/components/schemas/StubbedResponse'
                 predicates:
@@ -284,111 +280,12 @@ paths:
         '204':
           description: Stubs deleted
 
-  /api/sessions:
-    get:
-      summary: Sessions list
-      tags:
-        - Sessions
-      responses:
-        '200':
-          description: Array of sessions
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Session'
-    post:
-      summary: Create new session
-      tags:
-        - Sessions
-      requestBody:
-        description: Session details
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - name
-              properties:
-                name:
-                  type: string
-                  description: Session name
-                ttl:
-                  type: integer
-                  description: Time to life in seconds
-                  nullable: true
-      responses:
-        '201':
-          description: Session created
-
-  /api/sessions/{session_id}:
-    get:
-      summary: Get session details by id
-      tags:
-        - Sessions
-      parameters:
-        - name: session_id
-          in: path
-          description: ID of session to fetch
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Session details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Session'
-    put:
-      summary: Update session
-      tags:
-        - Sessions
-      parameters:
-        - name: session_id
-          in: path
-          description: ID of session to fetch
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Session details
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: Session name
-                ttl:
-                  type: integer
-                  description: Time to life in seconds
-                  nullable: true
-      responses:
-        '204':
-          description: Session updated
-    delete:
-      summary: Delete session
-      tags:
-        - Sessions
-      parameters:
-        - name: session_id
-          in: path
-          description: ID of session to fetch
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Session deleted
   /api/flush:
     post:
       tags:
         - Database Reset
       summary: Global database reset
-      description: Will delete all stubs, services and sessions
+      description: Will delete all stubs and services
       responses:
         '204':
           description: Database flush success
@@ -426,14 +323,6 @@ components:
               type: string
               description: Proxy target url
 
-    Session:
-      allOf:
-        - $ref: '#/components/schemas/BaseModel'
-        - properties:
-            name:
-              type: string
-              description: Session name
-
     Stub:
       allOf:
         - $ref: '#/components/schemas/BaseModel'
@@ -441,9 +330,6 @@ components:
             serviceId:
               type: string
               description: Service ID
-            sessionId:
-              type: string
-              description: Session ID
             response:
               $ref: '#/components/schemas/StubbedResponse'
             predicates:

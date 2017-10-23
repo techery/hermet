@@ -1,7 +1,6 @@
-import {Request, Response, Router, static as staticFiles} from 'express';
+import {Router, static as staticFiles} from 'express';
 import services from './services';
 import stubs from './stubs';
-import sessions from './sessions';
 import wrap from './wrapper';
 import {documentationController, flushController, stubsController} from '../container';
 
@@ -15,6 +14,5 @@ router.post('/api/flush', wrap(async (req, res, next) => flushController.flush(r
 
 router.use('/api/services', services);
 router.use('/api/services', stubs);
-router.use('/api/sessions', sessions);
 
 export default router;
