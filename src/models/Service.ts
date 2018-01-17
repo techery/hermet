@@ -7,7 +7,7 @@ export class Service extends Base {
 
     constructor(params: any = {}) {
         super(params);
-        this.name = params.name ? params.name.toLowerCase() : null;
+        this.name = params.name || null;
         this.targetUrl = params.targetUrl || null;
     }
 }

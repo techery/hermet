@@ -32,7 +32,7 @@ export default class ServicesController extends BaseController {
     public create(request: Request, response: Response): void {
         const ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
 
-        if (!request.body.hasOwnProperty('name') || !/[\w\d-_]{3,}/.test(request.body.name)) {
+        if (!request.body.hasOwnProperty('name') || !/[a-z\d-_]{3,}/.test(request.body.name)) {
             return this.respondWithValidationError('Invalid service name format!');
         }
 
@@ -44,7 +44,7 @@ export default class ServicesController extends BaseController {
             return this.respondWithValidationError('Invalid time to life!');
         }
 
-        const name = request.body.name;
+        const name = request.body.name.toLowerCase();
         const servicesCount = this.serviceRepository.count({name: name});
         if (servicesCount > 0) {
             this.respondWithValidationError('Service with name [' + name + '] already exists');
@@ -83,7 +83,7 @@ export default class ServicesController extends BaseController {
      * @param {Response} response
      */
     public update(request: Request, response: Response): void {
-        if (request.body.hasOwnProperty('name') && !/[\w\d-_]{3,}/.test(request.body.name)) {
+        if (request.body.hasOwnProperty('name') && !/[a-z\d-_]{3,}/.test(request.body.name)) {
             return this.respondWithValidationError('Invalid service name format!');
         }
 
@@ -98,6 +98,7 @@ export default class ServicesController extends BaseController {
         const service: Service = this.serviceRepository.get(request.params.serviceId);
 
         service.name = request.body.name || service.name;
+        service.name = service.name.toLowerCase();
         service.targetUrl = request.body.targetUrl || service.targetUrl;
 
         if (request.body.hasOwnProperty('ttl')) {
