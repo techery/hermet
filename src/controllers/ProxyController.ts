@@ -44,7 +44,7 @@ export default class ProxyController extends BaseController {
             return next();
         }
 
-        const service: Service = this.serviceRepository.findOne({name: serviceName});
+        const service: Service = this.serviceRepository.findOne({name: serviceName.toLowerCase()});
         if (!service) {
             const error = new ProxyError(400, 'Service "' + serviceName + '" not found');
 
