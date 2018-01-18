@@ -32,7 +32,7 @@ export default class StubsController extends BaseController {
     public create(request: SessionRequest, response: Response): void {
         const ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_stub_ttl;
 
-        if (!request.body.hasOwnProperty('response') || (!_.isObject(request.body.response) || !_.isString(request.body.response))) {
+        if (!request.body.hasOwnProperty('response') || !(_.isObject(request.body.response) || _.isString(request.body.response))) {
             return this.respondWithValidationError('Invalid response!');
         }
 
@@ -82,7 +82,7 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public update(request: Request, response: Response): void {
-        if (request.body.hasOwnProperty('response') && (!_.isObject(request.body.response) || !_.isString(request.body.response))) {
+        if (!request.body.hasOwnProperty('response') || !(_.isObject(request.body.response) || _.isString(request.body.response))) {
             return this.respondWithValidationError('Invalid response!');
         }
 
