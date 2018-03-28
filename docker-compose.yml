@@ -11,3 +11,16 @@ services:
       - '127.0.0.1:5025:5025'
     volumes:
       - ./database:/home/hermet/app/database
+    depends_on:
+      - mongodb
+  mongodb:
+      image: mongo:3.7
+      container_name: mongodb
+      environment:
+        - MONGO_DATA_DIR=/data/db
+        - MONGO_LOG_DIR=/dev/null
+      volumes:
+        - ./database:/data/db
+      ports:
+          - 27017:27017
+      command: mongod --smallfiles --logpath=/dev/null # --quiet

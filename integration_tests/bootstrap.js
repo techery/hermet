@@ -1,6 +1,5 @@
 'use strict';
 
-global.uuid = require('uuid');
 global.config = require('./config');
 global.hermetApiClient = require('./helpers/http_client').create(config.app.api_base_url + '/api');
 global.httpClient = require('./helpers/http_client').create();

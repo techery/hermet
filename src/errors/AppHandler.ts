@@ -1,5 +1,5 @@
 import Handler from './Handler';
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import NotFound from './NotFound';
 import ValidationError from './ValidationError';
 

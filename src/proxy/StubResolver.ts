@@ -1,9 +1,9 @@
 import * as url from 'url';
-import {proxyLogger as logger, stubRepository} from '../container';
-import {ProxyIncomingMessage} from './interfaces/ProxyIncomingMessage';
-import {Stub} from '../models/Stub';
+import { proxyLogger as logger } from '../container';
+import { ProxyIncomingMessage } from './interfaces/ProxyIncomingMessage';
+import Stub from '../models/Stub';
 import ProxyError from '../errors/ProxyError';
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 
 let predicateResolver = require('hermet-predicates');
 
@@ -14,11 +14,11 @@ export default class StubResolver {
      * @param {string} serviceId
      * @param {Request} request
      * @param {Response} response
-     * @return {boolean}
+     * @return {Promise}
      */
-    public applyStub(serviceId: string, request: Request, response: Response): boolean {
+    public async applyStub(serviceId: string, request: Request, response: Response): Promise<boolean> {
         try {
-            let stubs: Stub[] = stubRepository.find({serviceId: serviceId});
+            let stubs: Stub[] = await Stub.find({ serviceId: serviceId });
 
             let stub: Stub = this.resolveStubByRequest(stubs, request);
 
@@ -44,11 +44,11 @@ export default class StubResolver {
     /**
      * Try to get stub for request param satisfying for the stub predicates
      *
-     * @param {any[]} stubs Map(id, stub)
-     * @param {ProxyIncomingMessage} request     Protocol request
+     * @param {Stub[]} stubs
+     * @param {ProxyIncomingMessage} request Protocol request
      * @returns Object
      */
-    protected resolveStubByRequest(stubs: any[], request: Request): any {
+    protected resolveStubByRequest(stubs: Stub[], request: Request): any {
         return stubs.find((stub: any) => {
             let predicates: any[] = stub.predicates || [];
 

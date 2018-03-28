@@ -1,5 +1,5 @@
 import NotFound from './../errors/NotFound';
-import {Response} from 'express';
+import { Response } from 'express';
 import ValidationError from '../errors/ValidationError';
 
 abstract class BaseController {

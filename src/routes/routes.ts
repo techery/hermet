@@ -1,10 +1,10 @@
-import {Router, static as staticFiles} from 'express';
+import { Router, static as staticFiles } from 'express';
 import services from './services';
 import stubs from './stubs';
 import wrap from './wrapper';
-import {documentationController, flushController, stubsController} from '../container';
+import { documentationController, flushController, stubsController } from '../container';
 
-let router = Router({mergeParams: true});
+let router = Router({ mergeParams: true });
 
 router.use('/', staticFiles('documents/swagger'));
 router.get('/', wrap((req, res, next) => documentationController.show(req, res)));

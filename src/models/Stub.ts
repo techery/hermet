@@ -1,15 +1,31 @@
-import {Base} from './Base';
+import Model from './Model';
+import { Schema, SchemaDefinition } from 'mongoose';
 
-export class Stub extends Base {
-
+export class Stub extends Model {
     public response: any;
     public predicates: any;
     public serviceId: string;
+    public ttl: number;
+    public expireAt: Date;
 
-    constructor(params: any = {}) {
-        super(params);
-        this.response = params.response || {};
-        this.predicates = params.predicates || [];
-        this.serviceId = params.serviceId || null;
+    static get schema(): SchemaDefinition {
+        return {
+            response: {
+                type: Schema.Types.Mixed,
+                required: true
+            },
+            predicates: {
+                type: Schema.Types.Mixed,
+                required: true
+            },
+            serviceId: {
+                type: String,
+                required: true
+            },
+            ttl: Number,
+            expireAt: Date
+        };
     }
 }
+
+export default Stub.model;

@@ -1,6 +1,6 @@
-import {LoggerInstance} from 'winston';
-import {ServerResponse, IncomingMessage} from 'http';
-import {Request} from 'express';
+import { LoggerInstance } from 'winston';
+import { IncomingMessage, ServerResponse } from 'http';
+import { Request } from 'express';
 
 const curlify = require('request-as-curl');
 
@@ -32,7 +32,7 @@ abstract class Handler {
             'Content-Type': 'application/json'
         });
 
-        response.end(JSON.stringify({error: message}));
+        response.end(JSON.stringify({ error: message }));
     }
 
     /**

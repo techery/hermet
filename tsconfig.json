@@ -14,10 +14,10 @@
     "rootDir": "src",
     "sourceMap": false
   },
+  "typeRoots": ["node_modules/@types/"],
   "filesGlob": [
-    "typings/**/*.d.ts",
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
   ],
   "exclude": [
     "node_modules"

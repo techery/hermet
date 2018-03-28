@@ -1,35 +1,19 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import BaseController from './BaseController';
-import ServiceRepository from '../repositories/loki/ServiceRepository';
-import {SessionRequest} from '../requests/SessionRequest';
-import StubRepository from '../repositories/loki/StubRepository';
-import {Service} from '../models/Service';
+import Service from '../models/Service';
 import config from '../config';
 import * as moment from 'moment';
 import isTtl from '../validators/TtlValidator';
+import Stub from '../models/Stub';
 
 export default class ServicesController extends BaseController {
-
-    protected serviceRepository: ServiceRepository;
-    protected stubRepository: StubRepository;
-
-    /**
-     * @param {ServiceRepository} serviceRepository
-     * @param {StubRepository} stubRepository
-     */
-    constructor(serviceRepository: ServiceRepository, stubRepository: StubRepository) {
-        super();
-        this.serviceRepository = serviceRepository;
-        this.stubRepository = stubRepository;
-    }
-
     /**
      * Create new service
      *
      * @param {Request} request
      * @param {Response} response
      */
-    public create(request: Request, response: Response): void {
+    public async create(request: Request, response: Response): Promise<void> {
         const ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_service_ttl;
 
         if (!request.body.hasOwnProperty('name') || !/[a-z\d-_]{3,}/.test(request.body.name)) {
@@ -45,17 +29,19 @@ export default class ServicesController extends BaseController {
         }
 
         const name = request.body.name.toLowerCase();
-        const servicesCount = this.serviceRepository.count({name: name});
+        const servicesCount = await Service.count({ name: name });
         if (servicesCount > 0) {
             this.respondWithValidationError('Service with name [' + name + '] already exists');
         }
 
-        const service: Service = this.serviceRepository.create({
-            name: name,
+        const service = new Service({
+            name,
+            ttl,
             targetUrl: request.body.targetUrl,
-            ttl: ttl,
-            expireAt: ttl ? moment().add(ttl, 's').format() : null
+            expireAt: ttl ? moment().add(ttl, 's').toDate() : null
         });
+
+        await service.save();
 
         this.respondJson(response, service, 201);
     }
@@ -66,14 +52,13 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public get(request: Request, response: Response): void {
-        try {
-            const service: Service = this.serviceRepository.get(request.params.serviceId);
-
-            this.respondJson(response, service);
-        } catch (err) {
-            this.respondWithNotFound();
+    public async get(request: Request, response: Response): Promise<void> {
+        const service: Service = await Service.findById(request.params.serviceId);
+        if (!service) {
+            return this.respondWithNotFound();
         }
+
+        this.respondJson(response, service);
     }
 
     /**
@@ -82,7 +67,7 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public update(request: Request, response: Response): void {
+    public async update(request: Request, response: Response): Promise<void> {
         if (request.body.hasOwnProperty('name') && !/[a-z\d-_]{3,}/.test(request.body.name)) {
             return this.respondWithValidationError('Invalid service name format!');
         }
@@ -95,7 +80,11 @@ export default class ServicesController extends BaseController {
             return this.respondWithValidationError('Invalid time to life!');
         }
 
-        const service: Service = this.serviceRepository.get(request.params.serviceId);
+        const service: Service = await Service.findById(request.params.serviceId);
+
+        if (!service) {
+            return this.respondWithNotFound();
+        }
 
         service.name = request.body.name || service.name;
         service.name = service.name.toLowerCase();
@@ -106,9 +95,7 @@ export default class ServicesController extends BaseController {
             service.expireAt = moment(service.createAt).add(request.body.ttl).format();
         }
 
-        this.serviceRepository.update(service);
-
-        this.respondJson(response, service);
+        this.respondJson(response, await service.save());
     }
 
     /**
@@ -117,12 +104,10 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public remove(request: SessionRequest, response: Response): void {
+    public async remove(request: Request, response: Response): Promise<void> {
         try {
-            this.serviceRepository.delete({id: request.params.serviceId});
-            this.stubRepository.delete({
-                serviceId: request.params.serviceId
-            });
+            await Service.deleteOne({ _id: request.params.serviceId });
+            await Stub.deleteMany({ serviceId: request.params.serviceId });
             this.respondWithNoContent(response);
         } catch (err) {
             this.respondWithNotFound();
@@ -135,8 +120,8 @@ export default class ServicesController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public list(request: Request, response: Response): void {
-        let items: Service[] = this.serviceRepository.all();
+    public async list(request: Request, response: Response): Promise<void> {
+        let items: Service[] = await Service.find({});
 
         this.respondJson(response, items);
     }

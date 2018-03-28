@@ -3,7 +3,7 @@ FROM ubuntu:14.04
 # Environment configuration
 ENV NPM_CONFIG_LOGLEVEL info
 ENV NODE_VERSION 8.6.0
-ENV HERMET_DIR /home/hermet/app
+ENV HERMET_DIR /var/www/hermet
 
 # Replace shell with bash so we can source files
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -52,20 +52,16 @@ RUN curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-
 # Install PM2
 RUN npm i -g pm2
 
-# Create hermet user
-RUN useradd --user-group --create-home --shell /bin/false hermet;
-USER hermet
-
 # Create app directory
 RUN mkdir -p ${HERMET_DIR}
 WORKDIR ${HERMET_DIR}
 
 # Install node dependencies
-COPY --chown=hermet package.json ${HERMET_DIR}
+COPY package.json ${HERMET_DIR}
 RUN npm install
 
 # Copy project files
-COPY --chown=hermet . ${HERMET_DIR}
+COPY . ${HERMET_DIR}
 RUN rm -r ${HERMET_DIR}/database
 
 # Run gulp

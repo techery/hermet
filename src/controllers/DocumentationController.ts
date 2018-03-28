@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import BaseController from './BaseController';
 import config from '../config';
 import * as fs from 'fs';
@@ -15,7 +15,7 @@ export default class DocumentationController extends BaseController {
         let ui = fs.readFileSync(config.api.swagger).toString();
 
         documentation.servers = documentation.servers || [];
-        documentation.servers.push({url: config.app.base_url});
+        documentation.servers.push({ url: config.app.base_url });
 
         response.send(ui.replace('{{specification}}', JSON.stringify(documentation)));
     }
