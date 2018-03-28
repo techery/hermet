@@ -1,5 +1,5 @@
 import Handler from './Handler';
-import {ServerResponse, IncomingMessage} from 'http';
+import {IncomingMessage, ServerResponse} from 'http';
 import ProxyError from './ProxyError';
 
 export default class ProxyHandler extends Handler {
@@ -23,8 +23,8 @@ export default class ProxyHandler extends Handler {
 
         if (error instanceof ProxyError) {
             this.error(response, error.httpCode, error.message);
+        } else {
+            this.error(response, 500, 'An unknown error occurred during the proxying');
         }
-
-        this.error(response, 500, 'ProxyError');
     }
 }

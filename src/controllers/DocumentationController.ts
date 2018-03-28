@@ -15,9 +15,7 @@ export default class DocumentationController extends BaseController {
         let ui = fs.readFileSync(config.api.swagger).toString();
 
         documentation.servers = documentation.servers || [];
-        documentation.servers.push({
-            url: config.app.base_url + ':' + config.app.port
-        });
+        documentation.servers.push({url: config.app.base_url});
 
         response.send(ui.replace('{{specification}}', JSON.stringify(documentation)));
     }

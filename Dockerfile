@@ -66,6 +66,7 @@ RUN npm install
 
 # Copy project files
 COPY --chown=hermet . ${HERMET_DIR}
+RUN rm -r ${HERMET_DIR}/database
 
 # Run gulp
 RUN node_modules/.bin/gulp build

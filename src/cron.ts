@@ -1,4 +1,4 @@
-import {serviceRepository, sessionRepository, stubRepository} from './container';
+import {serviceRepository, stubRepository} from './container';
 import * as moment from 'moment';
 import {Base} from './models/Base';
 import Repository from './repositories/loki/Repository';
@@ -15,6 +15,5 @@ export default () => {
 
         removeExpiredItems(stubRepository);
         removeExpiredItems(serviceRepository);
-        removeExpiredItems(sessionRepository);
     });
 };

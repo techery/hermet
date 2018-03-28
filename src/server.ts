@@ -4,15 +4,14 @@
 import config from './config';
 import {createServer} from 'http';
 import app from './app';
-import proxy from './proxy';
-import {appLogger, proxyLogger} from './container';
+import cron from './cron';
+import {appLogger} from './container';
 import ErrnoException = NodeJS.ErrnoException;
 
 /**
  * Get port from environment and store in Express.
  */
 let apiPort = config.app.port;
-let proxyPort = config.proxy.port;
 
 app.set('port', apiPort);
 
@@ -27,18 +26,11 @@ let server = createServer(app);
 server.listen(apiPort);
 server.on('error', onError);
 server.on('listening', () => {
-    appLogger.info('API server listening on ' + apiPort);
+    appLogger.info('Hermet server listening on ' + apiPort);
 });
 
-/**
- * Create Proxy service
- */
-let proxySever = createServer(proxy);
-
-proxySever.listen(proxyPort);
-proxySever.on('listening', () => {
-    proxyLogger.info('Proxy server listening on ' + proxyPort);
-});
+// Start cron job
+cron();
 
 /**
  * Event listener for HTTP server "error" event.

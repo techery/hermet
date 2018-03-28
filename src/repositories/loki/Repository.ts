@@ -21,22 +21,6 @@ abstract class Repository {
         this.collection = collection;
     }
 
-    protected toModel(data: any): any {
-        if (Array.isArray(data)) {
-            let result: any[] = [];
-
-            data.forEach(item => result.push(this.toModel(item)));
-
-            return result;
-        }
-
-        if (data === Object(data)) {
-            return new this.model(data);
-        }
-
-        return data;
-    }
-
     /**
      * @param {Object} data
      *
@@ -165,6 +149,22 @@ abstract class Repository {
 
     public clear(): void {
         this.collection.clear();
+    }
+
+    protected toModel(data: any): any {
+        if (Array.isArray(data)) {
+            let result: any[] = [];
+
+            data.forEach(item => result.push(this.toModel(item)));
+
+            return result;
+        }
+
+        if (data === Object(data)) {
+            return new this.model(data);
+        }
+
+        return data;
     }
 }
 

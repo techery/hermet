@@ -3,18 +3,24 @@ import BaseController from './BaseController';
 import {SessionRequest} from '../requests/SessionRequest';
 import {Stub} from '../models/Stub';
 import config from '../config';
-import {stubValidator} from '../container';
 import StubRepository from '../repositories/loki/StubRepository';
+import StubValidator from '../validators/StubValidator';
+import * as moment from 'moment';
+import isTtl from '../validators/TtlValidator';
+import * as _ from 'lodash';
 
 export default class StubsController extends BaseController {
     protected stubRepository: StubRepository;
+    protected stubValidator: StubValidator;
 
     /**
      * @param {Object} stubRepository
+     * @param {StubValidator} stubValidator
      */
-    constructor(stubRepository: StubRepository) {
+    constructor(stubRepository: StubRepository, stubValidator: StubValidator) {
         super();
         this.stubRepository = stubRepository;
+        this.stubValidator = stubValidator;
     }
 
     /**
@@ -24,20 +30,33 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public create(request: SessionRequest, response: Response): void {
-        let items: Stub[] = this.stubRepository.find({
+        const ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_stub_ttl;
+
+        if (!request.body.hasOwnProperty('response') || !(_.isObject(request.body.response) || _.isString(request.body.response))) {
+            return this.respondWithValidationError('Invalid response!');
+        }
+
+        if (!request.body.hasOwnProperty('predicates') || !_.isArray(request.body.predicates)) {
+            return this.respondWithValidationError('Invalid predicates!');
+        }
+
+        if (request.body.hasOwnProperty('ttl') && !isTtl(request.body.ttl)) {
+            return this.respondWithValidationError('Invalid time to life!');
+        }
+
+        const items: Stub[] = this.stubRepository.find({serviceId: request.params.serviceId});
+
+        this.stubValidator.validate(request.body, items);
+
+        const stub: Stub = this.stubRepository.create({
+            response: request.body.response,
+            predicates: request.body.predicates,
             serviceId: request.params.serviceId,
-            sessionId: request.session.id
+            ttl: ttl,
+            expireAt: ttl ? moment().add(ttl, 's').format() : null
         });
-        stubValidator.validate(request.body, items);
 
-        request.body.ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_stub_ttl;
-        let stub: Stub = new Stub(request.body);
-        stub.sessionId = request.session.id;
-        stub.serviceId = request.params.serviceId;
-
-        let result = this.stubRepository.create(stub);
-
-        this.respondWithCreated(response, 'api/services/' + request.params.serviceId + '/stubs/' + result.id);
+        this.respondJson(response, stub, 201);
     }
 
     /**
@@ -48,7 +67,7 @@ export default class StubsController extends BaseController {
      */
     public get(request: SessionRequest, response: Response): void {
         try {
-            let stub = this.stubRepository.get(request.params.stubId);
+            const stub: Stub = this.stubRepository.get(request.params.stubId);
 
             this.respondJson(response, stub);
         } catch (err) {
@@ -63,8 +82,30 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public update(request: Request, response: Response): void {
-        this.stubRepository.findAndUpdate(request.params.stubId, request.body);
-        this.respondWithNoContent(response);
+        if (!request.body.hasOwnProperty('response') || !(_.isObject(request.body.response) || _.isString(request.body.response))) {
+            return this.respondWithValidationError('Invalid response!');
+        }
+
+        if (request.body.hasOwnProperty('predicates') && !_.isArray(request.body.predicates)) {
+            return this.respondWithValidationError('Invalid predicates!');
+        }
+
+        if (request.body.hasOwnProperty('ttl') && !isTtl(request.body.ttl)) {
+            return this.respondWithValidationError('Invalid time to life!');
+        }
+
+        const stub: Stub = this.stubRepository.get(request.params.stubId);
+
+        stub.response = request.body.response || stub.response;
+        stub.response = request.body.predicates || stub.predicates;
+
+        if (request.body.hasOwnProperty('ttl')) {
+            stub.ttl = request.body.ttl;
+            stub.expireAt = moment(stub.createAt).add(request.body.ttl).format();
+        }
+
+        this.stubRepository.update(stub);
+        this.respondJson(response, stub);
     }
 
     /**
@@ -89,10 +130,7 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public list(request: SessionRequest, response: Response): void {
-        let items: Stub[] = this.stubRepository.find({
-            serviceId: request.params.serviceId,
-            sessionId: request.session.id
-        });
+        let items: Stub[] = this.stubRepository.find({serviceId: request.params.serviceId});
 
         this.respondJson(response, items);
     }
@@ -104,9 +142,7 @@ export default class StubsController extends BaseController {
      * @param {Response} response
      */
     public removeAll(request: SessionRequest, response: Response): void {
-        let searchParams: any = {
-            sessionId: request.session.id
-        };
+        let searchParams: any = {};
 
         if (request.params.serviceId) {
             searchParams.serviceId = request.params.serviceId;
