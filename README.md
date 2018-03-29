@@ -16,7 +16,7 @@ docker-compose up hermet
 
 ### API documentation
 By default it located here: [http://localhost:5000/api/documentation](http://localhost:5000/api/documentation)
-Or you can read raw documentation here: [./documents/api.yml](API Documentation)
+Or you can read raw documentation here: [API Documentation](./documents/api.yml)
 
 ### Integration tests
 For run tests use command:
