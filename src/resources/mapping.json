@@ -1,18 +1,18 @@
 {
-    "mappings": {
-        "service": {},
-        "stub": {
-            "_parent": {
-                "type": "service"
-            },
-            "properties": {
-                "response": {
-                    "enabled": false
-                },
-                "predicates": {
-                    "enabled": false
-                }
-            }
+  "mappings": {
+    "service": {},
+    "stub": {
+      "_parent": {
+        "type": "service"
+      },
+      "properties": {
+        "response": {
+          "enabled": false
+        },
+        "predicates": {
+          "enabled": false
         }
+      }
     }
+  }
 }

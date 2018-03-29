@@ -1,5 +1,5 @@
-import {config as load} from 'dotenv';
-import {env} from './helpers';
+import { config as load } from 'dotenv';
+import { env } from './helpers';
 
 load();
 
@@ -24,8 +24,7 @@ const config: Config = Object.freeze({
     },
 
     database: {
-        file: 'database/db.json',
-        autosave_interval: env('HERMET_DATABASE_AUTOSAVE_INTERVAL', 5000)
+        uri: env('HERMET_DATABASE_URI', 'mongodb://mongodb/hermet')
     },
 
     api: {
@@ -55,8 +54,7 @@ class Config {
     };
 
     public database: {
-        file: string,
-        autosave_interval: number
+        uri: string
     };
 
     public api: {
@@ -65,5 +63,5 @@ class Config {
     };
 }
 
-export {config, Config};
+export { config, Config };
 export default config;

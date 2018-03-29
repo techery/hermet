@@ -1,25 +1,20 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import BaseController from './BaseController';
-import {SessionRequest} from '../requests/SessionRequest';
-import {Stub} from '../models/Stub';
+import Stub from '../models/Stub';
 import config from '../config';
-import StubRepository from '../repositories/loki/StubRepository';
 import StubValidator from '../validators/StubValidator';
 import * as moment from 'moment';
 import isTtl from '../validators/TtlValidator';
 import * as _ from 'lodash';
 
 export default class StubsController extends BaseController {
-    protected stubRepository: StubRepository;
     protected stubValidator: StubValidator;
 
     /**
-     * @param {Object} stubRepository
      * @param {StubValidator} stubValidator
      */
-    constructor(stubRepository: StubRepository, stubValidator: StubValidator) {
+    constructor(stubValidator: StubValidator) {
         super();
-        this.stubRepository = stubRepository;
         this.stubValidator = stubValidator;
     }
 
@@ -29,7 +24,7 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public create(request: SessionRequest, response: Response): void {
+    public async create(request: Request, response: Response): Promise<void> {
         const ttl = request.body.hasOwnProperty('ttl') ? request.body.ttl : config.app.default_stub_ttl;
 
         if (!request.body.hasOwnProperty('response') || !(_.isObject(request.body.response) || _.isString(request.body.response))) {
@@ -44,19 +39,19 @@ export default class StubsController extends BaseController {
             return this.respondWithValidationError('Invalid time to life!');
         }
 
-        const items: Stub[] = this.stubRepository.find({serviceId: request.params.serviceId});
+        const items: Stub[] = await Stub.find({ serviceId: request.params.serviceId });
 
         this.stubValidator.validate(request.body, items);
 
-        const stub: Stub = this.stubRepository.create({
+        const stub: Stub = new Stub({
             response: request.body.response,
             predicates: request.body.predicates,
             serviceId: request.params.serviceId,
             ttl: ttl,
-            expireAt: ttl ? moment().add(ttl, 's').format() : null
+            expireAt: ttl ? moment().add(ttl, 's').toDate() : null
         });
 
-        this.respondJson(response, stub, 201);
+        this.respondJson(response, await stub.save(), 201);
     }
 
     /**
@@ -65,14 +60,13 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public get(request: SessionRequest, response: Response): void {
-        try {
-            const stub: Stub = this.stubRepository.get(request.params.stubId);
-
-            this.respondJson(response, stub);
-        } catch (err) {
-            this.respondWithNotFound();
+    public async get(request: Request, response: Response): Promise<void> {
+        const stub: Stub = await Stub.findById(request.params.stubId);
+        if (!stub) {
+            return this.respondWithNotFound();
         }
+
+        this.respondJson(response, stub);
     }
 
     /**
@@ -81,7 +75,7 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public update(request: Request, response: Response): void {
+    public async update(request: Request, response: Response): Promise<void> {
         if (!request.body.hasOwnProperty('response') || !(_.isObject(request.body.response) || _.isString(request.body.response))) {
             return this.respondWithValidationError('Invalid response!');
         }
@@ -94,7 +88,10 @@ export default class StubsController extends BaseController {
             return this.respondWithValidationError('Invalid time to life!');
         }
 
-        const stub: Stub = this.stubRepository.get(request.params.stubId);
+        const stub: Stub = await Stub.findById(request.params.stubId);
+        if (!stub) {
+            return this.respondWithNotFound();
+        }
 
         stub.response = request.body.response || stub.response;
         stub.response = request.body.predicates || stub.predicates;
@@ -104,8 +101,7 @@ export default class StubsController extends BaseController {
             stub.expireAt = moment(stub.createAt).add(request.body.ttl).format();
         }
 
-        this.stubRepository.update(stub);
-        this.respondJson(response, stub);
+        this.respondJson(response, await stub.save());
     }
 
     /**
@@ -114,9 +110,9 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public remove(request: Request, response: Response): void {
+    public async remove(request: Request, response: Response): Promise<void> {
         try {
-            this.stubRepository.delete({id: request.params.stubId});
+            await Stub.deleteOne({ _id: request.params.stubId });
             this.respondWithNoContent(response);
         } catch (err) {
             this.respondWithNotFound();
@@ -129,8 +125,8 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public list(request: SessionRequest, response: Response): void {
-        let items: Stub[] = this.stubRepository.find({serviceId: request.params.serviceId});
+    public async list(request: Request, response: Response): Promise<void> {
+        let items: Stub[] = await Stub.find({ serviceId: request.params.serviceId });
 
         this.respondJson(response, items);
     }
@@ -141,14 +137,14 @@ export default class StubsController extends BaseController {
      * @param {Request} request
      * @param {Response} response
      */
-    public removeAll(request: SessionRequest, response: Response): void {
+    public async removeAll(request: Request, response: Response): Promise<void> {
         let searchParams: any = {};
 
         if (request.params.serviceId) {
             searchParams.serviceId = request.params.serviceId;
         }
 
-        this.stubRepository.findAndRemove(searchParams);
+        await Stub.deleteMany(searchParams);
 
         this.respondWithNoContent(response);
     }

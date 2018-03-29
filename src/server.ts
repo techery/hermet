@@ -1,11 +1,8 @@
-#!/usr/bin/env node
-/// <reference path="../typings/index.d.ts" />
-
 import config from './config';
-import {createServer} from 'http';
+import { createServer } from 'http';
 import app from './app';
 import cron from './cron';
-import {appLogger} from './container';
+import { appLogger } from './container';
 import ErrnoException = NodeJS.ErrnoException;
 
 /**

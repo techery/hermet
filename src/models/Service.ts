@@ -1,13 +1,27 @@
-import {Base} from './Base';
+import Model from './Model';
+import { SchemaDefinition } from 'mongoose';
 
-export class Service extends Base {
-
+export class Service extends Model {
     public name: string;
     public targetUrl: string;
+    public ttl: number;
+    public expireAt: Date;
 
-    constructor(params: any = {}) {
-        super(params);
-        this.name = params.name || null;
-        this.targetUrl = params.targetUrl || null;
+    static get schema(): SchemaDefinition {
+        return {
+            name: {
+                type: String,
+                required: true,
+                unique: true
+            },
+            targetUrl: {
+                type: String,
+                required: true
+            },
+            ttl: Number,
+            expireAt: Date
+        };
     }
 }
+
+export default Service.model;

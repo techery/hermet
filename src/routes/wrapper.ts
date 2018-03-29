@@ -1,4 +1,4 @@
-import {Request, Response, NextFunction, RequestHandler} from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 export default function wrap(callable: RequestHandler): RequestHandler {
     return function (request: Request, response: Response, next: NextFunction): void {

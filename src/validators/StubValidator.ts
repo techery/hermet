@@ -1,5 +1,5 @@
 let deepDiff = require('deep-diff');
-import {Stub} from '../models/Stub';
+import { Stub } from '../models/Stub';
 import ValidationError from '../errors/ValidationError';
 
 export default class StubValidator {
@@ -7,7 +7,7 @@ export default class StubValidator {
     public validate(stub: any, items: any[]): any {
         items.forEach((item: Stub): void => {
             if (!this.compare(stub.predicates, item.predicates)) {
-                throw new ValidationError(400, 'Stub has a collision with another stub with id [' + item.id + ']');
+                throw new ValidationError(400, 'Stub has a collision with another stub with id [' + item._id + ']');
             }
         });
     }

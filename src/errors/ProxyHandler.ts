@@ -1,5 +1,5 @@
 import Handler from './Handler';
-import {IncomingMessage, ServerResponse} from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
 import ProxyError from './ProxyError';
 
 export default class ProxyHandler extends Handler {
